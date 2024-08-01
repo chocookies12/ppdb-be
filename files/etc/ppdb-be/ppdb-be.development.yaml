@@ -1,0 +1,8 @@
+server:
+  port: ":8081"
+database:
+  master: "root:@tcp(localhost:3306)/ppdb"
+swagger:
+  host: "localhost:8081"
+  schemes:
+    - http
