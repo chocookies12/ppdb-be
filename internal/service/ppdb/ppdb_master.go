@@ -3,6 +3,7 @@ package ppdb
 import (
 	"context"
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
+	ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/errors"
 	// "encoding/json"
 	// "fmt"
@@ -51,19 +52,31 @@ import (
 // 	return result, err
 // }
 
-func (s Service) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
-	var (
-		result string
-	)
+// func (s Service) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
+// 	var (
+// 		result string
+// 	)
 
-	result, err := s.ppdb.LoginAdmin(ctx, admin_id, admin_password)
+// 	result, err := s.ppdb.LoginAdmin(ctx, admin_id, admin_password)
+
+// 	if err != nil {
+// 		result = "Gagal Login"
+// 		return result, errors.Wrap(err, "[Service][LoginAdmin]")
+// 	}
+// 	result = "Berhasil Login"
+
+// 	return result, err
+
+// }
+
+func (s Service) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error) {
+
+	kontakArray, err := s.ppdb.GetKontakSekolah(ctx)
 
 	if err != nil {
-		result = "Gagal Login"
-		return result, errors.Wrap(err, "[Service][LoginAdmin]")
+		return kontakArray, errors.Wrap(err, "[Service][GetKontakSekolah]")
 	}
-	result = "Berhasil Login"
 
-	return result, err
+	return kontakArray, nil
 
 }

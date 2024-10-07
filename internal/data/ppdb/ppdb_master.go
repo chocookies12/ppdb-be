@@ -2,7 +2,6 @@ package ppdb
 
 import (
 	"context"
-	"database/sql"
 	"ppdb-be/pkg/errors"
 
 	// "golang.org/x/crypto/bcrypt"
@@ -83,30 +82,53 @@ import (
 
 // 	return result, err
 
-func (d Data) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
+// func (d Data) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
+// 	var (
+// 		admin  ppdbEntity.TableAdmin
+// 		result string
+// 		err    error
+// 	)
+
+// 	err = (*d.stmt)[loginAdmin].QueryRowxContext(ctx, admin_id).StructScan(&admin)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			result = "Admin not found"
+// 		} else {
+// 			result = "Failed to query admin"
+// 		}
+// 		return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
+// 	}
+
+// 	// err = bcrypt.CompareHashAndPassword([]byte(admin.AdminPassword), []byte(admin_password))
+// 	// if err != nil {
+// 	// 	result = "Invalid password"
+// 	// 	return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
+// 	// }
+
+// 	result = "Login successful"
+// 	return result, nil
+// }
+
+// Kontak Sekolah
+func (d Data) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error) {
 	var (
-		admin  ppdbEntity.TableAdmin
-		result string
-		err    error
+		KontakSekolah      ppdbEntity.TableKontakSekolah
+		kontakSekolahArray []ppdbEntity.TableKontakSekolah
+		err                error
 	)
 
-	err = (*d.stmt)[loginAdmin].QueryRowxContext(ctx, admin_id).StructScan(&admin)
+	rows, err := (*d.stmt)[getKontakSekolah].QueryxContext(ctx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			result = "Admin not found"
-		} else {
-			result = "Failed to query admin"
-		}
-		return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
+		return kontakSekolahArray, errors.Wrap(err, "[DATA] [GetKontakSekolah]")
 	}
-	
 
-	// err = bcrypt.CompareHashAndPassword([]byte(admin.AdminPassword), []byte(admin_password))
-	// if err != nil {
-	// 	result = "Invalid password"
-	// 	return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
-	// }
+	defer rows.Close()
 
-	result = "Login successful"
-	return result, nil
+	for rows.Next() {
+		if err = rows.StructScan(&KontakSekolah); err != nil {
+			return kontakSekolahArray, errors.Wrap(err, "[DATA] [GetKontakSekolah]")
+		}
+		kontakSekolahArray = append(kontakSekolahArray, KontakSekolah)
+	}
+	return kontakSekolahArray, err
 }

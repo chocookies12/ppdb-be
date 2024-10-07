@@ -30,13 +30,17 @@ type (
 const (
 	//query get
 
-	loginAdmin  = "LoginAdmin"
-	qLoginAdmin = `Select admin_id, admin_name, admin_email, admin_password FROM t_admin WHERE admin_id = ?`
+	getKontakSekolah  = "GetKontakSekolah"
+	qGetKontakSekolah = `Select kontakKYID, alamatSekolah, noTelpSekolah1, noTelpSekolah2, emailSekolah, instagramSekolah FROM T_KontakSekolah`
+
+	// loginAdmin  = "LoginAdmin"
+	// qLoginAdmin = `Select adminID, adminName, emailAdmin, password FROM T_Admin WHERE adminID = ?`
 )
 
 var (
 	readStmt = []statement{
-		{loginAdmin, qLoginAdmin},
+		// {loginAdmin, qLoginAdmin},
+		{getKontakSekolah, qGetKontakSekolah},
 	}
 	insertStmt = []statement{}
 	updateStmt = []statement{}

@@ -40,8 +40,8 @@ func (h *Handler) InsertPpdb(w http.ResponseWriter, r *http.Request) {
 	// Your code here
 	types = r.FormValue("type")
 	switch types {
-	case "loginadmin":
-		result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("admin_id"), r.FormValue("admin_pasword"))
+	// case "loginadmin":
+	// 	result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("admin_id"), r.FormValue("admin_pasword"))
 	}
 
 	if err != nil {

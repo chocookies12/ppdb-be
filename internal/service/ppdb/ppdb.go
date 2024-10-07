@@ -9,12 +9,15 @@ import (
 
 	// "time"
 
+	ppdbEntity "ppdb-be/internal/entity/ppdb"
+
 	"github.com/opentracing/opentracing-go"
 )
 
 type Data interface {
 	//get
-	LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error)
+	// LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error)
+	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
 }
 
 type Service struct {
