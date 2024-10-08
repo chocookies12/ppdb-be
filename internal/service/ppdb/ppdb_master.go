@@ -51,23 +51,24 @@ import (
 
 // 	return result, err
 // }
+//LoginAdmin(ctx context.Context, email_admin string, admin_password string) (string, error)
 
-// func (s Service) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
-// 	var (
-// 		result string
-// 	)
+func (s Service) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
+	var (
+		result string
+	)
 
-// 	result, err := s.ppdb.LoginAdmin(ctx, admin_id, admin_password)
+	result, err := s.ppdb.LoginAdmin(ctx, emailAdmin, password)
 
-// 	if err != nil {
-// 		result = "Gagal Login"
-// 		return result, errors.Wrap(err, "[Service][LoginAdmin]")
-// 	}
-// 	result = "Berhasil Login"
+	if err != nil {
+		result = "Gagal Login"
+		return result, errors.Wrap(err, "[Service][LoginAdmin]")
+	}
+	result = "Berhasil Login"
 
-// 	return result, err
+	return result, err
 
-// }
+}
 
 func (s Service) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error) {
 

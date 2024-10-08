@@ -45,8 +45,8 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -57,5 +57,5 @@ require (
 	github.com/smartystreets/goconvey v1.7.2 // indirect
 	github.com/spf13/viper v1.15.0
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	golang.org/x/crypto v0.25.0
+	golang.org/x/crypto v0.28.0
 )

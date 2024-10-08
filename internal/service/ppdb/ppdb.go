@@ -16,7 +16,7 @@ import (
 
 type Data interface {
 	//get
-	// LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error)
+	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) 
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
 }
 

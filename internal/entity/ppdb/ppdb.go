@@ -21,3 +21,11 @@ type TableKontakSekolah struct {
 	Email_sekolah     string `db:"emailSekolah" json:"email_sekolah"`
 	Instagram_sekolah string `db:"instagramSekolah" json:"instagram_sekolah"`
 }
+
+type TableAdmin struct {
+	AdminID string `db:"adminID" json:"admin_id"`
+	RoleID string `db:"roleID" json:"role_id"`
+	AdminName string `db:"adminName" json:"admin_name"`
+	EmailAdmin string `db:"emailAdmin" json:"email_admin"`
+	Password string `db:"password" json:"password"`
+}

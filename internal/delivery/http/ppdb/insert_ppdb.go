@@ -6,6 +6,7 @@ import (
 	// "io/ioutil"
 	"log"
 	"net/http"
+
 	// JOEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/response"
 
@@ -23,8 +24,6 @@ func (h *Handler) InsertPpdb(w http.ResponseWriter, r *http.Request) {
 		resp  response.Response
 		types string
 
-
-
 		// InsertPack	JOEntity.InsertUnit
 	)
 	defer resp.RenderJSON(w, r)
@@ -40,8 +39,9 @@ func (h *Handler) InsertPpdb(w http.ResponseWriter, r *http.Request) {
 	// Your code here
 	types = r.FormValue("type")
 	switch types {
-	// case "loginadmin":
-	// 	result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("admin_id"), r.FormValue("admin_pasword"))
+	//ini ketika submit masuk ke halaman admin
+	case "loginadmin":
+		result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("emailAdmin"), r.FormValue("password"))
 	}
 
 	if err != nil {

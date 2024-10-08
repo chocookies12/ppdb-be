@@ -2,6 +2,7 @@ package ppdb
 
 import (
 	"context"
+	"database/sql"
 	"ppdb-be/pkg/errors"
 
 	// "golang.org/x/crypto/bcrypt"
@@ -13,6 +14,8 @@ import (
 	// "time"
 
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // func (d Data) GetKaryawan(ctx context.Context) ([]joEntity.GetKaryawan, error) {
@@ -82,32 +85,40 @@ import (
 
 // 	return result, err
 
-// func (d Data) LoginAdmin(ctx context.Context, admin_id string, admin_password string) (string, error) {
-// 	var (
-// 		admin  ppdbEntity.TableAdmin
-// 		result string
-// 		err    error
-// 	)
+func (d Data) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
+	var (
+		admin  ppdbEntity.TableAdmin
+		result string
+		err    error
+	)
 
-// 	err = (*d.stmt)[loginAdmin].QueryRowxContext(ctx, admin_id).StructScan(&admin)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			result = "Admin not found"
-// 		} else {
-// 			result = "Failed to query admin"
-// 		}
-// 		return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
-// 	}
+	// Query untuk mendapatkan data admin berdasarkan emailAdmin
+	err = (*d.stmt)[loginAdmin].QueryRowxContext(ctx, emailAdmin).StructScan(&admin)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			result = "Admin not found"
+		} else {
+			result = "Failed to query admin"
+		}
+		return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
+	}
 
-// 	// err = bcrypt.CompareHashAndPassword([]byte(admin.AdminPassword), []byte(admin_password))
-// 	// if err != nil {
-// 	// 	result = "Invalid password"
-// 	// 	return result, errors.Wrap(err, "[DATA] [LoginAdmin]")
-// 	// }
+	// Pengecekan hardcoded untuk email "catherinbella38@gmail.com" dengan password "admin"
+	if admin.EmailAdmin == "catherinbella38@gmail.com" && password == "admin" {
+		result = "Login successful"
+		return result, nil
+	}
 
-// 	result = "Login successful"
-// 	return result, nil
-// }
+	// Proses hashing untuk akun lainnya
+	err = bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
+	if err != nil {
+		result = "Invalid password"
+		return result, errors.Wrap(err, "[DATA] [LoginAdmin] Password mismatch")
+	}
+
+	result = "Login successful"
+	return result, nil
+}
 
 // Kontak Sekolah
 func (d Data) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error) {
