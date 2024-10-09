@@ -18,6 +18,7 @@ type Data interface {
 	//get
 	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) 
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
+	GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error)
 }
 
 type Service struct {

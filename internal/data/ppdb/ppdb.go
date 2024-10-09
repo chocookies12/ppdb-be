@@ -30,17 +30,23 @@ type (
 const (
 	//query get
 
+	getDataAdmin  = "GetDataAdmin"
+	qGetDataAdmin = `SELECT  a.adminID, a.adminName, a.emailAdmin, r.roleID, r.roleName, r.roleDesc
+					FROM T_Admin AS a JOIN T_Role AS r ON a.roleID = r.roleID WHERE 
+    				a.adminName LIKE ?`
+
 	getKontakSekolah  = "GetKontakSekolah"
 	qGetKontakSekolah = `Select kontakKYID, alamatSekolah, noTelpSekolah1, noTelpSekolah2, emailSekolah, instagramSekolah FROM T_KontakSekolah`
 
 	loginAdmin  = "LoginAdmin"
-	qLoginAdmin = `Select adminID, roleID, adminName, emailAdmin, password FROM T_Admin WHERE emailAdmin = ?`
+	qLoginAdmin = `Select adminID, roleID, adminName, emailAdmin, password FROM T_Admin WHERE emailAdmin = ? `
 )
 
 var (
 	readStmt = []statement{
 		{loginAdmin, qLoginAdmin},
 		{getKontakSekolah, qGetKontakSekolah},
+		{getDataAdmin, qGetDataAdmin},
 	}
 	insertStmt = []statement{}
 	updateStmt = []statement{}

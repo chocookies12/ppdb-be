@@ -81,3 +81,13 @@ func (s Service) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontak
 	return kontakArray, nil
 
 }
+
+func (s Service) GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error) {
+	adminArray, err := s.ppdb.GetDataAdmin(ctx, searchInput)
+
+	if err != nil {
+		return adminArray, errors.Wrap(err, "[Service][GetDataAdmin]")
+	}
+
+	return adminArray, nil
+}

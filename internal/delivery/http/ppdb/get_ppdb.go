@@ -40,8 +40,11 @@ func (h *Handler) GetPpdb(w http.ResponseWriter, r *http.Request) {
 	// Your code here
 	types = r.FormValue("type")
 	switch types {
-	case"getkontaksekolah":
+	case "getkontaksekolah":
 		result, err = h.ppdbSvc.GetKontakSekolah(ctx)
+	case "getDataAdmin":
+		searchInput := r.FormValue("searchInput")             
+		result, err = h.ppdbSvc.GetDataAdmin(ctx, searchInput)
 	}
 
 	if err != nil {

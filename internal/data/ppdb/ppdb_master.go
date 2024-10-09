@@ -143,3 +143,31 @@ func (d Data) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSek
 	}
 	return kontakSekolahArray, err
 }
+
+// Get Data Admin
+func (d Data) GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error) {
+	var (
+		adminData      ppdbEntity.TableKelolaDataAdmin
+		adminDataArray []ppdbEntity.TableKelolaDataAdmin
+		err            error
+	)
+
+	// Execute the query with search input
+	rows, err := (*d.stmt)[getDataAdmin].QueryxContext(ctx, "%"+searchInput+"%")
+	if err != nil {
+		return adminDataArray, errors.Wrap(err, "[DATA] [GetDataAdmin] Error executing query")
+	}
+
+	defer rows.Close()
+
+	// Loop through the rows and map to struct
+	for rows.Next() {
+		if err = rows.StructScan(&adminData); err != nil {
+			return adminDataArray, errors.Wrap(err, "[DATA] [GetDataAdmin] Error scanning row")
+		}
+		adminDataArray = append(adminDataArray, adminData)
+	}
+
+	// Return the result
+	return adminDataArray, err
+}
