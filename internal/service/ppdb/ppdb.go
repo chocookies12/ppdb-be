@@ -16,9 +16,18 @@ import (
 
 type Data interface {
 	//get
-	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) 
+	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
-	GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error)
+	GetDataAdmin(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableKelolaDataAdmin, error)
+	GetDataAdminPagination(ctx context.Context, searchInput string) (int, error)
+
+	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
+
+	//insert
+	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
+
+	//delete
+	DeleteAdmin(ctx context.Context, adminID string) (string, error)
 }
 
 type Service struct {

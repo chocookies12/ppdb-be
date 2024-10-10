@@ -47,3 +47,21 @@ func (h *Handler) DeletePpdb(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 
 }
+
+func (h *Handler) DeleteAdmin(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp    response.Response
+		adminID = r.URL.Query().Get("adminID") // Get adminID from query
+	)
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+	result, err := h.ppdbSvc.DeleteAdmin(ctx, adminID) // Call service to delete admin
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		resp = httpHelper.ParseErrorCode(err.Error())
+		return
+	}
+
+	resp.Data = result
+}

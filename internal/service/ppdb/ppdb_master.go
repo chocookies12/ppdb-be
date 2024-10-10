@@ -2,6 +2,8 @@ package ppdb
 
 import (
 	"context"
+	"math"
+
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/errors"
@@ -51,7 +53,6 @@ import (
 
 // 	return result, err
 // }
-//LoginAdmin(ctx context.Context, email_admin string, admin_password string) (string, error)
 
 func (s Service) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
 	var (
@@ -82,12 +83,83 @@ func (s Service) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontak
 
 }
 
-func (s Service) GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error) {
-	adminArray, err := s.ppdb.GetDataAdmin(ctx, searchInput)
+// kelola admin
+func (s Service) GetDataAdminSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableKelolaDataAdmin, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	var metadata = make(map[string]int)
+	admins := []ppdbEntity.TableKelolaDataAdmin{}
 
-	if err != nil {
-		return adminArray, errors.Wrap(err, "[Service][GetDataAdmin]")
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of admins for pagination
+		count, err := s.ppdb.GetDataAdminPagination(ctx, searchInput)
+		if err != nil {
+			return admins, metadata, errors.Wrap(err, "[SERVICE][GetDataAdminSlim] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated admin data
+		admins, err = s.ppdb.GetDataAdmin(ctx, searchInput, offset, limit)
+		if err != nil {
+			return admins, metadata, errors.Wrap(err, "[SERVICE][GetDataAdminSlim] Error getting paginated admin data")
+		}
+
+		return admins, metadata, nil
 	}
 
-	return adminArray, nil
+	// If pagination parameters are not provided, return all data
+	admins, err := s.ppdb.GetDataAdmin(ctx, searchInput, 0, 0) // Adjust method for retrieving all records
+	if err != nil {
+		return admins, metadata, errors.Wrap(err, "[SERVICE][GetDataAdminSlim] Error getting all admin data")
+	}
+
+	return admins, metadata, nil
+}
+
+func (s Service) InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error) {
+	var (
+		result string
+	)
+
+	// Panggil fungsi InsertDataAdmin dari data layer
+	result, err := s.ppdb.InsertDataAdmin(ctx, admin)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][InsertDataAdmin]")
+	}
+
+	result = "Berhasil"
+
+	return result, nil
+}
+
+func (s Service) DeleteAdmin(ctx context.Context, adminID string) (string, error) {
+	result, err := s.ppdb.DeleteAdmin(ctx, adminID)
+
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][DeleteAdmin]")
+	}
+
+	return result, nil
+}
+
+func (s Service) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
+
+	roleArray, err := s.ppdb.GetRole(ctx)
+
+	if err != nil {
+		return roleArray, errors.Wrap(err, "[Service][GetRole]")
+	}
+
+	return roleArray, nil
+
 }

@@ -23,20 +23,25 @@ type TableKontakSekolah struct {
 }
 
 type TableAdmin struct {
-	AdminID string `db:"adminID" json:"admin_id"`
-	RoleID string `db:"roleID" json:"role_id"`
-	AdminName string `db:"adminName" json:"admin_name"`
+	AdminID    string `db:"adminID" json:"admin_id"`
+	RoleID     string `db:"roleID" json:"role_id"`
+	AdminName  string `db:"adminName" json:"admin_name"`
 	EmailAdmin string `db:"emailAdmin" json:"email_admin"`
-	Password string `db:"password" json:"password"`
+	Password   string `db:"password" json:"password"`
 }
 
-type TableKelolaDataAdmin struct{
-	AdminID string `db:"adminID" json:"admin_id"`
-	RoleID string `db:"roleID" json:"role_id"`
-	AdminName string `db:"adminName" json:"admin_name"`
+type TableKelolaDataAdmin struct {
+	AdminID    string `db:"adminID" json:"admin_id"`
+	RoleID     string `db:"roleID" json:"role_id"`
+	AdminName  string `db:"adminName" json:"admin_name"`
 	EmailAdmin string `db:"emailAdmin" json:"email_admin"`
-	Password string `db:"password" json:"password"`
+	Password   string `db:"password" json:"password"`
+	RoleName   string `db:"roleName" json:"role_name"`
+	RoleDesc   string `db:"roleDesc" json:"role_desc"`
+}
+
+type TableRole struct {
+	RoleID   string `db:"roleID" json:"role_id"`
 	RoleName string `db:"roleName" json:"role_name"`
 	RoleDesc string `db:"roleDesc" json:"role_desc"`
 }
-

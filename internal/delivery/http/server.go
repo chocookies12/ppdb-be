@@ -14,6 +14,14 @@ type Handler interface {
 	InsertPpdb(w http.ResponseWriter, r *http.Request)
 	DeletePpdb(w http.ResponseWriter, r *http.Request)
 	UpdatePpdb(w http.ResponseWriter, r *http.Request)
+
+	//website ppdb
+	GetKontakSekolah(w http.ResponseWriter, r *http.Request)
+	GetRole(w http.ResponseWriter, r *http.Request)
+	//kelola Admin 
+	GetDataAdminSlim(w http.ResponseWriter, r *http.Request)
+	InsertDataAdmin(w http.ResponseWriter, r *http.Request)
+	DeleteAdmin(w http.ResponseWriter, r *http.Request) 
 }
 
 // Server ...

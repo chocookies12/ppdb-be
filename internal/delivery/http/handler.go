@@ -36,6 +36,13 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("", s.Ppdb.UpdatePpdb).Methods("PUT")
 	ppdb.HandleFunc("", s.Ppdb.DeletePpdb).Methods("DELETE")
 
+	ppdb.HandleFunc("/getkontaksekolah", s.Ppdb.GetKontakSekolah).Methods("GET")
+	ppdb.HandleFunc("/getrole", s.Ppdb.GetRole).Methods("GET")
+	//DataAdmin
+	ppdb.HandleFunc("/getdataadmin", s.Ppdb.GetDataAdminSlim).Methods("GET")
+	ppdb.HandleFunc("/insertdataadmin", s.Ppdb.InsertDataAdmin).Methods("POST")
+	ppdb.HandleFunc("/deletedataadmin", s.Ppdb.DeleteAdmin).Methods("DELETE")
+
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r
 }

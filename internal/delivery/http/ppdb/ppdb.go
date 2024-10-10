@@ -16,7 +16,13 @@ type IppdbSvc interface {
 	//get
 	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
-	GetDataAdmin(ctx context.Context, searchInput string) ([]ppdbEntity.TableKelolaDataAdmin, error)
+	GetDataAdminSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableKelolaDataAdmin, interface{}, error)
+	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
+	//insert
+	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
+
+	//delete
+	DeleteAdmin(ctx context.Context, adminID string) (string, error)
 }
 
 type (

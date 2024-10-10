@@ -30,16 +30,38 @@ type (
 const (
 	//query get
 
-	getDataAdmin  = "GetDataAdmin"
-	qGetDataAdmin = `SELECT  a.adminID, a.adminName, a.emailAdmin, r.roleID, r.roleName, r.roleDesc
-					FROM T_Admin AS a JOIN T_Role AS r ON a.roleID = r.roleID WHERE 
-    				a.adminName LIKE ?`
+	getDataAdminPagination  = "GetDataAdminPagination"
+	qGetDataAdminPagination = `SELECT  count(*)
+                    FROM T_Admin AS a JOIN T_Role AS r ON a.roleID = r.roleID WHERE 
+                    a.adminName LIKE ?`
 
 	getKontakSekolah  = "GetKontakSekolah"
 	qGetKontakSekolah = `Select kontakKYID, alamatSekolah, noTelpSekolah1, noTelpSekolah2, emailSekolah, instagramSekolah FROM T_KontakSekolah`
 
 	loginAdmin  = "LoginAdmin"
 	qLoginAdmin = `Select adminID, roleID, adminName, emailAdmin, password FROM T_Admin WHERE emailAdmin = ? `
+
+	getDataAdmin  = "GetDataAdmin"
+	qGetDataAdmin = `SELECT  a.adminID, a.adminName, a.emailAdmin, r.roleID, r.roleName, r.roleDesc
+                    FROM T_Admin AS a JOIN T_Role AS r ON a.roleID = r.roleID WHERE 
+                    a.adminName LIKE ? LIMIT ?, ?`
+
+	getLastAdminId  = "GetLastAdminId"
+	qGetLastAdminId = `SELECT adminID FROM T_Admin
+						ORDER BY adminID DESC
+					   LIMIT 1;`
+
+	getRole  = "GetRole"
+	qGetRole = `Select roleID, roleName, roleDesc FROM T_Role`
+
+	//query insert
+	insertDataAdmin  = "InsertDataAdmin"
+	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
+						VALUES (?, ?, ?, ?, ?)`
+
+	//query delete
+	deleteDataAdmin  = "DeleteDataAdmin"
+	qDeleteDataAdmin = `DELETE FROM T_Admin WHERE adminID = ?`
 )
 
 var (
@@ -47,10 +69,18 @@ var (
 		{loginAdmin, qLoginAdmin},
 		{getKontakSekolah, qGetKontakSekolah},
 		{getDataAdmin, qGetDataAdmin},
+		{getDataAdminPagination, qGetDataAdminPagination},
+		{getLastAdminId, qGetLastAdminId},
+
+		{getRole, qGetRole},
 	}
-	insertStmt = []statement{}
+	insertStmt = []statement{
+		{insertDataAdmin, qInsertDataAdmin},
+	}
 	updateStmt = []statement{}
-	deleteStmt = []statement{}
+	deleteStmt = []statement{
+		{deleteDataAdmin, qDeleteDataAdmin},
+	}
 )
 
 // New ...
