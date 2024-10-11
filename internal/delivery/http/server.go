@@ -21,8 +21,14 @@ type Handler interface {
 	//kelola Admin 
 	GetDataAdminSlim(w http.ResponseWriter, r *http.Request)
 	InsertDataAdmin(w http.ResponseWriter, r *http.Request)
-	DeleteAdmin(w http.ResponseWriter, r *http.Request) 
+	DeleteAdmin(w http.ResponseWriter, r *http.Request) 	
+	//Info Pendaftaran 
+	InsertInfoDaftar(w http.ResponseWriter, r *http.Request)
+	GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request)
+	GetInfoDaftar(w http.ResponseWriter, r *http.Request)
+	
 }
+
 
 // Server ...
 type Server struct {

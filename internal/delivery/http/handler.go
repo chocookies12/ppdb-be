@@ -42,6 +42,10 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getdataadmin", s.Ppdb.GetDataAdminSlim).Methods("GET")
 	ppdb.HandleFunc("/insertdataadmin", s.Ppdb.InsertDataAdmin).Methods("POST")
 	ppdb.HandleFunc("/deletedataadmin", s.Ppdb.DeleteAdmin).Methods("DELETE")
+	//Info Penddaftaran
+	ppdb.HandleFunc("/insertinfopendaftaran", s.Ppdb.InsertInfoDaftar).Methods("POST")
+	ppdb.HandleFunc("/getgambarinfodaftar", s.Ppdb.GetGambarInfoDaftar).Methods("GET")
+	ppdb.HandleFunc("/getinfodaftar", s.Ppdb.GetInfoDaftar).Methods("GET")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

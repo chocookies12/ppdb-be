@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
+	"path/filepath"
 	"ppdb-be/pkg/errors"
 	"strconv"
 
@@ -86,6 +88,30 @@ import (
 // 	result = "Berhasil"
 
 // 	return result, err
+
+func saveImageToFile(imageBytes []byte, filePath string) error {
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+
+	_, err = file.Write(imageBytes)
+	if err != nil {
+		return fmt.Errorf("failed to write image to file: %w", err)
+	}
+
+	return nil
+}
+
+func EnsureDirectory(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if err := os.MkdirAll(path, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 func (d Data) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
 	var (
@@ -175,17 +201,16 @@ func (d Data) GetDataAdmin(ctx context.Context, searchInput string, offset, limi
 }
 
 func (d Data) GetDataAdminPagination(ctx context.Context, searchInput string) (int, error) {
-    var totalCount int
+	var totalCount int
 
-    // Query untuk mendapatkan total count tanpa LIMIT
-    err := (*d.stmt)[getDataAdminPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
-    if err != nil {
-        return 0, errors.Wrap(err, "[DATA] [GetDataAdminPagination] Error executing count query")
-    }
+	// Query untuk mendapatkan total count tanpa LIMIT
+	err := (*d.stmt)[getDataAdminPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetDataAdminPagination] Error executing count query")
+	}
 
-    return totalCount, nil
+	return totalCount, nil
 }
-
 
 func (d Data) InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error) {
 	var (
@@ -245,22 +270,21 @@ func (d Data) InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) 
 
 // Hapus Data Admin
 func (d Data) DeleteAdmin(ctx context.Context, adminID string) (string, error) {
-    var (
-        err    error
-        result string
-    )
-	
-    _, err = (*d.stmt)[deleteDataAdmin].ExecContext(ctx, adminID)
+	var (
+		err    error
+		result string
+	)
 
-    if err != nil {
-        result = "Gagal"
-        return result, errors.Wrap(err, "[DATA][DeleteAdmin]")
-    }
+	_, err = (*d.stmt)[deleteDataAdmin].ExecContext(ctx, adminID)
 
-    result = "Berhasil"
-    return result, nil
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][DeleteAdmin]")
+	}
+
+	result = "Berhasil"
+	return result, nil
 }
-
 
 // Role
 func (d Data) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
@@ -284,4 +308,109 @@ func (d Data) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 		roleArray = append(roleArray, role)
 	}
 	return roleArray, err
+}
+
+// Info Pendaftarn
+func (d Data) InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error) {
+	var (
+		err    error
+		result string
+		lastID string
+		newID  string
+	)
+
+	// Mengambil InfoID terakhir
+	err = (*d.stmt)[getLastInfoId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastInfoId]")
+	}
+
+	if lastID != "" {
+		// Mengambil bagian numerik dari lastID dan menambahkannya
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("I%04d", num+1)
+
+	} else {
+		newID = "I0001" // ID pertama
+	}
+
+	fmt.Println("newID", newID)
+
+	// Set AdminID baru ke admin struct
+	infoDaftar.InfoID = newID
+
+	// Eksekusi query untuk memasukkan data ke dalam tabel T_InfoDaftar
+	_, err = (*d.stmt)[insertInfoDaftar].ExecContext(ctx,
+		infoDaftar.InfoID,
+		infoDaftar.PosterDaftar,
+		infoDaftar.AwalTahunAjar,
+		infoDaftar.AkhirTahunAjar,
+	)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][InsertDataAdmin]")
+	}
+
+	result = "Berhasil"
+	return result, nil
+}
+
+func (d Data) GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error) {
+	var poster []byte
+	if err := (*d.stmt)[getGambarInfoDaftar].QueryRowxContext(ctx, infoID).Scan(&poster); err != nil {
+		return poster, errors.Wrap(err, "[DATA][GetGambarInfoDaftar]")
+	}
+
+	return poster, nil
+}
+
+func generateImageURLFotoInfoDaftar(id string) string {
+	var url = "http://localhost:8081"
+	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarinfodaftar?infoID=%s", id)
+}
+
+func (d Data) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error) {
+	var (
+		infoDaftarArray []ppdbEntity.TableInfoDaftar
+		err             error
+	)
+
+	rows, err := (*d.stmt)[getInfoDaftar].QueryxContext(ctx)
+	if err != nil {
+		return infoDaftarArray, errors.Wrap(err, "[DATA] [GetInfoDaftar]")
+	}
+
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetInfoDaftar] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var infoDaftar ppdbEntity.TableInfoDaftar
+
+		// Memindahkan data dari hasil query ke dalam struct
+		if err = rows.Scan(&infoDaftar.InfoID, &infoDaftar.LinkPosterDaftar, &infoDaftar.AwalTahunAjar, &infoDaftar.AkhirTahunAjar); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetInfoDaftar] - Failed to scan row")
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, infoDaftar.InfoID+".jpg")
+		if err := saveImageToFile(infoDaftar.PosterDaftar, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetInfoDaftar] - Failed to save image")
+		}
+
+		infoDaftar.LinkPosterDaftar = generateImageURLFotoInfoDaftar(infoDaftar.InfoID)
+		infoDaftarArray = append(infoDaftarArray, infoDaftar)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetInfoDaftar] - Row iteration error")
+	}
+
+	return infoDaftarArray, nil
 }

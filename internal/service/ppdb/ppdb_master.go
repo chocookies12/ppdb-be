@@ -163,3 +163,39 @@ func (s Service) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 	return roleArray, nil
 
 }
+
+func (s Service) InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error) {
+	var (
+		result string
+	)
+
+	// Panggil fungsi InsertInfoDaftar dari data layer
+	result, err := s.ppdb.InsertInfoDaftar(ctx, infoDaftar)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][InsertInfoDaftar]")
+	}
+
+	result = "Berhasil"
+
+	return result, nil
+}
+
+func (s Service) GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error) {
+	poster, err := s.ppdb.GetGambarInfoDaftar(ctx, infoID)
+	if err != nil {
+		return poster, errors.Wrap(err, "[SERVICE][GetGambarInfoDaftar]")
+	}
+
+	return poster, err
+}
+
+func (s Service) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error) {
+	infoDaftar, err := s.ppdb.GetInfoDaftar(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SERVICE] [GetInfoDaftar]")
+	}
+
+	return infoDaftar, nil
+}

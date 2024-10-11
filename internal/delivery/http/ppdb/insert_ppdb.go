@@ -5,6 +5,7 @@ import (
 	// "encoding/json"
 	// "io/ioutil"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 
@@ -94,3 +95,57 @@ func (h *Handler) InsertDataAdmin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
+func (h *Handler) InsertInfoDaftar(w http.ResponseWriter, r *http.Request) {
+	var (
+		infoDaftar ppdbEntity.TableInfoDaftar
+		resp       response.Response
+	)
+
+	// Parse multipart form with maximum file size of 10MB
+	err := r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
+	if err != nil {
+		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
+		return
+	}
+
+	// Mengambil file dari form-data
+	file, _, err := r.FormFile("poster_daftar")
+	if err != nil {
+		http.Error(w, "Error mengambil file dari form-data", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Membaca isi file ke dalam byte array
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, "Error membaca isi file", http.StatusInternalServerError)
+		return
+	}
+
+	// Membaca data JSON lainnya dari form-data
+	infoDaftar.PosterDaftar = []byte(fileBytes)
+	// infoDaftar.LinkPosterDaftar = r.FormValue("link_poster_daftar")
+	infoDaftar.AwalTahunAjar = r.FormValue("awal_tahun_ajar")
+	infoDaftar.AkhirTahunAjar = r.FormValue("akhir_tahun_ajar")
+
+	// Memanggil service untuk memasukkan data infoDaftar
+	result, err := h.ppdbSvc.InsertInfoDaftar(r.Context(), infoDaftar)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Data Info Daftar berhasil dimasukkan"
+
+	// Logging informasi request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}

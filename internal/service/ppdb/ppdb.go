@@ -23,8 +23,13 @@ type Data interface {
 
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
 
+	//info Daftar
+	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)
+	GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
+	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)

@@ -45,3 +45,11 @@ type TableRole struct {
 	RoleName string `db:"roleName" json:"role_name"`
 	RoleDesc string `db:"roleDesc" json:"role_desc"`
 }
+
+type TableInfoDaftar struct {
+	InfoID           string `db:"infoID" json:"info_id"`
+	PosterDaftar     []byte `db:"posterDaftar" json:"poster_daftar"`
+	LinkPosterDaftar string `json:"link_poster_daftar"`
+	AwalTahunAjar    string `db:"awalTahunAjar" json:"awal_tahun_ajar"`
+	AkhirTahunAjar   string `db:"akhirTahunAjar" json:"akhir_tahun_ajar"`
+}

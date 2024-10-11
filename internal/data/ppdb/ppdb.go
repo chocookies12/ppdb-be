@@ -49,15 +49,28 @@ const (
 	getLastAdminId  = "GetLastAdminId"
 	qGetLastAdminId = `SELECT adminID FROM T_Admin
 						ORDER BY adminID DESC
-					   LIMIT 1;`
+					   LIMIT 1`
 
 	getRole  = "GetRole"
 	qGetRole = `Select roleID, roleName, roleDesc FROM T_Role`
+
+	getLastInfoId  = "GetLastInfoId"
+	qGetLastInfoId = `SELECT infoID FROM T_InfoPendaftaran ORDER BY infoID DESC LIMIT 1`
+
+	getGambarInfoDaftar  = "GetGambarInfodaftar"
+	qGetGambarInfoDaftar = `SELECT posterDaftar from T_InfoPendaftaran WHERE InfoID= ?`
+
+	getInfoDaftar  = "GetInfoDaftar"
+	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, awalTahunAjar from T_InfoPendaftaran`
 
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
 						VALUES (?, ?, ?, ?, ?)`
+
+	insertInfoDaftar  = "InsertInfoDaftar"
+	qInsertInfoDaftar = `INSERT INTO T_InfoPendaftaran (infoID, posterDaftar, awalTahunAjar, akhirTahunAjar)
+						VALUES (?, ?, ?, ?)`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -71,11 +84,16 @@ var (
 		{getDataAdmin, qGetDataAdmin},
 		{getDataAdminPagination, qGetDataAdminPagination},
 		{getLastAdminId, qGetLastAdminId},
+		{getLastInfoId, qGetLastInfoId},
+
+		{getGambarInfoDaftar, qGetGambarInfoDaftar},
+		{getInfoDaftar, qGetInfoDaftar},
 
 		{getRole, qGetRole},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
+		{insertInfoDaftar, qInsertInfoDaftar},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{

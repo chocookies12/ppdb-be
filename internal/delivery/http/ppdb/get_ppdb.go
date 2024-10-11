@@ -3,6 +3,7 @@ package ppdb
 import (
 	// "internal/itoa"
 
+	"encoding/json"
 	"log"
 	"net/http"
 	httpHelper "ppdb-be/internal/delivery/http"
@@ -134,4 +135,41 @@ func (h *Handler) GetRole(w http.ResponseWriter, r *http.Request) {
 
 	// Logging informasi request yang berhasil
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+func (h *Handler) GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request) {
+	infoID := r.URL.Query().Get("infoID")
+	if infoID == "" {
+		http.Error(w, "infoID is required", http.StatusBadRequest)
+		return
+	}
+
+	poster, err := h.ppdbSvc.GetGambarInfoDaftar(r.Context(), infoID)
+	if err != nil {
+		http.Error(w, "Failed to get poster image", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.WriteHeader(http.StatusOK)
+	w.Write(poster)
+}
+
+func (h *Handler) GetInfoDaftar(w http.ResponseWriter, r *http.Request) {
+	// Memanggil service untuk mendapatkan data Info Daftar
+	infoDaftar, err := h.ppdbSvc.GetInfoDaftar(r.Context())
+	if err != nil {
+		http.Error(w, "Failed to get info daftar", http.StatusInternalServerError)
+		return
+	}
+
+	// Set response content type ke JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	// Mengirimkan response dalam format JSON
+	if err := json.NewEncoder(w).Encode(infoDaftar); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }
