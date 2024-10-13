@@ -53,3 +53,10 @@ type TableInfoDaftar struct {
 	AwalTahunAjar    string `db:"awalTahunAjar" json:"awal_tahun_ajar"`
 	AkhirTahunAjar   string `db:"akhirTahunAjar" json:"akhir_tahun_ajar"`
 }
+
+type TableBanner struct{
+	BannerID string `db:"bannerID" json:"banner_id"`
+	BannerName string `db:"bannerName" json:"banner_name"`
+	BannerImage []byte `db:"bannerImage" json:"banner_image"`
+	LinkBannerImage string `json:"link_banner_image"`
+}

@@ -414,3 +414,47 @@ func (d Data) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, 
 
 	return infoDaftarArray, nil
 }
+
+//Banner sekolah
+func (d Data) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
+	var (
+		err    error
+		result string
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastBannerId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastBannerId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("B%04d", num+1)
+
+	} else {
+		newID = "B0001" // ID pertama
+	}
+
+	fmt.Println("newID", newID)
+
+	// Set AdminID baru ke admin struct
+	banner.BannerID = newID
+
+	// Eksekusi query untuk memasukkan data ke dalam tabel T_InfoDaftar
+	_, err = (*d.stmt)[insertBanner].ExecContext(ctx,
+		banner.BannerID,
+		banner.BannerName,
+		banner.BannerImage,
+	)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][InsertBanner]")
+	}
+
+	result = "Berhasil"
+	return result, nil
+}

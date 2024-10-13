@@ -25,6 +25,7 @@ type IppdbSvc interface {
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
+	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error)
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)

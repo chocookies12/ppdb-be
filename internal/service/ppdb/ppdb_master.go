@@ -199,3 +199,20 @@ func (s Service) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDafta
 
 	return infoDaftar, nil
 }
+
+func (s Service) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
+	var (
+		result string
+	)
+	
+	result, err := s.ppdb.InsertBanner(ctx, banner)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][InsertBanner]")
+	}
+
+	result = "Berhasil"
+
+	return result, nil
+}

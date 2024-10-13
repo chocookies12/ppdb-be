@@ -26,6 +26,9 @@ type Handler interface {
 	InsertInfoDaftar(w http.ResponseWriter, r *http.Request)
 	GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request)
 	GetInfoDaftar(w http.ResponseWriter, r *http.Request)
+
+	//Banner
+	InsertBanner(w http.ResponseWriter, r *http.Request)
 	
 }
 

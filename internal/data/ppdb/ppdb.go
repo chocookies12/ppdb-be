@@ -61,7 +61,10 @@ const (
 	qGetGambarInfoDaftar = `SELECT posterDaftar from T_InfoPendaftaran WHERE InfoID= ?`
 
 	getInfoDaftar  = "GetInfoDaftar"
-	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, awalTahunAjar from T_InfoPendaftaran`
+	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, akhirTahunAjar from T_InfoPendaftaran`
+
+	getLastBannerId = "GetLastBannerId"
+	qGetLastBannerId =  `SELECT bannerID FROM T_BannerSekolah ORDER BY bannerID DESC LIMIT 1`
 
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
@@ -71,6 +74,10 @@ const (
 	insertInfoDaftar  = "InsertInfoDaftar"
 	qInsertInfoDaftar = `INSERT INTO T_InfoPendaftaran (infoID, posterDaftar, awalTahunAjar, akhirTahunAjar)
 						VALUES (?, ?, ?, ?)`
+
+	insertBanner ="InsertBanner"
+	qInsertBanner = `INSERT INTO T_BannerSekolah (bannerID, bannerName, bannerImage)
+					VALUES (?, ?, ?)`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -85,6 +92,7 @@ var (
 		{getDataAdminPagination, qGetDataAdminPagination},
 		{getLastAdminId, qGetLastAdminId},
 		{getLastInfoId, qGetLastInfoId},
+		{getLastBannerId,qGetLastBannerId},
 
 		{getGambarInfoDaftar, qGetGambarInfoDaftar},
 		{getInfoDaftar, qGetInfoDaftar},
@@ -94,6 +102,7 @@ var (
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
 		{insertInfoDaftar, qInsertInfoDaftar},
+		{insertBanner,qInsertBanner},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{
