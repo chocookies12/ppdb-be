@@ -27,6 +27,10 @@ type Data interface {
 	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)
 	GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error)
 
+	//banner
+	GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error) 
+	GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) 
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

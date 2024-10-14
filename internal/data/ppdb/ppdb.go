@@ -58,13 +58,19 @@ const (
 	qGetLastInfoId = `SELECT infoID FROM T_InfoPendaftaran ORDER BY infoID DESC LIMIT 1`
 
 	getGambarInfoDaftar  = "GetGambarInfodaftar"
-	qGetGambarInfoDaftar = `SELECT posterDaftar from T_InfoPendaftaran WHERE InfoID= ?`
+	qGetGambarInfoDaftar = `SELECT posterDaftar from T_InfoPendaftaran WHERE infoID= ?`
 
 	getInfoDaftar  = "GetInfoDaftar"
 	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, akhirTahunAjar from T_InfoPendaftaran`
 
-	getLastBannerId = "GetLastBannerId"
-	qGetLastBannerId =  `SELECT bannerID FROM T_BannerSekolah ORDER BY bannerID DESC LIMIT 1`
+	getLastBannerId  = "GetLastBannerId"
+	qGetLastBannerId = `SELECT bannerID FROM T_BannerSekolah ORDER BY bannerID DESC LIMIT 1`
+
+	getGambarBanner  = "GetGambarBanner"
+	qGetGambarBanner = `SELECT bannerImage from T_BannerSekolah WHERE bannerID =?`
+
+	getBanner  = "GetBanner"
+	qGetBanner = "SELECT bannerID, bannerName, bannerImage from T_BannerSekolah "
 
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
@@ -75,7 +81,7 @@ const (
 	qInsertInfoDaftar = `INSERT INTO T_InfoPendaftaran (infoID, posterDaftar, awalTahunAjar, akhirTahunAjar)
 						VALUES (?, ?, ?, ?)`
 
-	insertBanner ="InsertBanner"
+	insertBanner  = "InsertBanner"
 	qInsertBanner = `INSERT INTO T_BannerSekolah (bannerID, bannerName, bannerImage)
 					VALUES (?, ?, ?)`
 
@@ -92,17 +98,20 @@ var (
 		{getDataAdminPagination, qGetDataAdminPagination},
 		{getLastAdminId, qGetLastAdminId},
 		{getLastInfoId, qGetLastInfoId},
-		{getLastBannerId,qGetLastBannerId},
+		{getLastBannerId, qGetLastBannerId},
 
 		{getGambarInfoDaftar, qGetGambarInfoDaftar},
 		{getInfoDaftar, qGetInfoDaftar},
+
+		{getGambarBanner, qGetGambarBanner},
+		{getBanner, qGetBanner},
 
 		{getRole, qGetRole},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
 		{insertInfoDaftar, qInsertInfoDaftar},
-		{insertBanner,qInsertBanner},
+		{insertBanner, qInsertBanner},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{

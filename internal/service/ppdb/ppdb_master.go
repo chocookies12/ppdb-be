@@ -216,3 +216,23 @@ func (s Service) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner
 
 	return result, nil
 }
+
+func (s Service) GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error) {
+	poster, err := s.ppdb.GetGambarBanner(ctx, bannerID)
+	if err != nil {
+		return poster, errors.Wrap(err, "[SERVICE][GetGambarBanner]")
+	}
+
+	return poster, err
+}
+
+
+func (s Service) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
+	banner, err := s.ppdb.GetBanner(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SERVICE] [GetBanner]")
+	}
+
+	return banner, nil
+}
+

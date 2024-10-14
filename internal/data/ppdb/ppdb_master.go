@@ -458,3 +458,61 @@ func (d Data) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (
 	result = "Berhasil"
 	return result, nil
 }
+
+func (d Data) GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error) {
+	var poster []byte
+	if err := (*d.stmt)[getGambarBanner].QueryRowxContext(ctx, bannerID).Scan(&poster); err != nil {
+		return poster, errors.Wrap(err, "[DATA][GetGambarBanner]")
+	}
+
+	return poster, nil
+}
+
+func generateImageURLFotoBanner(id string) string {
+	var url = "http://localhost:8081"
+	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarbanner?bannerID=%s", id)
+}
+
+func (d Data) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
+	var (
+		bannerArray []ppdbEntity.TableBanner
+		err             error
+	)
+
+	rows, err := (*d.stmt)[getBanner].QueryxContext(ctx)
+	if err != nil {
+		return bannerArray, errors.Wrap(err, "[DATA] [GetBanner]")
+	}
+
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetBanner] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var banner ppdbEntity.TableBanner
+
+		// Memindahkan data dari hasil query ke dalam struct
+		if err = rows.Scan(&banner.BannerID, &banner.BannerName, &banner.LinkBannerImage); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetBanner] - Failed to scan row")
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, banner.BannerID+".jpg")
+		if err := saveImageToFile(banner.BannerImage, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetBanner] - Failed to save image")
+		}
+
+		banner.LinkBannerImage = generateImageURLFotoBanner(banner.BannerID)
+		bannerArray = append(bannerArray, banner)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetBanner] - Row iteration error")
+	}
+
+	return bannerArray, nil
+}

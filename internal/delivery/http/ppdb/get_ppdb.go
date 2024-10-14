@@ -173,3 +173,40 @@ func (h *Handler) GetInfoDaftar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *Handler) GetGambarBanner(w http.ResponseWriter, r *http.Request) {
+	bannerID := r.URL.Query().Get("bannerID")
+	if bannerID == "" {
+		http.Error(w, "bannerID is required", http.StatusBadRequest)
+		return
+	}
+
+	poster, err := h.ppdbSvc.GetGambarBanner(r.Context(), bannerID)
+	if err != nil {
+		http.Error(w, "Failed to get poster image", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.WriteHeader(http.StatusOK)
+	w.Write(poster)
+}
+
+func (h *Handler) GetBanner(w http.ResponseWriter, r *http.Request) {
+	// Memanggil service untuk mendapatkan data Info Daftar
+	banner, err := h.ppdbSvc.GetBanner(r.Context())
+	if err != nil {
+		http.Error(w, "Failed to get banner", http.StatusInternalServerError)
+		return
+	}
+
+	// Set response content type ke JSON
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	// Mengirimkan response dalam format JSON
+	if err := json.NewEncoder(w).Encode(banner); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+}
