@@ -32,6 +32,8 @@ type Handler interface {
 	GetGambarBanner(w http.ResponseWriter, r *http.Request)
 	GetBanner(w http.ResponseWriter, r *http.Request) 
 	
+	//Fasilitas 
+	InsertFasilitas(w http.ResponseWriter, r *http.Request)
 }
 
 

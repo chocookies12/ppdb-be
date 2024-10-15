@@ -60,3 +60,10 @@ type TableBanner struct{
 	BannerImage []byte `db:"bannerImage" json:"banner_image"`
 	LinkBannerImage string `json:"link_banner_image"`
 }
+
+type TableFasilitas struct{
+	FasilitasID string `db:"fasilitasID" json:"fasilitas_id"`
+	FasilitasName string `db:"fasilitasName" json:"fasilitas_name"`
+	FasilitasImage []byte `db:"fasilitasImage" json:"fasilitas_image"`
+	LinkFasilitasImage string `json:"link_fasilitas_image"`
+}

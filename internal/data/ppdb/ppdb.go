@@ -72,6 +72,9 @@ const (
 	getBanner  = "GetBanner"
 	qGetBanner = "SELECT bannerID, bannerName, bannerImage from T_BannerSekolah "
 
+	getLastFasilitasId  = "GetLastFasilitasId"
+	qGetLastFasilitasId = `SELECT fasilitasID FROM T_Fasilitas ORDER BY fasilitasID DESC LIMIT 1`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -84,6 +87,10 @@ const (
 	insertBanner  = "InsertBanner"
 	qInsertBanner = `INSERT INTO T_BannerSekolah (bannerID, bannerName, bannerImage)
 					VALUES (?, ?, ?)`
+
+	insertFasilitas  = "InsertFasilitas"
+	qInsertFasilitas = `INSERT INTO T_Fasilitas (fasilitasID, fasilitasName, fasilitasImage)
+						VALUES (?, ?, ?)`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -107,11 +114,14 @@ var (
 		{getBanner, qGetBanner},
 
 		{getRole, qGetRole},
+
+		{getLastFasilitasId, qGetLastFasilitasId},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
 		{insertInfoDaftar, qInsertInfoDaftar},
 		{insertBanner, qInsertBanner},
+		{insertFasilitas, qInsertFasilitas},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{

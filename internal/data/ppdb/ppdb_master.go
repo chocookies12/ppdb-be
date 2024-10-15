@@ -415,7 +415,7 @@ func (d Data) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, 
 	return infoDaftarArray, nil
 }
 
-//Banner sekolah
+// Banner sekolah
 func (d Data) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
 	var (
 		err    error
@@ -476,7 +476,7 @@ func generateImageURLFotoBanner(id string) string {
 func (d Data) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
 	var (
 		bannerArray []ppdbEntity.TableBanner
-		err             error
+		err         error
 	)
 
 	rows, err := (*d.stmt)[getBanner].QueryxContext(ctx)
@@ -515,4 +515,48 @@ func (d Data) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
 	}
 
 	return bannerArray, nil
+}
+
+// Fasilitas Sekolah
+func (d Data) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error) {
+	var (
+		err    error
+		result string
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastFasilitasId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastFasilitasId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("F%04d", num+1)
+
+	} else {
+		newID = "F0001" // ID pertama
+	}
+
+	fmt.Println("newID", newID)
+
+	// Set AdminID baru ke admin struct
+	fasilitas.FasilitasID = newID
+
+	// Eksekusi query untuk memasukkan data ke dalam tabel T_Fasilitas
+	_, err = (*d.stmt)[insertFasilitas].ExecContext(ctx,
+		fasilitas.FasilitasID,
+		fasilitas.FasilitasName,
+		fasilitas.FasilitasImage,
+	)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][InsertFasilitas]")
+	}
+
+	result = "Berhasil"
+	return result, nil
 }

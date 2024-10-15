@@ -204,7 +204,7 @@ func (s Service) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner
 	var (
 		result string
 	)
-	
+
 	result, err := s.ppdb.InsertBanner(ctx, banner)
 
 	if err != nil {
@@ -226,7 +226,6 @@ func (s Service) GetGambarBanner(ctx context.Context, bannerID string) ([]byte, 
 	return poster, err
 }
 
-
 func (s Service) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
 	banner, err := s.ppdb.GetBanner(ctx)
 	if err != nil {
@@ -236,3 +235,19 @@ func (s Service) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error
 	return banner, nil
 }
 
+func (s Service) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error) {
+	var (
+		result string
+	)
+
+	result, err := s.ppdb.InsertFasilitas(ctx, fasilitas)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][InsertFasilitas]")
+	}
+
+	result = "Berhasil"
+
+	return result, nil
+}
