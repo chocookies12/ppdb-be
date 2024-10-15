@@ -52,6 +52,8 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getbanner", s.Ppdb.GetBanner).Methods("GET")
 	//Fasilitas
 	ppdb.HandleFunc("/insertfasilitas", s.Ppdb.InsertFasilitas).Methods("POST")
+	ppdb.HandleFunc("/getgambarfasilitas", s.Ppdb.GetGambarFasilitas).Methods("GET")
+	ppdb.HandleFunc("/getfasilitasslim", s.Ppdb.GetFasilitasSlim).Methods("GET")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

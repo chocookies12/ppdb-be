@@ -70,10 +70,20 @@ const (
 	qGetGambarBanner = `SELECT bannerImage from T_BannerSekolah WHERE bannerID =?`
 
 	getBanner  = "GetBanner"
-	qGetBanner = "SELECT bannerID, bannerName, bannerImage from T_BannerSekolah "
+	qGetBanner = `SELECT bannerID, bannerName, bannerImage from T_BannerSekolah `
 
 	getLastFasilitasId  = "GetLastFasilitasId"
 	qGetLastFasilitasId = `SELECT fasilitasID FROM T_Fasilitas ORDER BY fasilitasID DESC LIMIT 1`
+
+	getGambarFasilitas  = "GetGambarFasilitas"
+	qGetGambarFasilitas = `SELECT fasilitasImage from T_Fasilitas WHERE fasilitasID =?`
+
+	getFasilitas  = "GetFasilitas"
+	qGetFasilitas = `SELECT fasilitasID, fasilitasName, fasilitasImage from T_Fasilitas WHERE 
+                     fasilitasName LIKE ? LIMIT ?, ? `
+
+	getFasilitasPagination  = "GetFasilitasPagination"
+	qGetFasilitasPagination = `SELECT  count(*) FROM T_Fasilitas WHERE fasilitasName LIKE ?`
 
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
@@ -116,6 +126,9 @@ var (
 		{getRole, qGetRole},
 
 		{getLastFasilitasId, qGetLastFasilitasId},
+		{getGambarFasilitas, qGetGambarFasilitas},
+		{getFasilitas, qGetFasilitas},
+		{getFasilitasPagination, qGetFasilitasPagination},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

@@ -560,3 +560,73 @@ func (d Data) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFas
 	result = "Berhasil"
 	return result, nil
 }
+
+func (d Data) GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error) {
+	var poster []byte
+	if err := (*d.stmt)[getGambarFasilitas].QueryRowxContext(ctx, fasilitasID).Scan(&poster); err != nil {
+		return poster, errors.Wrap(err, "[DATA][GetGambarFasilitas]")
+	}
+
+	return poster, nil
+}
+
+func generateImageURLFotoFasilitas(id string) string {
+	var url = "http://localhost:8081"
+	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarfasilitas?fasilitasID=%s", id)
+}
+
+
+func (d Data) GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error) {
+	var (
+		fasilitasArray []ppdbEntity.TableFasilitas
+		err            error
+	)
+
+	rows, err := (*d.stmt)[getFasilitas].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+	if err != nil {
+		return fasilitasArray, errors.Wrap(err, "[DATA] [GetFasilitas]")
+	}
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetFasilitas] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var fasilitas ppdbEntity.TableFasilitas
+
+		// Memindahkan data dari hasil query ke dalam struct
+		if err = rows.Scan(&fasilitas.FasilitasID, &fasilitas.FasilitasName, &fasilitas.LinkFasilitasImage); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetFasilitas] - Failed to scan row")
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, fasilitas.FasilitasID+".jpg")
+		if err := saveImageToFile(fasilitas.FasilitasImage, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetFasilitas] - Failed to save image")
+		}
+
+		fasilitas.LinkFasilitasImage = generateImageURLFotoFasilitas(fasilitas.FasilitasID)
+		fasilitasArray = append(fasilitasArray, fasilitas)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetFasilitas] - Row iteration error")
+	}
+
+	return fasilitasArray, nil
+}
+
+func (d Data) GetFasilitasPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query untuk mendapatkan total count tanpa LIMIT
+	err := (*d.stmt)[getFasilitasPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetFasilitasPagination] Error executing count query")
+	}
+
+	return totalCount, nil
+}

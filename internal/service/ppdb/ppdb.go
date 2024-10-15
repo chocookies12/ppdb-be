@@ -28,15 +28,20 @@ type Data interface {
 	GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error)
 
 	//banner
-	GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error) 
-	GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) 
+	GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error)
+	GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error)
+
+	//fasilitas
+	GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error)
+	GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error)
+	GetFasilitasPagination(ctx context.Context, searchInput string) (int, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
 
-	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) 
-	InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error) 
+	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error)
+	InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error)
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)

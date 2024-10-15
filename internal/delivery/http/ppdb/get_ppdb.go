@@ -193,20 +193,70 @@ func (h *Handler) GetGambarBanner(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetBanner(w http.ResponseWriter, r *http.Request) {
-	// Memanggil service untuk mendapatkan data Info Daftar
-	banner, err := h.ppdbSvc.GetBanner(r.Context())
+	// Membuat response default
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r) // Pastikan response selalu dikembalikan dalam format JSON
+
+	// Memperoleh context dari request
+	ctx := r.Context()
+
+	// Memanggil service untuk mendapatkan data banner
+	banners, err := h.ppdbSvc.GetBanner(ctx)
 	if err != nil {
-		http.Error(w, "Failed to get banner", http.StatusInternalServerError)
+		// Jika terjadi error, gunakan ParseErrorCode untuk memparsing error
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
 		return
 	}
 
-	// Set response content type ke JSON
-	w.Header().Set("Content-Type", "application/json")
+	// Mengisi field data dan metadata dalam response
+	resp.Data = banners // Set data dengan banner yang didapat
+	resp.Metadata = nil // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
+
+	// Logging informasi request yang berhasil
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+
+func (h *Handler) GetGambarFasilitas(w http.ResponseWriter, r *http.Request) {
+	fasilitasID := r.URL.Query().Get("fasilitasID")
+	if fasilitasID == "" {
+		http.Error(w, "fasilitasID is required", http.StatusBadRequest)
+		return
+	}
+
+	poster, err := h.ppdbSvc.GetGambarFasilitas(r.Context(), fasilitasID)
+	if err != nil {
+		http.Error(w, "Failed to get poster image", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
 	w.WriteHeader(http.StatusOK)
+	w.Write(poster)
+}
 
-	// Mengirimkan response dalam format JSON
-	if err := json.NewEncoder(w).Encode(banner); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+func (h *Handler) GetFasilitasSlim(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	searchInput := r.FormValue("searchInput")
+	page, _ := strconv.Atoi(r.FormValue("page"))
+	length, _ := strconv.Atoi(r.FormValue("length"))
+
+	ctx := r.Context()
+
+	// Get fasilitas data with pagination
+	fasilitas, metadata, err := h.ppdbSvc.GetFasilitasSlim(ctx, searchInput, page, length)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
 		return
 	}
+
+	// Prepare response data
+	resp.Data = fasilitas
+	resp.Metadata = metadata
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }

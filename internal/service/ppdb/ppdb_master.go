@@ -251,3 +251,52 @@ func (s Service) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.Table
 
 	return result, nil
 }
+
+func (s Service) GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error) {
+	poster, err := s.ppdb.GetGambarFasilitas(ctx, fasilitasID)
+	if err != nil {
+		return poster, errors.Wrap(err, "[SERVICE][GetGambarFasilitas]")
+	}
+
+	return poster, err
+}
+
+func (s Service) GetFasilitasSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableFasilitas, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	fasilitas := []ppdbEntity.TableFasilitas{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of fasilitas for pagination
+		count, err := s.ppdb.GetFasilitasPagination(ctx, searchInput)
+		if err != nil {
+			return fasilitas, metadata, errors.Wrap(err, "[SERVICE][GetFasilitas] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated fasilitas data
+		fasilitas, err = s.ppdb.GetFasilitas(ctx, searchInput, offset, limit)
+		if err != nil {
+			return fasilitas, metadata, errors.Wrap(err, "[SERVICE][GetFasilitas] Error getting paginated fasilitas data")
+		}
+
+		return fasilitas, metadata, nil
+	}
+
+	// If page or length is invalid, get all data without pagination
+	fasilitas, err := s.ppdb.GetFasilitas(ctx, searchInput, offset, limit)
+	if err != nil {
+		return fasilitas, metadata, errors.Wrap(err, "[SERVICE][GetFasilitas] Error getting fasilitas data")
+	}
+
+	return fasilitas, metadata, nil
+}

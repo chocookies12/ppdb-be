@@ -34,6 +34,8 @@ type Handler interface {
 	
 	//Fasilitas 
 	InsertFasilitas(w http.ResponseWriter, r *http.Request)
+	GetGambarFasilitas(w http.ResponseWriter, r *http.Request)
+	GetFasilitasSlim(w http.ResponseWriter, r *http.Request)
 }
 
 

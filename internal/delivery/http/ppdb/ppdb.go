@@ -25,6 +25,9 @@ type IppdbSvc interface {
 	GetGambarBanner(ctx context.Context, bannerID string) ([]byte, error) 
 	GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) 
 
+	GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error)
+	GetFasilitasSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableFasilitas, interface{}, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
