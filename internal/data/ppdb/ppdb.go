@@ -105,6 +105,12 @@ const (
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
 	qDeleteDataAdmin = `DELETE FROM T_Admin WHERE adminID = ?`
+
+	deleteBanner  = "DeleteBanner"
+	qDeleteBanner = `DELETE FROM T_BannerSekolah WHERE bannerID = ?`
+
+	deleteFasilitas = "DeleteFasilitas"
+	qDeleteFasilitas = `DELETE FROM T_Fasilitas WHERE fasilitasID = ?`
 )
 
 var (
@@ -139,6 +145,8 @@ var (
 	updateStmt = []statement{}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},
+		{deleteBanner, qDeleteBanner},
+		{deleteFasilitas, qDeleteFasilitas}, 
 	}
 )
 

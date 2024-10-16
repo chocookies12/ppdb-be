@@ -6,13 +6,6 @@ package ppdb
 
 // "gopkg.in/guregu/null.v3/zero"
 
-// type TableAdmin struct {
-// 	AdminID       string `db:"admin_id" json:"admin_id"`
-// 	AdminName     string `db:"admin_name" json:"admin_name"`
-// 	AdminGmail    string `db:"admin_email" json:"admin_email"`
-// 	AdminPassword string `db:"admin_password" json: "admin_password"`
-// }
-
 type TableKontakSekolah struct {
 	Kontak_id         string `db:"kontakKYID" json:"kontak_id"`
 	Alamat_sekolah    string `db:"alamatSekolah" json:"alamat_sekolah"`

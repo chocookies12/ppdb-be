@@ -45,6 +45,8 @@ type Data interface {
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)
+	DeleteBanner(ctx context.Context, bannerID string) (string, error) 
+	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) 
 }
 
 type Service struct {

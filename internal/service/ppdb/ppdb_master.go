@@ -200,6 +200,7 @@ func (s Service) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDafta
 	return infoDaftar, nil
 }
 
+// Banner
 func (s Service) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
 	var (
 		result string
@@ -235,6 +236,17 @@ func (s Service) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error
 	return banner, nil
 }
 
+func (s Service) DeleteBanner(ctx context.Context, bannerID string) (string, error) {
+	result, err := s.ppdb.DeleteBanner(ctx, bannerID)
+
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][DeleteBanner]")
+	}
+
+	return result, nil
+}
+
+// Fasilitas
 func (s Service) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error) {
 	var (
 		result string
@@ -299,4 +311,14 @@ func (s Service) GetFasilitasSlim(ctx context.Context, searchInput string, page,
 	}
 
 	return fasilitas, metadata, nil
+}
+
+func (s Service) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) {
+	result, err := s.ppdb.DeleteFasilitas(ctx, fasilitasID)
+
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][DeleteFasilitas]")
+	}
+
+	return result, nil
 }

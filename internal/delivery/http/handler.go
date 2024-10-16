@@ -50,10 +50,12 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/insertbanner", s.Ppdb.InsertBanner).Methods("POST")
 	ppdb.HandleFunc("/getgambarbanner", s.Ppdb.GetGambarBanner).Methods("GET")
 	ppdb.HandleFunc("/getbanner", s.Ppdb.GetBanner).Methods("GET")
+	ppdb.HandleFunc("/deletebanner", s.Ppdb.DeleteBanner).Methods("DELETE")
 	//Fasilitas
 	ppdb.HandleFunc("/insertfasilitas", s.Ppdb.InsertFasilitas).Methods("POST")
 	ppdb.HandleFunc("/getgambarfasilitas", s.Ppdb.GetGambarFasilitas).Methods("GET")
 	ppdb.HandleFunc("/getfasilitasslim", s.Ppdb.GetFasilitasSlim).Methods("GET")
+	ppdb.HandleFunc("/deletefasilitas", s.Ppdb.DeleteFasilitas).Methods("DELETE")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

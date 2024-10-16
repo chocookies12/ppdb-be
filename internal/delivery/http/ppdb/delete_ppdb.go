@@ -65,3 +65,39 @@ func (h *Handler) DeleteAdmin(w http.ResponseWriter, r *http.Request) {
 
 	resp.Data = result
 }
+
+func (h *Handler) DeleteBanner(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp    response.Response
+		bannerID = r.URL.Query().Get("bannerID")
+	)
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+	result, err := h.ppdbSvc.DeleteBanner(ctx, bannerID) 
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		resp = httpHelper.ParseErrorCode(err.Error())
+		return
+	}
+
+	resp.Data = result
+}
+
+func (h *Handler) DeleteFasilitas(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp    response.Response
+		fasilitasID = r.URL.Query().Get("fasilitasID")
+	)
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+	result, err := h.ppdbSvc.DeleteFasilitas(ctx, fasilitasID) 
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		resp = httpHelper.ParseErrorCode(err.Error())
+		return
+	}
+
+	resp.Data = result
+}

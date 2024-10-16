@@ -31,11 +31,13 @@ type Handler interface {
 	InsertBanner(w http.ResponseWriter, r *http.Request)
 	GetGambarBanner(w http.ResponseWriter, r *http.Request)
 	GetBanner(w http.ResponseWriter, r *http.Request) 
+	DeleteBanner(w http.ResponseWriter, r *http.Request) 
 	
 	//Fasilitas 
 	InsertFasilitas(w http.ResponseWriter, r *http.Request)
 	GetGambarFasilitas(w http.ResponseWriter, r *http.Request)
 	GetFasilitasSlim(w http.ResponseWriter, r *http.Request)
+	DeleteFasilitas(w http.ResponseWriter, r *http.Request)
 }
 
 

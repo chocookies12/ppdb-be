@@ -517,6 +517,24 @@ func (d Data) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
 	return bannerArray, nil
 }
 
+// Hapus Data Banner
+func (d Data) DeleteBanner(ctx context.Context, bannerID string) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	_, err = (*d.stmt)[deleteBanner].ExecContext(ctx, bannerID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][DeleteBanner]")
+	}
+
+	result = "Berhasil"
+	return result, nil
+}
+
 // Fasilitas Sekolah
 func (d Data) InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error) {
 	var (
@@ -629,4 +647,23 @@ func (d Data) GetFasilitasPagination(ctx context.Context, searchInput string) (i
 	}
 
 	return totalCount, nil
+}
+
+
+// Hapus Data Fasilitas
+func (d Data) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	_, err = (*d.stmt)[deleteFasilitas].ExecContext(ctx, fasilitasID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][DeleteFasilitas]")
+	}
+
+	result = "Berhasil"
+	return result, nil
 }
