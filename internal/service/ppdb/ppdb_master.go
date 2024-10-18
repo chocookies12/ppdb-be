@@ -313,6 +313,15 @@ func (s Service) GetFasilitasSlim(ctx context.Context, searchInput string, page,
 	return fasilitas, metadata, nil
 }
 
+func (s Service) GetFasilitas(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) {
+	fasilitas, err := s.ppdb.GetFasilitasUtama(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SERVICE] [GetFasilitas]")
+	}
+
+	return fasilitas, nil
+}
+
 func (s Service) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) {
 	result, err := s.ppdb.DeleteFasilitas(ctx, fasilitasID)
 

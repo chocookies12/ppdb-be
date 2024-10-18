@@ -35,6 +35,7 @@ type Data interface {
 	GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error)
 	GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error)
 	GetFasilitasPagination(ctx context.Context, searchInput string) (int, error)
+	GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) 
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

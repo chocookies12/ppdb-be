@@ -593,7 +593,7 @@ func generateImageURLFotoFasilitas(id string) string {
 	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarfasilitas?fasilitasID=%s", id)
 }
 
-
+//ini untuk get fasilitas di website admin (ada untuk paginationnya)
 func (d Data) GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error) {
 	var (
 		fasilitasArray []ppdbEntity.TableFasilitas
@@ -648,6 +648,52 @@ func (d Data) GetFasilitasPagination(ctx context.Context, searchInput string) (i
 
 	return totalCount, nil
 }
+
+//ini untuk get fasilitas di website utama 
+func (d Data) GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) {
+	var (
+		fasilitasArray []ppdbEntity.TableFasilitas
+		err         error
+	)
+
+	rows, err := (*d.stmt)[getFasilitasUtama].QueryxContext(ctx)
+	if err != nil {
+		return fasilitasArray, errors.Wrap(err, "[DATA] [GetFasilitasUtama]")
+	}
+
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetFasilitasUtama] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var fasilitas ppdbEntity.TableFasilitas
+
+		// Memindahkan data dari hasil query ke dalam struct
+		if err = rows.Scan(&fasilitas.FasilitasID, &fasilitas.FasilitasName, &fasilitas.LinkFasilitasImage); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetFasilitasUtama] - Failed to scan row")
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, fasilitas.FasilitasID+".jpg")
+		if err := saveImageToFile(fasilitas.FasilitasImage, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetFasilitasUtama] - Failed to save image")
+		}
+
+		fasilitas.LinkFasilitasImage = generateImageURLFotoFasilitas(fasilitas.FasilitasID)
+		fasilitasArray = append(fasilitasArray, fasilitas)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetFasilitasUtama] - Row iteration error")
+	}
+
+	return fasilitasArray, nil
+}
+
 
 
 // Hapus Data Fasilitas

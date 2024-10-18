@@ -85,6 +85,9 @@ const (
 	getFasilitasPagination  = "GetFasilitasPagination"
 	qGetFasilitasPagination = `SELECT  count(*) FROM T_Fasilitas WHERE fasilitasName LIKE ?`
 
+	getFasilitasUtama  = "GetFasilitasUtama"
+	qGetFasilitasUtama = `SELECT fasilitasID, fasilitasName, fasilitasImage from T_Fasilitas`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -109,7 +112,7 @@ const (
 	deleteBanner  = "DeleteBanner"
 	qDeleteBanner = `DELETE FROM T_BannerSekolah WHERE bannerID = ?`
 
-	deleteFasilitas = "DeleteFasilitas"
+	deleteFasilitas  = "DeleteFasilitas"
 	qDeleteFasilitas = `DELETE FROM T_Fasilitas WHERE fasilitasID = ?`
 )
 
@@ -135,6 +138,7 @@ var (
 		{getGambarFasilitas, qGetGambarFasilitas},
 		{getFasilitas, qGetFasilitas},
 		{getFasilitasPagination, qGetFasilitasPagination},
+		{getFasilitasUtama, qGetFasilitasUtama},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -146,7 +150,7 @@ var (
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},
 		{deleteBanner, qDeleteBanner},
-		{deleteFasilitas, qDeleteFasilitas}, 
+		{deleteFasilitas, qDeleteFasilitas},
 	}
 )
 

@@ -31,10 +31,10 @@ func (s *Server) Handler() *mux.Router {
 
 	// Routes
 	ppdb := sub.PathPrefix("/data").Subrouter()
-	ppdb.HandleFunc("", s.Ppdb.GetPpdb).Methods("GET")
-	ppdb.HandleFunc("", s.Ppdb.InsertPpdb).Methods("POST")
-	ppdb.HandleFunc("", s.Ppdb.UpdatePpdb).Methods("PUT")
-	ppdb.HandleFunc("", s.Ppdb.DeletePpdb).Methods("DELETE")
+	// ppdb.HandleFunc("", s.Ppdb.GetPpdb).Methods("GET")
+	// ppdb.HandleFunc("", s.Ppdb.InsertPpdb).Methods("POST")
+	// ppdb.HandleFunc("", s.Ppdb.UpdatePpdb).Methods("PUT")
+	// ppdb.HandleFunc("", s.Ppdb.DeletePpdb).Methods("DELETE")
 
 	ppdb.HandleFunc("/getkontaksekolah", s.Ppdb.GetKontakSekolah).Methods("GET")
 	ppdb.HandleFunc("/getrole", s.Ppdb.GetRole).Methods("GET")
@@ -55,6 +55,7 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/insertfasilitas", s.Ppdb.InsertFasilitas).Methods("POST")
 	ppdb.HandleFunc("/getgambarfasilitas", s.Ppdb.GetGambarFasilitas).Methods("GET")
 	ppdb.HandleFunc("/getfasilitasslim", s.Ppdb.GetFasilitasSlim).Methods("GET")
+	ppdb.HandleFunc("/getfasilitas", s.Ppdb.GetFasilitas).Methods("GET")
 	ppdb.HandleFunc("/deletefasilitas", s.Ppdb.DeleteFasilitas).Methods("DELETE")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)

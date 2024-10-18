@@ -27,6 +27,7 @@ type IppdbSvc interface {
 
 	GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error)
 	GetFasilitasSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableFasilitas, interface{}, error)
+	GetFasilitas(ctx context.Context) ([]ppdbEntity.TableFasilitas, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
