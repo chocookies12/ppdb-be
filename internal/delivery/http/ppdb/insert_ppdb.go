@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	// JOEntity "ppdb-be/internal/entity/ppdb"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
@@ -153,7 +154,7 @@ func (h *Handler) InsertInfoDaftar(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) InsertBanner(w http.ResponseWriter, r *http.Request) {
 	var (
 		banner ppdbEntity.TableBanner
-		resp       response.Response
+		resp   response.Response
 	)
 
 	// Parse multipart form with maximum file size of 10MB
@@ -182,7 +183,6 @@ func (h *Handler) InsertBanner(w http.ResponseWriter, r *http.Request) {
 	banner.BannerName = r.FormValue("banner_name")
 	banner.BannerImage = []byte(fileBytes)
 
-
 	result, err := h.ppdbSvc.InsertBanner(r.Context(), banner)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -203,11 +203,10 @@ func (h *Handler) InsertBanner(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-
 func (h *Handler) InsertFasilitas(w http.ResponseWriter, r *http.Request) {
 	var (
 		fasilitas ppdbEntity.TableFasilitas
-		resp       response.Response
+		resp      response.Response
 	)
 
 	// Parse multipart form with maximum file size of 10MB
@@ -236,7 +235,6 @@ func (h *Handler) InsertFasilitas(w http.ResponseWriter, r *http.Request) {
 	fasilitas.FasilitasName = r.FormValue("fasilitas_name")
 	fasilitas.FasilitasImage = []byte(fileBytes)
 
-
 	result, err := h.ppdbSvc.InsertFasilitas(r.Context(), fasilitas)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -245,6 +243,72 @@ func (h *Handler) InsertFasilitas(w http.ResponseWriter, r *http.Request) {
 
 	resp.Data = result
 	resp.Message = "Data Fasilitas Sekolah berhasil dimasukkan"
+
+	// Logging informasi request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
+	var (
+		staff ppdbEntity.TableStaff
+		resp  response.Response
+	)
+
+	// Parse multipart form with maximum file size of 10MB
+	err := r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
+	if err != nil {
+		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
+		return
+	}
+
+	// Mengambil file dari form-data
+	file, _, err := r.FormFile("staff_photo")
+	if err != nil {
+		http.Error(w, "Error mengambil file dari form-data", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Membaca isi file ke dalam byte array
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, "Error membaca isi file", http.StatusInternalServerError)
+		return
+	}
+
+	// Membaca data JSON lainnya dari form-data
+	staff.StaffPhoto = fileBytes
+	staff.StaffName = r.FormValue("staff_name")
+	staff.StaffGender = r.FormValue("staff_gender")
+	staff.StaffPosition = r.FormValue("staff_position")
+	staff.StaffTmptLahir = r.FormValue("staff_tmpt_lahir")
+
+	// Parse tanggal lahir ke format time.Time
+	staffTglLahir := r.FormValue("staff_tgl_lahir")
+	parsedDate, err := time.Parse("02-01-2006", staffTglLahir) // Format: DD-MM-YYYY
+	if err != nil {
+		log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err) // Logging tambahan
+		http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+		return
+	}
+	staff.StaffTglLahir = parsedDate
+
+	// Memanggil service untuk memasukkan data staff
+	result, err := h.ppdbSvc.InsertProfileStaff(r.Context(), staff)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Data Staff berhasil dimasukkan"
 
 	// Logging informasi request
 	ctx := r.Context()

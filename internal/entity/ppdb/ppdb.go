@@ -1,5 +1,7 @@
 package ppdb
 
+import "time"
+
 // import "gopkg.in/guregu/null.v3/zero"
 
 // "time"
@@ -47,16 +49,27 @@ type TableInfoDaftar struct {
 	AkhirTahunAjar   string `db:"akhirTahunAjar" json:"akhir_tahun_ajar"`
 }
 
-type TableBanner struct{
-	BannerID string `db:"bannerID" json:"banner_id"`
-	BannerName string `db:"bannerName" json:"banner_name"`
-	BannerImage []byte `db:"bannerImage" json:"banner_image"`
+type TableBanner struct {
+	BannerID        string `db:"bannerID" json:"banner_id"`
+	BannerName      string `db:"bannerName" json:"banner_name"`
+	BannerImage     []byte `db:"bannerImage" json:"banner_image"`
 	LinkBannerImage string `json:"link_banner_image"`
 }
 
-type TableFasilitas struct{
-	FasilitasID string `db:"fasilitasID" json:"fasilitas_id"`
-	FasilitasName string `db:"fasilitasName" json:"fasilitas_name"`
-	FasilitasImage []byte `db:"fasilitasImage" json:"fasilitas_image"`
+type TableFasilitas struct {
+	FasilitasID        string `db:"fasilitasID" json:"fasilitas_id"`
+	FasilitasName      string `db:"fasilitasName" json:"fasilitas_name"`
+	FasilitasImage     []byte `db:"fasilitasImage" json:"fasilitas_image"`
 	LinkFasilitasImage string `json:"link_fasilitas_image"`
+}
+
+type TableStaff struct {
+	StaffID        string    `db:"staffID" json:"staff_id"`
+	StaffName      string    `db:"staffName" json:"staff_name"`
+	StaffGender    string    `db:"staffGender" json:"staff_gender"`
+	StaffPosition  string    `db:"staffPosition" json:"staff_position"`
+	StaffTmptLahir string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
+	StaffTglLahir  time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
+	StaffPhoto     []byte    `db:"staffPhoto" json:"staff_photo"`
+	LinkStaffPhoto string    `json:"link_staff_photo"`
 }

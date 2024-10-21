@@ -331,3 +331,31 @@ func (s Service) DeleteFasilitas(ctx context.Context, fasilitasID string) (strin
 
 	return result, nil
 }
+
+func (s Service) InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) {
+	var (
+		result string
+	)
+
+	// Panggil fungsi InsertProfileStaff dari data layer
+	result, err := s.ppdb.InsertProfileStaff(ctx, staff)
+
+	if err != nil {
+		result = "Gagal menyimpan data staff"
+		return result, errors.Wrap(err, "[Service][InsertProfileStaff]")
+	}
+
+	result = "Berhasil menyimpan data staff"
+	return result, nil
+}
+
+
+
+func (s Service) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) {
+	poster, err := s.ppdb.GetPhotoStaff(ctx, staffID)
+	if err != nil {
+		return poster, errors.Wrap(err, "[SERVICE][GetPhotoStaff]")
+	}
+
+	return poster, err
+}

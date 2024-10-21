@@ -37,12 +37,16 @@ type Data interface {
 	GetFasilitasPagination(ctx context.Context, searchInput string) (int, error)
 	GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) 
 
+	//Profile Staff
+	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) 
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
 
 	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error)
 	InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error)
+	InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) 
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)

@@ -713,3 +713,63 @@ func (d Data) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, 
 	result = "Berhasil"
 	return result, nil
 }
+
+// Profile Staff
+func (d Data) InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) {
+    var (
+        err    error
+        result string
+        lastID string
+        newID  string
+    )
+
+    // Mengambil StaffID terakhir
+    err = (*d.stmt)[getLastStaffId].QueryRowxContext(ctx).Scan(&lastID)
+    if err != nil && err != sql.ErrNoRows {
+        result = "Gagal mengambil ID terakhir"
+        return result, errors.Wrap(err, "[DATA][GetLastStaffId]")
+    }
+
+    if lastID != "" {
+        // Mengambil bagian numerik dari lastID dan menambahkannya
+        num, _ := strconv.Atoi(lastID[1:])
+        newID = fmt.Sprintf("S%04d", num+1)
+    } else {
+        newID = "S0001" // ID pertama
+    }
+
+    fmt.Println("newID", newID)
+
+    // Set StaffID baru ke struct staff
+    staff.StaffID = newID
+
+    // Eksekusi query untuk memasukkan data ke dalam tabel T_ProfileStaff
+    _, err = (*d.stmt)[insertProfileStaff].ExecContext(ctx,
+        staff.StaffID,
+        staff.StaffName,
+        staff.StaffGender,
+        staff.StaffPosition,
+        staff.StaffTmptLahir,
+        staff.StaffTglLahir,
+        staff.StaffPhoto,
+    )
+
+    if err != nil {
+        result = "Gagal menyimpan data staff"
+        return result, errors.Wrap(err, "[DATA][InsertProfileStaff]")
+    }
+
+    result = "Berhasil menyimpan data staff"
+    return result, nil
+}
+
+func (d Data) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) {
+	var poster []byte
+	if err := (*d.stmt)[getPhotoStaff].QueryRowxContext(ctx, staffID).Scan(&poster); err != nil {
+		return poster, errors.Wrap(err, "[DATA][GetPhotoStaff]")
+	}
+
+	return poster, nil
+}
+
+

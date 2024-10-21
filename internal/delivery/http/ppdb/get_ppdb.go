@@ -3,7 +3,6 @@ package ppdb
 import (
 	// "internal/itoa"
 
-	"encoding/json"
 	"log"
 	"net/http"
 	httpHelper "ppdb-be/internal/delivery/http"
@@ -154,24 +153,29 @@ func (h *Handler) GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(poster)
 }
-
 func (h *Handler) GetInfoDaftar(w http.ResponseWriter, r *http.Request) {
+	// Membuat response default
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r) // Pastikan response selalu dikembalikan dalam format JSON
+
+	// Memperoleh context dari request
+	ctx := r.Context()
+
 	// Memanggil service untuk mendapatkan data Info Daftar
-	infoDaftar, err := h.ppdbSvc.GetInfoDaftar(r.Context())
+	infoDaftar, err := h.ppdbSvc.GetInfoDaftar(ctx)
 	if err != nil {
-		http.Error(w, "Failed to get info daftar", http.StatusInternalServerError)
+		// Jika terjadi error, gunakan ParseErrorCode untuk memparsing error
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
 		return
 	}
 
-	// Set response content type ke JSON
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	// Mengisi field data dan metadata dalam response
+	resp.Data = infoDaftar // Set data dengan info daftar yang didapat
+	resp.Metadata = nil    // Jika ada metadata tambahan, bisa diset di sini
 
-	// Mengirimkan response dalam format JSON
-	if err := json.NewEncoder(w).Encode(infoDaftar); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-		return
-	}
+	// Logging informasi request yang berhasil
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
 func (h *Handler) GetGambarBanner(w http.ResponseWriter, r *http.Request) {
@@ -216,7 +220,6 @@ func (h *Handler) GetBanner(w http.ResponseWriter, r *http.Request) {
 	// Logging informasi request yang berhasil
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
-
 
 func (h *Handler) GetGambarFasilitas(w http.ResponseWriter, r *http.Request) {
 	fasilitasID := r.URL.Query().Get("fasilitasID")
@@ -280,8 +283,27 @@ func (h *Handler) GetFasilitas(w http.ResponseWriter, r *http.Request) {
 
 	// Mengisi field data dan metadata dalam response
 	resp.Data = fasilitas // Set data dengan banner yang didapat
-	resp.Metadata = nil // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
+	resp.Metadata = nil   // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
 
 	// Logging informasi request yang berhasil
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+
+func (h *Handler) GetPhotoStaff(w http.ResponseWriter, r *http.Request) {
+	staffID := r.URL.Query().Get("staffID")
+	if staffID == "" {
+		http.Error(w, "staffID is required", http.StatusBadRequest)
+		return
+	}
+
+	poster, err := h.ppdbSvc.GetPhotoStaff(r.Context(), staffID)
+	if err != nil {
+		http.Error(w, "Failed to get poster image", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.WriteHeader(http.StatusOK)
+	w.Write(poster)
 }

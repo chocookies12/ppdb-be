@@ -88,6 +88,12 @@ const (
 	getFasilitasUtama  = "GetFasilitasUtama"
 	qGetFasilitasUtama = `SELECT fasilitasID, fasilitasName, fasilitasImage from T_Fasilitas`
 
+	getLastStaffId  = "GetLastStaffId"
+	qGetLastStaffId = `SELECT staffID FROM T_ProfileStaff ORDER BY staffID DESC LIMIT 1`
+
+	getPhotoStaff  = "GetPhotoStaff"
+	qGetPhotoStaff = `SELECT staffPhoto FROM T_ProfileStaff WHERE staffID = ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -104,6 +110,10 @@ const (
 	insertFasilitas  = "InsertFasilitas"
 	qInsertFasilitas = `INSERT INTO T_Fasilitas (fasilitasID, fasilitasName, fasilitasImage)
 						VALUES (?, ?, ?)`
+
+	insertProfileStaff  = "InsertProfileStaff"
+	qInsertProfileStaff = `INSERT INTO T_ProfileStaff (staffID, staffName, staffGender, staffPosition, 
+						staffTmptLahir, staffTglLahir, staffPhoto ) VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -139,12 +149,16 @@ var (
 		{getFasilitas, qGetFasilitas},
 		{getFasilitasPagination, qGetFasilitasPagination},
 		{getFasilitasUtama, qGetFasilitasUtama},
+
+		{getLastStaffId, qGetLastStaffId},
+		{getPhotoStaff, qGetPhotoStaff},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
 		{insertInfoDaftar, qInsertInfoDaftar},
 		{insertBanner, qInsertBanner},
 		{insertFasilitas, qInsertFasilitas},
+		{insertProfileStaff, qInsertProfileStaff},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{
