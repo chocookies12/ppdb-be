@@ -64,12 +64,12 @@ type TableFasilitas struct {
 }
 
 type TableStaff struct {
-	StaffID        string    `db:"staffID" json:"staff_id"`
-	StaffName      string    `db:"staffName" json:"staff_name"`
-	StaffGender    string    `db:"staffGender" json:"staff_gender"`
-	StaffPosition  string    `db:"staffPosition" json:"staff_position"`
-	StaffTmptLahir string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
-	StaffTglLahir  time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
-	StaffPhoto     []byte    `db:"staffPhoto" json:"staff_photo"`
-	LinkStaffPhoto string    `json:"link_staff_photo"`
+	StaffID        string     `db:"staffID" json:"staff_id"`
+	StaffName      string     `db:"staffName" json:"staff_name"`
+	StaffGender    string     `db:"staffGender" json:"staff_gender"`
+	StaffPosition  string     `db:"staffPosition" json:"staff_position"`
+	StaffTmptLahir *string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
+	StaffTglLahir  *time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
+	StaffPhoto     []byte     `db:"staffPhoto" json:"staff_photo"`
+	LinkStaffPhoto string     `json:"link_staff_photo"`
 }

@@ -288,17 +288,29 @@ func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
 	staff.StaffName = r.FormValue("staff_name")
 	staff.StaffGender = r.FormValue("staff_gender")
 	staff.StaffPosition = r.FormValue("staff_position")
-	staff.StaffTmptLahir = r.FormValue("staff_tmpt_lahir")
+
+	// Mengambil tempat lahir
+	staffTmptLahir := r.FormValue("staff_tmpt_lahir")
+	if staffTmptLahir != "" {
+		staff.StaffTmptLahir = &staffTmptLahir // Menggunakan pointer untuk menyimpan tempat lahir
+	} else {
+		staff.StaffTmptLahir = nil // Atur ke nil jika tidak ada tempat lahir yang diberikan
+	}
 
 	// Parse tanggal lahir ke format time.Time
 	staffTglLahir := r.FormValue("staff_tgl_lahir")
-	parsedDate, err := time.Parse("02-01-2006", staffTglLahir) // Format: DD-MM-YYYY
-	if err != nil {
-		log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err) // Logging tambahan
-		http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
-		return
+	log.Printf("Tanggal lahir yang diterima: %s", staffTglLahir) // Logging nilai yang diterima
+	if staffTglLahir != "" {
+		parsedDate, err := time.Parse("02-01-2006", staffTglLahir) // Format: DD-MM-YYYY
+		if err != nil {
+			log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err) // Logging tambahan
+			http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+			return
+		}
+		staff.StaffTglLahir = &parsedDate // Menggunakan pointer untuk menyimpan tanggal
+	} else {
+		staff.StaffTglLahir = nil // Atur ke nil jika tidak ada tanggal yang diberikan
 	}
-	staff.StaffTglLahir = parsedDate
 
 	// Memanggil service untuk memasukkan data staff
 	result, err := h.ppdbSvc.InsertProfileStaff(r.Context(), staff)
