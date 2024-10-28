@@ -94,6 +94,13 @@ const (
 	getPhotoStaff  = "GetPhotoStaff"
 	qGetPhotoStaff = `SELECT staffPhoto FROM T_ProfileStaff WHERE staffID = ?`
 
+	getProfilStaff   = "GetProfilStaff"
+	qGetProfileStaff = `SELECT staffID, staffName, staffGender, staffPosition, staffTmptLahir, staffTglLahir, staffPhoto
+						FROM T_ProfileStaff WHERE staffName LIKE ? LIMIT ?, ?`
+
+	getProfilStaffPagination  = "GetProfilStaffPagination"
+	qGetProfilStaffPagination = `SELECT count(*) FROM T_ProfileStaff WHERE staffName LIKE ? `
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -124,6 +131,9 @@ const (
 
 	deleteFasilitas  = "DeleteFasilitas"
 	qDeleteFasilitas = `DELETE FROM T_Fasilitas WHERE fasilitasID = ?`
+
+	deleteProfileStaff  = "DeleteProfileStaff"
+	qDeleteProfileStaff = `DELETE FROM T_ProfileStaff WHERE staffID = ?	`
 )
 
 var (
@@ -152,6 +162,8 @@ var (
 
 		{getLastStaffId, qGetLastStaffId},
 		{getPhotoStaff, qGetPhotoStaff},
+		{getProfilStaff, qGetProfileStaff},
+		{getProfilStaffPagination, qGetProfilStaffPagination},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -165,6 +177,7 @@ var (
 		{deleteDataAdmin, qDeleteDataAdmin},
 		{deleteBanner, qDeleteBanner},
 		{deleteFasilitas, qDeleteFasilitas},
+		{deleteProfileStaff, qDeleteProfileStaff},
 	}
 )
 

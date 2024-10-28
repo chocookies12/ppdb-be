@@ -101,3 +101,21 @@ func (h *Handler) DeleteFasilitas(w http.ResponseWriter, r *http.Request) {
 
 	resp.Data = result
 }
+
+func (h *Handler) DeleteProfileStaff(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp    response.Response
+		staffID = r.URL.Query().Get("staffID")
+	)
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+	result, err := h.ppdbSvc.DeleteProfileStaff(ctx, staffID) 
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		resp = httpHelper.ParseErrorCode(err.Error())
+		return
+	}
+
+	resp.Data = result
+}

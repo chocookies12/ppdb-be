@@ -261,7 +261,7 @@ func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
 		resp  response.Response
 	)
 
-	// Parse multipart form with maximum file size of 10MB
+	// Parse multipart form dengan ukuran maksimum 10MB
 	err := r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
 	if err != nil {
 		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
@@ -297,17 +297,21 @@ func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
 		staff.StaffTmptLahir = nil // Atur ke nil jika tidak ada tempat lahir yang diberikan
 	}
 
-	// Parse tanggal lahir ke format time.Time
+	// Parse tanggal lahir dengan format RFC1123
 	staffTglLahir := r.FormValue("staff_tgl_lahir")
 	log.Printf("Tanggal lahir yang diterima: %s", staffTglLahir) // Logging nilai yang diterima
 	if staffTglLahir != "" {
-		parsedDate, err := time.Parse("02-01-2006", staffTglLahir) // Format: DD-MM-YYYY
+		// Parsing sesuai format waktu RFC1123
+		parsedDate, err := time.Parse(time.RFC1123, staffTglLahir)
 		if err != nil {
 			log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err) // Logging tambahan
 			http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
 			return
 		}
-		staff.StaffTglLahir = &parsedDate // Menggunakan pointer untuk menyimpan tanggal
+
+		// Menyimpan hanya tanggal tanpa waktu
+		dateOnly := time.Date(parsedDate.Year(), parsedDate.Month(), parsedDate.Day(), 0, 0, 0, 0, parsedDate.Location())
+		staff.StaffTglLahir = &dateOnly // Menggunakan pointer untuk menyimpan tanggal
 	} else {
 		staff.StaffTglLahir = nil // Atur ke nil jika tidak ada tanggal yang diberikan
 	}

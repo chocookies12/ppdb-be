@@ -30,6 +30,7 @@ type IppdbSvc interface {
 	GetFasilitas(ctx context.Context) ([]ppdbEntity.TableFasilitas, error)
 
 	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) 
+	GetProfileStaffSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableStaff, interface{}, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
@@ -42,6 +43,7 @@ type IppdbSvc interface {
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)
 	DeleteBanner(ctx context.Context, bannerID string) (string, error)
 	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error)
+	DeleteProfileStaff(ctx context.Context, staffID string) (string, error)
 }
 
 type (

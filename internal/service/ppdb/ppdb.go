@@ -38,7 +38,9 @@ type Data interface {
 	GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) 
 
 	//Profile Staff
-	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) 
+	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
+	GetProfileStaff(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableStaff, error)
+	GetProfileStaffPagination(ctx context.Context, searchInput string) (int, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
@@ -52,6 +54,7 @@ type Data interface {
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)
 	DeleteBanner(ctx context.Context, bannerID string) (string, error) 
 	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) 
+	DeleteProfileStaff(ctx context.Context, staffID string) (string, error)
 }
 
 type Service struct {

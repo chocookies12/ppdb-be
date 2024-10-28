@@ -43,6 +43,8 @@ type Handler interface {
 	//Profile Staff
 	InsertProfileStaff(w http.ResponseWriter, r *http.Request)
 	GetPhotoStaff(w http.ResponseWriter, r *http.Request) 
+	GetProfileStaffSlim(w http.ResponseWriter, r *http.Request)
+	DeleteProfileStaff(w http.ResponseWriter, r *http.Request) 
 }
 
 // Server ...

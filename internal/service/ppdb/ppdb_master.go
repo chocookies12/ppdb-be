@@ -349,8 +349,6 @@ func (s Service) InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableS
 	return result, nil
 }
 
-
-
 func (s Service) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) {
 	poster, err := s.ppdb.GetPhotoStaff(ctx, staffID)
 	if err != nil {
@@ -358,4 +356,54 @@ func (s Service) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, err
 	}
 
 	return poster, err
+}
+
+func (s Service) GetProfileStaffSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableStaff, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	staff := []ppdbEntity.TableStaff{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of staff for pagination
+		count, err := s.ppdb.GetProfileStaffPagination(ctx, searchInput)
+		if err != nil {
+			return staff, metadata, errors.Wrap(err, "[SERVICE][GetProfileStaffSlim] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated staff data
+		staff, err = s.ppdb.GetProfileStaff(ctx, searchInput, offset, limit)
+		if err != nil {
+			return staff, metadata, errors.Wrap(err, "[SERVICE][GetProfileStaffSlim] Error getting paginated staff data")
+		}
+
+		return staff, metadata, nil
+	}
+
+	// Jika page atau length tidak valid, dapatkan semua data tanpa pagination
+	staff, err := s.ppdb.GetProfileStaff(ctx, searchInput, offset, limit)
+	if err != nil {
+		return staff, metadata, errors.Wrap(err, "[SERVICE][GetProfileStaffSlim] Error getting staff data")
+	}
+
+	return staff, metadata, nil
+}
+
+func (s Service) DeleteProfileStaff(ctx context.Context, staffID string) (string, error) {
+	result, err := s.ppdb.DeleteProfileStaff(ctx, staffID)
+
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][DeleteProfileStaff]")
+	}
+
+	return result, nil
 }

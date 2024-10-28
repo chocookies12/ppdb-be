@@ -289,7 +289,6 @@ func (h *Handler) GetFasilitas(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
-
 func (h *Handler) GetPhotoStaff(w http.ResponseWriter, r *http.Request) {
 	staffID := r.URL.Query().Get("staffID")
 	if staffID == "" {
@@ -306,4 +305,29 @@ func (h *Handler) GetPhotoStaff(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/jpeg")
 	w.WriteHeader(http.StatusOK)
 	w.Write(poster)
+}
+
+func (h *Handler) GetProfileStaffSlim(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	searchInput := r.FormValue("searchInput")
+	page, _ := strconv.Atoi(r.FormValue("page"))
+	length, _ := strconv.Atoi(r.FormValue("length"))
+
+	ctx := r.Context()
+
+	// Get staff data with pagination
+	staff, metadata, err := h.ppdbSvc.GetProfileStaffSlim(ctx, searchInput, page, length)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Prepare response data
+	resp.Data = staff
+	resp.Metadata = metadata
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }

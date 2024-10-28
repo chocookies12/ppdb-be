@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"ppdb-be/pkg/errors"
 	"strconv"
+	"time"
 
 	// "golang.org/x/crypto/bcrypt"
 
@@ -593,7 +594,7 @@ func generateImageURLFotoFasilitas(id string) string {
 	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarfasilitas?fasilitasID=%s", id)
 }
 
-//ini untuk get fasilitas di website admin (ada untuk paginationnya)
+// ini untuk get fasilitas di website admin (ada untuk paginationnya)
 func (d Data) GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error) {
 	var (
 		fasilitasArray []ppdbEntity.TableFasilitas
@@ -649,11 +650,11 @@ func (d Data) GetFasilitasPagination(ctx context.Context, searchInput string) (i
 	return totalCount, nil
 }
 
-//ini untuk get fasilitas di website utama 
+// ini untuk get fasilitas di website utama
 func (d Data) GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) {
 	var (
 		fasilitasArray []ppdbEntity.TableFasilitas
-		err         error
+		err            error
 	)
 
 	rows, err := (*d.stmt)[getFasilitasUtama].QueryxContext(ctx)
@@ -694,8 +695,6 @@ func (d Data) GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilita
 	return fasilitasArray, nil
 }
 
-
-
 // Hapus Data Fasilitas
 func (d Data) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) {
 	var (
@@ -716,51 +715,51 @@ func (d Data) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, 
 
 // Profile Staff
 func (d Data) InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) {
-    var (
-        err    error
-        result string
-        lastID string
-        newID  string
-    )
+	var (
+		err    error
+		result string
+		lastID string
+		newID  string
+	)
 
-    // Mengambil StaffID terakhir
-    err = (*d.stmt)[getLastStaffId].QueryRowxContext(ctx).Scan(&lastID)
-    if err != nil && err != sql.ErrNoRows {
-        result = "Gagal mengambil ID terakhir"
-        return result, errors.Wrap(err, "[DATA][GetLastStaffId]")
-    }
+	// Mengambil StaffID terakhir
+	err = (*d.stmt)[getLastStaffId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastStaffId]")
+	}
 
-    if lastID != "" {
-        // Mengambil bagian numerik dari lastID dan menambahkannya
-        num, _ := strconv.Atoi(lastID[1:])
-        newID = fmt.Sprintf("S%04d", num+1)
-    } else {
-        newID = "S0001" // ID pertama
-    }
+	if lastID != "" {
+		// Mengambil bagian numerik dari lastID dan menambahkannya
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("S%04d", num+1)
+	} else {
+		newID = "S0001" // ID pertama
+	}
 
-    fmt.Println("newID", newID)
+	fmt.Println("newID", newID)
 
-    // Set StaffID baru ke struct staff
-    staff.StaffID = newID
+	// Set StaffID baru ke struct staff
+	staff.StaffID = newID
 
-    // Eksekusi query untuk memasukkan data ke dalam tabel T_ProfileStaff
-    _, err = (*d.stmt)[insertProfileStaff].ExecContext(ctx,
-        staff.StaffID,
-        staff.StaffName,
-        staff.StaffGender,
-        staff.StaffPosition,
-        staff.StaffTmptLahir,
-        staff.StaffTglLahir,
-        staff.StaffPhoto,
-    )
+	// Eksekusi query untuk memasukkan data ke dalam tabel T_ProfileStaff
+	_, err = (*d.stmt)[insertProfileStaff].ExecContext(ctx,
+		staff.StaffID,
+		staff.StaffName,
+		staff.StaffGender,
+		staff.StaffPosition,
+		staff.StaffTmptLahir,
+		staff.StaffTglLahir,
+		staff.StaffPhoto,
+	)
 
-    if err != nil {
-        result = "Gagal menyimpan data staff"
-        return result, errors.Wrap(err, "[DATA][InsertProfileStaff]")
-    }
+	if err != nil {
+		result = "Gagal menyimpan data staff"
+		return result, errors.Wrap(err, "[DATA][InsertProfileStaff]")
+	}
 
-    result = "Berhasil menyimpan data staff"
-    return result, nil
+	result = "Berhasil menyimpan data staff"
+	return result, nil
 }
 
 func (d Data) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) {
@@ -772,4 +771,95 @@ func (d Data) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
 	return poster, nil
 }
 
+func generateImageURLFotoStaff(id string) string {
+	var url = "http://localhost:8081"
+	return fmt.Sprintf(url+"/ppdb/v1/data/getphotostaff?staffID=%s", id)
+}
 
+// ini untuk get staff di website admin (ada untuk paginationnya)
+func (d Data) GetProfileStaff(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableStaff, error) {
+	var (
+		staffArray []ppdbEntity.TableStaff
+		err        error
+	)
+
+	rows, err := (*d.stmt)[getProfilStaff].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+	if err != nil {
+		return staffArray, errors.Wrap(err, "[DATA] [GetProfileStaff]")
+	}
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var staff ppdbEntity.TableStaff
+
+		// Memindahkan data dari hasil query ke dalam struct
+		var staffTglLahir sql.NullString // Menggunakan sql.NullString untuk menangani nilai NULL dari database
+		if err = rows.Scan(&staff.StaffID, &staff.StaffName, &staff.StaffGender, &staff.StaffPosition, &staff.StaffTmptLahir, &staffTglLahir, &staff.LinkStaffPhoto); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to scan row")
+		}
+
+		// Mengubah staffTglLahir menjadi *time.Time
+		if staffTglLahir.Valid {
+			t, err := time.Parse("2006-01-02", staffTglLahir.String) // Menggunakan format yang sesuai
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to parse staffTglLahir")
+			}
+			staff.StaffTglLahir = &t
+		} else {
+			staff.StaffTglLahir = nil // Mengatur nil jika tidak ada nilai
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, staff.StaffID+".jpg")
+		if err := saveImageToFile(staff.StaffPhoto, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to save image")
+		}
+
+		// Menghasilkan URL untuk foto staf
+		staff.LinkStaffPhoto = generateImageURLFotoStaff(staff.StaffID)
+
+		staffArray = append(staffArray, staff)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Row iteration error")
+	}
+
+	return staffArray, nil
+}
+
+func (d Data) GetProfileStaffPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query untuk mendapatkan total count tanpa LIMIT
+	err := (*d.stmt)[getProfilStaffPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetProfileStaffPagination] Error executing count query")
+	}
+
+	return totalCount, nil
+}
+
+// Hapus Data Fasilitas
+func (d Data) DeleteProfileStaff(ctx context.Context, staffID string) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	_, err = (*d.stmt)[deleteProfileStaff].ExecContext(ctx, staffID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][DeleteProfileStaff]")
+	}
+
+	result = "Berhasil"
+	return result, nil
+}
