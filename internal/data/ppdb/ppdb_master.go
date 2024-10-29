@@ -863,3 +863,59 @@ func (d Data) DeleteProfileStaff(ctx context.Context, staffID string) (string, e
 	result = "Berhasil"
 	return result, nil
 }
+
+func (d Data) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error) {
+	var (
+		staffArray []ppdbEntity.TableStaff
+		err        error
+	)
+
+	rows, err := (*d.stmt)[getProfilStaffUtama].QueryxContext(ctx)
+	if err != nil {
+		return staffArray, errors.Wrap(err, "[DATA] [GetProfileStaff]")
+	}
+	defer rows.Close()
+
+	// Pastikan direktori untuk menyimpan gambar ada
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var staff ppdbEntity.TableStaff
+
+		// Memindahkan data dari hasil query ke dalam struct
+		var staffTglLahir sql.NullString // Menggunakan sql.NullString untuk menangani nilai NULL dari database
+		if err = rows.Scan(&staff.StaffID, &staff.StaffName, &staff.StaffGender, &staff.StaffPosition, &staff.StaffTmptLahir, &staffTglLahir, &staff.LinkStaffPhoto); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to scan row")
+		}
+
+		// Mengubah staffTglLahir menjadi *time.Time
+		if staffTglLahir.Valid {
+			t, err := time.Parse("2006-01-02", staffTglLahir.String) // Menggunakan format yang sesuai
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to parse staffTglLahir")
+			}
+			staff.StaffTglLahir = &t
+		} else {
+			staff.StaffTglLahir = nil // Mengatur nil jika tidak ada nilai
+		}
+
+		// Menyimpan gambar dan menghasilkan URL
+		filePath := filepath.Join(imageDir, staff.StaffID+".jpg")
+		if err := saveImageToFile(staff.StaffPhoto, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Failed to save image")
+		}
+
+		// Menghasilkan URL untuk foto staf
+		staff.LinkStaffPhoto = generateImageURLFotoStaff(staff.StaffID)
+		staffArray = append(staffArray, staff)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetProfileStaff] - Row iteration error")
+	}
+
+	return staffArray, nil
+}

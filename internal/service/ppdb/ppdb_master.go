@@ -407,3 +407,12 @@ func (s Service) DeleteProfileStaff(ctx context.Context, staffID string) (string
 
 	return result, nil
 }
+
+func (s Service) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error) {
+	staff, err := s.ppdb.GetProfileStaffUtama(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SERVICE] [GetProfileStaffUtama]")
+	}
+
+	return staff, nil
+}

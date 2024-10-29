@@ -331,3 +331,29 @@ func (h *Handler) GetProfileStaffSlim(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
+
+
+func (h *Handler) GetProfilStaffUtama(w http.ResponseWriter, r *http.Request) {
+	// Membuat response default
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r) // Pastikan response selalu dikembalikan dalam format JSON
+
+	// Memperoleh context dari request
+	ctx := r.Context()
+
+	// Memanggil service untuk mendapatkan data banner
+	staff, err := h.ppdbSvc.GetProfileStaffUtama(ctx)
+	if err != nil {
+		// Jika terjadi error, gunakan ParseErrorCode untuk memparsing error
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Mengisi field data dan metadata dalam response
+	resp.Data = staff // Set data dengan banner yang didapat
+	resp.Metadata = nil   // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
+
+	// Logging informasi request yang berhasil
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}

@@ -41,6 +41,7 @@ type Data interface {
 	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
 	GetProfileStaff(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableStaff, error)
 	GetProfileStaffPagination(ctx context.Context, searchInput string) (int, error)
+	GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

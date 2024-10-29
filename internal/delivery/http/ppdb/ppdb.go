@@ -29,8 +29,9 @@ type IppdbSvc interface {
 	GetFasilitasSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableFasilitas, interface{}, error)
 	GetFasilitas(ctx context.Context) ([]ppdbEntity.TableFasilitas, error)
 
-	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error) 
+	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
 	GetProfileStaffSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableStaff, interface{}, error)
+	GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

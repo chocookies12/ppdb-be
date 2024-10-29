@@ -61,8 +61,9 @@ func (s *Server) Handler() *mux.Router {
 	//Profile Staff
 	ppdb.HandleFunc("/insertprofilestaff", s.Ppdb.InsertProfileStaff).Methods("POST")
 	ppdb.HandleFunc("/getphotostaff", s.Ppdb.GetPhotoStaff).Methods("GET")
-	ppdb.HandleFunc("/getprofilstaffslim", s.Ppdb.GetProfileStaffSlim).Methods("GET")
+	ppdb.HandleFunc("/getprofilstaffslim", s.Ppdb.GetProfileStaffSlim).Methods("GET") // slim untuk pagination
 	ppdb.HandleFunc("/deleteprofilstaff", s.Ppdb.DeleteProfileStaff).Methods("DELETE")
+	ppdb.HandleFunc("/getprofilstaff", s.Ppdb.GetProfilStaffUtama).Methods("GET")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

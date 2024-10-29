@@ -45,6 +45,7 @@ type Handler interface {
 	GetPhotoStaff(w http.ResponseWriter, r *http.Request) 
 	GetProfileStaffSlim(w http.ResponseWriter, r *http.Request)
 	DeleteProfileStaff(w http.ResponseWriter, r *http.Request) 
+	GetProfilStaffUtama(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...
