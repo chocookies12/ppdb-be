@@ -919,3 +919,250 @@ func (d Data) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff
 
 	return staffArray, nil
 }
+
+func (d Data) InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error) {
+	var (
+		err    error
+		result string
+		lastID string
+		newID  string
+	)
+
+	// Mengambil EventID terakhir
+	err = (*d.stmt)[getLastEventId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastEventId]")
+	}
+
+	if lastID != "" {
+		// Mengambil bagian numerik dari lastID dan menambahkannya
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("E%04d", num+1)
+	} else {
+		newID = "E0001" // ID pertama
+	}
+
+	fmt.Println("newID", newID)
+
+	// Set EventID baru ke struct event
+	event.EventID = newID
+
+	// Eksekusi query untuk memasukkan data ke dalam tabel T_EventSekolah
+	_, err = (*d.stmt)[insertEvent].ExecContext(ctx,
+		event.EventID,
+		event.EventHeader,
+		event.EventStartDate,
+		event.EventEndDate,
+		event.EventDesc,
+		event.EventImage,
+	)
+
+	if err != nil {
+		result = "Gagal menyimpan data event"
+		return result, errors.Wrap(err, "[DATA][InsertEvent]")
+	}
+
+	result = "Berhasil menyimpan data event"
+	return result, nil
+}
+
+func (d Data) GetImageEvent(ctx context.Context, eventID string) ([]byte, error) {
+	var poster []byte
+	if err := (*d.stmt)[getImageEvent].QueryRowxContext(ctx, eventID).Scan(&poster); err != nil {
+		return poster, errors.Wrap(err, "[DATA][GetImageEvent]")
+	}
+
+	return poster, nil
+}
+
+func generateImageURLFotoEvent(id string) string {
+	var url = "http://localhost:8081"
+	return fmt.Sprintf(url+"/ppdb/v1/data/getimageevent?eventID=%s", id)
+}
+
+func (d Data) GetEvent(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableEvent, error) {
+	var (
+		eventArray []ppdbEntity.TableEvent
+		err        error
+	)
+
+	rows, err := (*d.stmt)[getEvent].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+	if err != nil {
+		return eventArray, errors.Wrap(err, "[DATA] [GetEvent]")
+	}
+	defer rows.Close()
+
+	// Ensure the directory for storing images exists
+	imageDir := filepath.Join("public", "images")
+	if err := EnsureDirectory(imageDir); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetEvent] - Failed to ensure directory")
+	}
+
+	for rows.Next() {
+		var event ppdbEntity.TableEvent
+
+		// Scan the event data from the database
+		var eventStartDate sql.NullString
+		var eventEndDate sql.NullString // Using sql.NullString to handle potential NULL values
+
+		if err = rows.Scan(&event.EventID, &event.EventHeader, &eventStartDate, &eventEndDate, &event.EventDesc, &event.LinkEventImage); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetEvent] - Failed to scan row")
+		}
+
+		// Parse start date
+		if eventStartDate.Valid {
+			t, err := time.Parse("2006-01-02", eventStartDate.String) // Using the correct format
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetEvent] - Failed to parse eventStartDate")
+			}
+			event.EventStartDate = t // Set directly as time.Time
+		} else {
+			// If not valid, it remains the zero value of time.Time
+			event.EventStartDate = time.Time{} // Optional: Set to a specific zero value if necessary
+		}
+
+		// Parse end date
+		if eventEndDate.Valid {
+			t, err := time.Parse("2006-01-02", eventEndDate.String) // Using the correct format
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetEvent] - Failed to parse eventEndDate")
+			}
+			event.EventEndDate = &t // Set as a pointer to time.Time
+		} else {
+			event.EventEndDate = nil // Set to nil if not valid
+		}
+
+		// Save image and generate URL if necessary
+		filePath := filepath.Join(imageDir, event.EventID+".jpg")
+		if err := saveImageToFile(event.EventImage, filePath); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetEvent] - Failed to save image")
+		}
+		// Generate URL for the event image (if applicable)
+		event.LinkEventImage = generateImageURLFotoEvent(event.EventID)
+
+		eventArray = append(eventArray, event)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetEvent] - Row iteration error")
+	}
+
+	return eventArray, nil
+}
+
+func (d Data) GetEventPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query untuk mendapatkan total count tanpa LIMIT
+	err := (*d.stmt)[getEventPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetEventPagination] Error executing count query")
+	}
+
+	return totalCount, nil
+}
+
+func (d Data) GetEventDetail(ctx context.Context, eventID string) (ppdbEntity.TableEvent, error) {
+	var (
+		event ppdbEntity.TableEvent
+		err   error
+	)
+
+	// Execute the query to get event details by eventID
+	row := (*d.stmt)[getEventDetail].QueryRowxContext(ctx, eventID)
+
+	// Scan event data from the row
+	var eventStartDate sql.NullString
+	var eventEndDate sql.NullString // Using sql.NullString to handle potential NULL values
+
+	if err = row.Scan(&event.EventID, &event.EventHeader, &eventStartDate, &eventEndDate, &event.EventDesc, &event.LinkEventImage); err != nil {
+		if err == sql.ErrNoRows {
+			return event, errors.Wrap(err, "[DATA] [GetEventDetail] - Event not found")
+		}
+		return event, errors.Wrap(err, "[DATA] [GetEventDetail] - Failed to scan row")
+	}
+
+	// Parse start date
+	if eventStartDate.Valid {
+		t, err := time.Parse("2006-01-02", eventStartDate.String) // Using the correct format
+		if err != nil {
+			return event, errors.Wrap(err, "[DATA] [GetEventDetail] - Failed to parse eventStartDate")
+		}
+		event.EventStartDate = t // Set directly as time.Time
+	} else {
+		event.EventStartDate = time.Time{} // Optional: Set to a specific zero value if necessary
+	}
+
+	// Parse end date
+	if eventEndDate.Valid {
+		t, err := time.Parse("2006-01-02", eventEndDate.String) // Using the correct format
+		if err != nil {
+			return event, errors.Wrap(err, "[DATA] [GetEventDetail] - Failed to parse eventEndDate")
+		}
+		event.EventEndDate = &t // Set as a pointer to time.Time
+	} else {
+		event.EventEndDate = nil // Set to nil if not valid
+	}
+
+	// Generate URL for the event image (if applicable)
+	event.LinkEventImage = generateImageURLFotoEvent(event.EventID)
+
+	return event, nil
+}
+
+func (d Data) GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error) {
+	var (
+		eventArray []ppdbEntity.TableEvent
+		err        error
+	)
+
+	// Execute the query to get all events
+	rows, err := (*d.stmt)[getEventUtama].QueryxContext(ctx)
+	if err != nil {
+		return eventArray, errors.Wrap(err, "[DATA] [GetEventUtama] - Failed to execute query")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var event ppdbEntity.TableEvent
+
+		// Scan event data from the row
+		var eventStartDate sql.NullString
+		var eventEndDate sql.NullString // Using sql.NullString to handle potential NULL values
+
+		if err = rows.Scan(&event.EventID, &event.EventHeader, &eventStartDate, &eventEndDate, &event.EventDesc, &event.LinkEventImage); err != nil {
+			return nil, errors.Wrap(err, "[DATA] [GetEventUtama] - Failed to scan row")
+		}
+
+		// Parse start date
+		if eventStartDate.Valid {
+			t, err := time.Parse("2006-01-02", eventStartDate.String) // Using the correct format
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetEventUtama] - Failed to parse eventStartDate")
+			}
+			event.EventStartDate = t // Set directly as time.Time
+		}
+
+		// Parse end date
+		if eventEndDate.Valid {
+			t, err := time.Parse("2006-01-02", eventEndDate.String) // Using the correct format
+			if err != nil {
+				return nil, errors.Wrap(err, "[DATA] [GetEventUtama] - Failed to parse eventEndDate")
+			}
+			event.EventEndDate = &t // Set as a pointer to time.Time
+		}
+
+		// Generate URL for the event image (if applicable)
+		event.LinkEventImage = generateImageURLFotoEvent(event.EventID)
+
+		// Append the event to the array
+		eventArray = append(eventArray, event)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "[DATA] [GetEventUtama] - Row iteration error")
+	}
+
+	return eventArray, nil
+}

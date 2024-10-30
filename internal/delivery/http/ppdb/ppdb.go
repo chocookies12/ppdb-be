@@ -33,12 +33,18 @@ type IppdbSvc interface {
 	GetProfileStaffSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableStaff, interface{}, error)
 	GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error)
 
+	GetImageEvent(ctx context.Context, eventID string) ([]byte, error)
+	GetEventSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableEvent, interface{}, error)
+	GetEventDetail(ctx context.Context, eventID string) (ppdbEntity.TableEvent, error)
+	GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
 	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error)
 	InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error)
 	InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error)
+	InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error)
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)

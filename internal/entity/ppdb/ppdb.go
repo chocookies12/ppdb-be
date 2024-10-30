@@ -64,12 +64,22 @@ type TableFasilitas struct {
 }
 
 type TableStaff struct {
-	StaffID                string     `db:"staffID" json:"staff_id"`
-	StaffName              string     `db:"staffName" json:"staff_name"`
-	StaffGender            string     `db:"staffGender" json:"staff_gender"`
-	StaffPosition          string     `db:"staffPosition" json:"staff_position"`
-	StaffTmptLahir         *string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
-	StaffTglLahir          *time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
-	StaffPhoto             []byte     `db:"staffPhoto" json:"staff_photo"`
-	LinkStaffPhoto         string     `json:"link_staff_photo"`
+	StaffID        string     `db:"staffID" json:"staff_id"`
+	StaffName      string     `db:"staffName" json:"staff_name"`
+	StaffGender    string     `db:"staffGender" json:"staff_gender"`
+	StaffPosition  string     `db:"staffPosition" json:"staff_position"`
+	StaffTmptLahir *string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
+	StaffTglLahir  *time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
+	StaffPhoto     []byte     `db:"staffPhoto" json:"s	taff_photo"`
+	LinkStaffPhoto string     `json:"link_staff_photo"`
+}
+
+type TableEvent struct {
+	EventID        string     `db:"eventID" json:"event_id"`
+	EventHeader    string     `db:"eventHeader" json:"event_header"`
+	EventStartDate time.Time  `db:"eventStartDate" json:"event_start_date"`
+	EventEndDate   *time.Time `db:"eventEndDate" json:"event_end_date"`
+	EventDesc      string     `db:"eventDesc" json:"event_desc"`
+	EventImage     []byte     `db:"eventImage" json:"event_image"`
+	LinkEventImage string     `json:"link_event_image"`
 }

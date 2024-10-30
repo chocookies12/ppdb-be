@@ -105,6 +105,27 @@ const (
 	qGetProfileStaffUtama = `SELECT staffID, staffName, staffGender, staffPosition, staffTmptLahir, staffTglLahir, staffPhoto
 						FROM T_ProfileStaff`
 
+	getLastEventId  = "GetLastEventId"
+	qGetLastEventId = `SELECT eventID from T_EventSekolah ORDER BY eventID DESC LIMIT 1`
+
+	getImageEvent  = "GetImageEvent"
+	qGetImageEvent = `SELECT eventImage FROM T_EventSekolah WHERE eventID = ?`
+
+	getEvent  = "GetEvent"
+	qGetEvent = `SELECT eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage 
+				FROM T_EventSekolah WHERE eventHeader LIKE ? LIMIT ?,?`
+
+	getEventPagination  = "GetEventPagination"
+	qGetEventPagination = `SELECT count(*) FROM T_EventSekolah WHERE eventHeader LIKE ?`
+
+	getEventDetail  = "GetEventDetail"
+	qGetEventDetail = `SELECT eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage 
+				FROM T_EventSekolah WHERE eventID LIKE ?`
+
+	getEventUtama  = "GetEventUtama"
+	qGetEventUtama = `SELECT eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage 
+					FROM T_EventSekolah`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -125,6 +146,10 @@ const (
 	insertProfileStaff  = "InsertProfileStaff"
 	qInsertProfileStaff = `INSERT INTO T_ProfileStaff (staffID, staffName, staffGender, staffPosition, 
 						staffTmptLahir, staffTglLahir, staffPhoto ) VALUES (?, ?, ?, ?, ?, ?, ?)`
+
+	insertEvent  = "InsertEvent"
+	qInsertEvent = `INSERT INTO T_EventSekolah (eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage)
+					VALUES(?, ?, ?, ?, ?, ?)`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -169,6 +194,13 @@ var (
 		{getProfilStaff, qGetProfileStaff},
 		{getProfilStaffPagination, qGetProfilStaffPagination},
 		{getProfilStaffUtama, qGetProfileStaffUtama},
+
+		{getLastEventId, qGetLastEventId},
+		{getImageEvent, qGetImageEvent},
+		{getEvent, qGetEvent},
+		{getEventPagination, qGetEventPagination},
+		{getEventDetail, qGetEventDetail},
+		{getEventUtama, qGetEventUtama},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -176,6 +208,7 @@ var (
 		{insertBanner, qInsertBanner},
 		{insertFasilitas, qInsertFasilitas},
 		{insertProfileStaff, qInsertProfileStaff},
+		{insertEvent, qInsertEvent},
 	}
 	updateStmt = []statement{}
 	deleteStmt = []statement{

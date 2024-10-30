@@ -46,6 +46,13 @@ type Handler interface {
 	GetProfileStaffSlim(w http.ResponseWriter, r *http.Request)
 	DeleteProfileStaff(w http.ResponseWriter, r *http.Request) 
 	GetProfilStaffUtama(w http.ResponseWriter, r *http.Request)
+
+	//Event Sekolah 
+	InsertEvent(w http.ResponseWriter, r *http.Request) 
+	GetImageEvent(w http.ResponseWriter, r *http.Request)
+	GetEventSlim(w http.ResponseWriter, r *http.Request)  
+	GetEventDetail(w http.ResponseWriter, r *http.Request)
+	GetEventUtama(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

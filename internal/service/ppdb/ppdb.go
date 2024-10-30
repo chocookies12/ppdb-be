@@ -35,7 +35,7 @@ type Data interface {
 	GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byte, error)
 	GetFasilitas(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableFasilitas, error)
 	GetFasilitasPagination(ctx context.Context, searchInput string) (int, error)
-	GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error) 
+	GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilitas, error)
 
 	//Profile Staff
 	GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
@@ -43,18 +43,26 @@ type Data interface {
 	GetProfileStaffPagination(ctx context.Context, searchInput string) (int, error)
 	GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff, error)
 
+	//Event
+	GetImageEvent(ctx context.Context, eventID string) ([]byte, error)
+	GetEvent(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableEvent, error)
+	GetEventPagination(ctx context.Context, searchInput string) (int, error)
+	GetEventDetail(ctx context.Context, eventID string) (ppdbEntity.TableEvent, error)
+	GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
 
 	InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error)
 	InsertFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas) (string, error)
-	InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) 
+	InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error)
+	InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error)
 
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)
-	DeleteBanner(ctx context.Context, bannerID string) (string, error) 
-	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) 
+	DeleteBanner(ctx context.Context, bannerID string) (string, error)
+	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error)
 	DeleteProfileStaff(ctx context.Context, staffID string) (string, error)
 }
 

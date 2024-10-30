@@ -336,3 +336,85 @@ func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
+
+func (h *Handler) InsertEvent(w http.ResponseWriter, r *http.Request) {
+	var (
+		event ppdbEntity.TableEvent
+		resp  response.Response
+	)
+
+	// Parse multipart form dengan ukuran maksimum 10MB
+	err := r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
+	if err != nil {
+		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
+		return
+	}
+
+	// Mengambil file dari form-data
+	file, _, err := r.FormFile("event_image")
+	if err != nil {
+		http.Error(w, "Error mengambil file dari form-data", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Membaca isi file ke dalam byte array
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, "Error membaca isi file", http.StatusInternalServerError)
+		return
+	}
+
+	// Menyimpan gambar ke dalam struct event
+	event.EventImage = fileBytes
+	event.EventHeader = r.FormValue("event_header")
+
+	// Mengambil dan memproses tanggal mulai event
+	eventStartDate := r.FormValue("event_start_date")
+	if eventStartDate != "" {
+		parsedStartDate, err := time.Parse("2006-01-02", eventStartDate)
+		if err != nil {
+			log.Printf("Error parsing start date: %s, Error: %v", eventStartDate, err)
+			http.Error(w, "Error memproses tanggal mulai event", http.StatusBadRequest)
+			return
+		}
+		event.EventStartDate = parsedStartDate
+	}
+
+	// Mengambil dan memproses tanggal akhir event
+	eventEndDate := r.FormValue("event_end_date")
+	if eventEndDate != "" {
+		parsedEndDate, err := time.Parse("2006-01-02", eventEndDate)
+		if err != nil {
+			log.Printf("Error parsing end date: %s, Error: %v", eventEndDate, err)
+			http.Error(w, "Error memproses tanggal akhir event", http.StatusBadRequest)
+			return
+		}
+		event.EventEndDate = &parsedEndDate
+	} else {
+		event.EventEndDate = nil
+	}
+
+	// Menyimpan deskripsi event
+	event.EventDesc = r.FormValue("event_desc")
+
+	// Memanggil service untuk memasukkan data event
+	result, err := h.ppdbSvc.InsertEvent(r.Context(), event)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Data Event berhasil dimasukkan"
+
+	// Logging informasi request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}

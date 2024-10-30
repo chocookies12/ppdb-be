@@ -332,7 +332,6 @@ func (h *Handler) GetProfileStaffSlim(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
-
 func (h *Handler) GetProfilStaffUtama(w http.ResponseWriter, r *http.Request) {
 	// Membuat response default
 	resp := response.Response{}
@@ -350,9 +349,102 @@ func (h *Handler) GetProfilStaffUtama(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Mengisi field data dan metadata dalam response
-	resp.Data = staff // Set data dengan banner yang didapat
-	resp.Metadata = nil   // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
+	resp.Data = staff
+	resp.Metadata = nil
+
+	// Logging informasi request yang berhasil
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+func (h *Handler) GetImageEvent(w http.ResponseWriter, r *http.Request) {
+	eventID := r.URL.Query().Get("eventID")
+	if eventID == "" {
+		http.Error(w, "eventID is required", http.StatusBadRequest)
+		return
+	}
+
+	poster, err := h.ppdbSvc.GetImageEvent(r.Context(), eventID)
+	if err != nil {
+		http.Error(w, "Failed to get poster image", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.WriteHeader(http.StatusOK)
+	w.Write(poster)
+}
+
+func (h *Handler) GetEventSlim(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	searchInput := r.FormValue("searchInput")
+	page, _ := strconv.Atoi(r.FormValue("page"))
+	length, _ := strconv.Atoi(r.FormValue("length"))
+
+	ctx := r.Context()
+
+	// Get staff data with pagination
+	event, metadata, err := h.ppdbSvc.GetEventSlim(ctx, searchInput, page, length)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Prepare response data
+	resp.Data = event
+	resp.Metadata = metadata
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+func (h *Handler) GetEventDetail(w http.ResponseWriter, r *http.Request) {
+
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+
+	eventID := r.URL.Query().Get("eventID")
+	if eventID == "" {
+		resp = httpHelper.ParseErrorCode("eventID is required")
+		h.logger.For(ctx).Error("HTTP request error - missing eventID", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+		return
+	}
+
+	event, err := h.ppdbSvc.GetEventDetail(ctx, eventID)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	resp.Data = event
+	resp.Metadata = nil
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+func (h *Handler) GetEventUtama(w http.ResponseWriter, r *http.Request) {
+	// Membuat response default
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r) // Pastikan response selalu dikembalikan dalam format JSON
+
+	// Memperoleh context dari request
+	ctx := r.Context()
+
+	// Memanggil service untuk mendapatkan data event
+	events, err := h.ppdbSvc.GetEventUtama(ctx)
+	if err != nil {
+		// Jika terjadi error, gunakan ParseErrorCode untuk memparsing error
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	resp.Data = events
+	resp.Metadata = nil
 
 	// Logging informasi request yang berhasil
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))

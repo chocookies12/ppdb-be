@@ -416,3 +416,87 @@ func (s Service) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableSt
 
 	return staff, nil
 }
+
+func (s Service) InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error) {
+	var (
+		result string
+	)
+
+	// Panggil fungsi InsertEvent dari data layer
+	result, err := s.ppdb.InsertEvent(ctx, event)
+
+	if err != nil {
+		result = "Gagal menyimpan data event"
+		return result, errors.Wrap(err, "[Service][InsertEvent]")
+	}
+
+	result = "Berhasil menyimpan data event"
+	return result, nil
+}
+
+func (s Service) GetImageEvent(ctx context.Context, eventID string) ([]byte, error) {
+	poster, err := s.ppdb.GetImageEvent(ctx, eventID)
+	if err != nil {
+		return poster, errors.Wrap(err, "[SERVICE][GetImageEvent]")
+	}
+
+	return poster, err
+}
+
+func (s Service) GetEventSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableEvent, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	event := []ppdbEntity.TableEvent{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of event for pagination
+		count, err := s.ppdb.GetEventPagination(ctx, searchInput)
+		if err != nil {
+			return event, metadata, errors.Wrap(err, "[SERVICE][GetEventSlim] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated event data
+		event, err = s.ppdb.GetEvent(ctx, searchInput, offset, limit)
+		if err != nil {
+			return event, metadata, errors.Wrap(err, "[SERVICE][GetEventSlim] Error getting paginated event data")
+		}
+
+		return event, metadata, nil
+	}
+
+	// Jika page atau length tidak valid, dapatkan semua data tanpa pagination
+	event, err := s.ppdb.GetEvent(ctx, searchInput, offset, limit)
+	if err != nil {
+		return event, metadata, errors.Wrap(err, "[SERVICE][GetEventSlim] Error getting event data")
+	}
+
+	return event, metadata, nil
+}
+
+func (s Service) GetEventDetail(ctx context.Context, eventID string) (ppdbEntity.TableEvent, error) {
+	event, err := s.ppdb.GetEventDetail(ctx, eventID)
+	if err != nil {
+		return ppdbEntity.TableEvent{}, errors.Wrap(err, "[SERVICE] [GetEventDetail]")
+	}
+
+	return event, nil
+}
+
+func (s Service) GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error) {
+	events, err := s.ppdb.GetEventUtama(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "[SERVICE] [GetEventUtama]")
+	}
+
+	return events, nil
+}
