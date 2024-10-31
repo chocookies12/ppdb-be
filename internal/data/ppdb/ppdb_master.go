@@ -311,6 +311,30 @@ func (d Data) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 	return roleArray, err
 }
 
+// Status
+func (d Data) GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error) {
+	var (
+		status      ppdbEntity.TableStatus
+		statusArray []ppdbEntity.TableStatus
+		err         error
+	)
+
+	rows, err := (*d.stmt)[getStatus].QueryxContext(ctx)
+	if err != nil {
+		return statusArray, errors.Wrap(err, "[DATA] [GetStatus]")
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		if err = rows.StructScan(&status); err != nil {
+			return statusArray, errors.Wrap(err, "[DATA] [GetStatus]")
+		}
+		statusArray = append(statusArray, status)
+	}
+	return statusArray, err
+}
+
 // Info Pendaftarn
 func (d Data) InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error) {
 	var (
@@ -518,7 +542,6 @@ func (d Data) GetBanner(ctx context.Context) ([]ppdbEntity.TableBanner, error) {
 	return bannerArray, nil
 }
 
-// Hapus Data Banner
 func (d Data) DeleteBanner(ctx context.Context, bannerID string) (string, error) {
 	var (
 		err    error
@@ -534,6 +557,23 @@ func (d Data) DeleteBanner(ctx context.Context, bannerID string) (string, error)
 
 	result = "Berhasil"
 	return result, nil
+}
+
+func (d Data) UpdateBanner(ctx context.Context, banner ppdbEntity.TableBanner, bannerID string) (string, error) {
+	var (
+		result string
+		err    error
+	)
+
+	_, err = (*d.stmt)[updateBanner].ExecContext(ctx, banner.BannerName, banner.BannerImage, banner.LinkBannerImage, bannerID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][UpdateBanner]")
+	}
+
+	result = "Berhasil"
+	return result, err
 }
 
 // Fasilitas Sekolah
@@ -1165,4 +1205,22 @@ func (d Data) GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error
 	}
 
 	return eventArray, nil
+}
+
+// Hapus Data Event
+func (d Data) DeleteEvent(ctx context.Context, eventID string) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	_, err = (*d.stmt)[deleteEvent].ExecContext(ctx, eventID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][DeleteEvent]")
+	}
+
+	result = "Berhasil"
+	return result, nil
 }

@@ -112,29 +112,45 @@ func (h *Handler) GetDataAdminSlim(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetRole(w http.ResponseWriter, r *http.Request) {
-	// Membuat response default
-	resp := response.Response{}
-	defer resp.RenderJSON(w, r) // Pastikan response selalu dikembalikan dalam format JSON
 
-	// Memperoleh context dari request
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
 	ctx := r.Context()
 
-	// Memanggil service untuk mendapatkan data kontak sekolah
 	role, err := h.ppdbSvc.GetRole(ctx)
 	if err != nil {
-		// Jika terjadi error, gunakan ParseErrorCode untuk memparsing error
 		resp = httpHelper.ParseErrorCode(err.Error())
 		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
 		return
 	}
 
-	// Mengisi field data dan metadata dalam response
 	resp.Data = role
-	resp.Metadata = nil // Jika Anda memiliki metadata (misal: pagination), bisa diset di sini
+	resp.Metadata = nil
 
-	// Logging informasi request yang berhasil
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
+
+func (h *Handler) GetStatus(w http.ResponseWriter, r *http.Request) {
+
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+
+	status, err := h.ppdbSvc.GetStatus(ctx)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	resp.Data = status
+	resp.Metadata = nil
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
 
 func (h *Handler) GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request) {
 	infoID := r.URL.Query().Get("infoID")

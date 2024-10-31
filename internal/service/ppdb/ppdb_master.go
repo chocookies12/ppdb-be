@@ -164,6 +164,18 @@ func (s Service) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 
 }
 
+func (s Service) GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error) {
+
+	statusArray, err := s.ppdb.GetStatus(ctx)
+
+	if err != nil {
+		return statusArray, errors.Wrap(err, "[Service][GetStatus]")
+	}
+
+	return statusArray, nil
+
+}
+
 func (s Service) InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error) {
 	var (
 		result string
@@ -244,6 +256,21 @@ func (s Service) DeleteBanner(ctx context.Context, bannerID string) (string, err
 	}
 
 	return result, nil
+}
+
+func (s Service) UpdateBanner(ctx context.Context, banner ppdbEntity.TableBanner, bannerID string) (string, error) {
+	var (
+		result string
+	)
+
+	result, err := s.ppdb.UpdateBanner(ctx, banner, bannerID)
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][UpdateBanner]")
+	}
+
+	result = "Berhasil"
+	return result, err
 }
 
 // Fasilitas
@@ -499,4 +526,14 @@ func (s Service) GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, er
 	}
 
 	return events, nil
+}
+
+func (s Service) DeleteEvent(ctx context.Context, eventID string) (string, error) {
+	result, err := s.ppdb.DeleteEvent(ctx, eventID)
+
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][DeleteEvent]")
+	}
+
+	return result, nil
 }

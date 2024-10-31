@@ -119,3 +119,21 @@ func (h *Handler) DeleteProfileStaff(w http.ResponseWriter, r *http.Request) {
 
 	resp.Data = result
 }
+
+func (h *Handler) DeleteEvent(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp    response.Response
+		eventID = r.URL.Query().Get("eventID")
+	)
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+	result, err := h.ppdbSvc.DeleteEvent(ctx, eventID) 
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		resp = httpHelper.ParseErrorCode(err.Error())
+		return
+	}
+
+	resp.Data = result
+}

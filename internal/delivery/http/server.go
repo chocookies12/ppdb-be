@@ -18,6 +18,8 @@ type Handler interface {
 	//website ppdb
 	GetKontakSekolah(w http.ResponseWriter, r *http.Request)
 	GetRole(w http.ResponseWriter, r *http.Request)
+	GetStatus(w http.ResponseWriter, r *http.Request) 
+
 	//kelola Admin
 	GetDataAdminSlim(w http.ResponseWriter, r *http.Request)
 	InsertDataAdmin(w http.ResponseWriter, r *http.Request)
@@ -32,6 +34,7 @@ type Handler interface {
 	GetGambarBanner(w http.ResponseWriter, r *http.Request)
 	GetBanner(w http.ResponseWriter, r *http.Request)
 	DeleteBanner(w http.ResponseWriter, r *http.Request)
+	UpdateBanner(w http.ResponseWriter, r *http.Request)
 
 	//Fasilitas
 	InsertFasilitas(w http.ResponseWriter, r *http.Request)
@@ -53,6 +56,7 @@ type Handler interface {
 	GetEventSlim(w http.ResponseWriter, r *http.Request)  
 	GetEventDetail(w http.ResponseWriter, r *http.Request)
 	GetEventUtama(w http.ResponseWriter, r *http.Request)
+	DeleteEvent(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

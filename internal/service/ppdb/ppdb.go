@@ -22,6 +22,7 @@ type Data interface {
 	GetDataAdminPagination(ctx context.Context, searchInput string) (int, error)
 
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
+	GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error)
 
 	//info Daftar
 	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)
@@ -64,6 +65,10 @@ type Data interface {
 	DeleteBanner(ctx context.Context, bannerID string) (string, error)
 	DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error)
 	DeleteProfileStaff(ctx context.Context, staffID string) (string, error)
+	DeleteEvent(ctx context.Context, eventID string) (string, error)
+
+	//update
+	UpdateBanner(ctx context.Context, banner ppdbEntity.TableBanner, bannerID string) (string, error)
 }
 
 type Service struct {

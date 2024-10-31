@@ -70,7 +70,7 @@ type TableStaff struct {
 	StaffPosition  string     `db:"staffPosition" json:"staff_position"`
 	StaffTmptLahir *string    `db:"staffTmptLahir" json:"staff_tmpt_lahir"`
 	StaffTglLahir  *time.Time `db:"staffTglLahir" json:"staff_tgl_lahir"`
-	StaffPhoto     []byte     `db:"staffPhoto" json:"s	taff_photo"`
+	StaffPhoto     []byte     `db:"staffPhoto" json:"staff_photo"`
 	LinkStaffPhoto string     `json:"link_staff_photo"`
 }
 
@@ -82,4 +82,10 @@ type TableEvent struct {
 	EventDesc      string     `db:"eventDesc" json:"event_desc"`
 	EventImage     []byte     `db:"eventImage" json:"event_image"`
 	LinkEventImage string     `json:"link_event_image"`
+}
+
+type TableStatus struct {
+	StatusID   string `db:"statusID" json:"status_id"`
+	StatusName string `db:"statusName" json:"status_name"`
+	StatusDesc string `db:"statusDesc" json:"status_desc"`
 }

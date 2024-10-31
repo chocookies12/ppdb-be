@@ -38,6 +38,8 @@ func (s *Server) Handler() *mux.Router {
 
 	ppdb.HandleFunc("/getkontaksekolah", s.Ppdb.GetKontakSekolah).Methods("GET")
 	ppdb.HandleFunc("/getrole", s.Ppdb.GetRole).Methods("GET")
+	ppdb.HandleFunc("/getstatus", s.Ppdb.GetStatus).Methods("GET")
+
 	//DataAdmin
 	ppdb.HandleFunc("/getdataadmin", s.Ppdb.GetDataAdminSlim).Methods("GET")
 	ppdb.HandleFunc("/insertdataadmin", s.Ppdb.InsertDataAdmin).Methods("POST")
@@ -51,6 +53,8 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getgambarbanner", s.Ppdb.GetGambarBanner).Methods("GET")
 	ppdb.HandleFunc("/getbanner", s.Ppdb.GetBanner).Methods("GET")
 	ppdb.HandleFunc("/deletebanner", s.Ppdb.DeleteBanner).Methods("DELETE")
+	ppdb.HandleFunc("/updatebanner", s.Ppdb.UpdateBanner).Methods("PUT")
+
 	//Fasilitas
 	ppdb.HandleFunc("/insertfasilitas", s.Ppdb.InsertFasilitas).Methods("POST")
 	ppdb.HandleFunc("/getgambarfasilitas", s.Ppdb.GetGambarFasilitas).Methods("GET")
@@ -71,6 +75,7 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/geteventslim", s.Ppdb.GetEventSlim).Methods("GET")
 	ppdb.HandleFunc("/geteventdetail", s.Ppdb.GetEventDetail).Methods("GET")
 	ppdb.HandleFunc("/geteventutama", s.Ppdb.GetEventUtama).Methods("GET")
+	ppdb.HandleFunc("/deleteevent", s.Ppdb.DeleteEvent).Methods("DELETE")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

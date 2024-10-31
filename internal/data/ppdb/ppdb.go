@@ -126,6 +126,9 @@ const (
 	qGetEventUtama = `SELECT eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage 
 					FROM T_EventSekolah`
 
+	getStatus  = "GetStatus"
+	qGetStatus = `SELECT statusID, statusName, statusDesc FROM T_Status`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -163,6 +166,17 @@ const (
 
 	deleteProfileStaff  = "DeleteProfileStaff"
 	qDeleteProfileStaff = `DELETE FROM T_ProfileStaff WHERE staffID = ?	`
+
+	deleteEvent  = "DeleteEvent"
+	qDeleteEvent = `DELETE FROM T_EventSekolah WHERE eventID = ?`
+
+	//query update
+
+	updateBanner  = "UpdateBanner"
+	qUpdateBanner = `UPDATE T_BannerSekolah
+					SET bannerName = ?, bannerImage = ?
+					WHERE bannerID = ?
+	`
 )
 
 var (
@@ -182,6 +196,7 @@ var (
 		{getBanner, qGetBanner},
 
 		{getRole, qGetRole},
+		{getStatus, qGetStatus},
 
 		{getLastFasilitasId, qGetLastFasilitasId},
 		{getGambarFasilitas, qGetGambarFasilitas},
@@ -210,12 +225,15 @@ var (
 		{insertProfileStaff, qInsertProfileStaff},
 		{insertEvent, qInsertEvent},
 	}
-	updateStmt = []statement{}
+	updateStmt = []statement{
+		{updateBanner, qUpdateBanner},
+	}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},
 		{deleteBanner, qDeleteBanner},
 		{deleteFasilitas, qDeleteFasilitas},
 		{deleteProfileStaff, qDeleteProfileStaff},
+		{deleteEvent, qDeleteEvent},
 	}
 )
 
