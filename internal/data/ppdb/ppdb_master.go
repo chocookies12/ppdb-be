@@ -440,6 +440,23 @@ func (d Data) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, 
 	return infoDaftarArray, nil
 }
 
+func (d Data) UpdateInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar, infoID string) (string, error) {
+	var (
+		result string
+		err    error
+	)
+
+	_, err = (*d.stmt)[updateInfoDaftar].ExecContext(ctx, infoDaftar.PosterDaftar, infoDaftar.AwalTahunAjar, infoDaftar.AkhirTahunAjar, infoID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][UpdateInfoDaftar]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
 // Banner sekolah
 func (d Data) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
 	var (
@@ -565,7 +582,7 @@ func (d Data) UpdateBanner(ctx context.Context, banner ppdbEntity.TableBanner, b
 		err    error
 	)
 
-	_, err = (*d.stmt)[updateBanner].ExecContext(ctx, banner.BannerName, banner.BannerImage, banner.LinkBannerImage, bannerID)
+	_, err = (*d.stmt)[updateBanner].ExecContext(ctx, banner.BannerName, banner.BannerImage, bannerID)
 
 	if err != nil {
 		result = "Gagal"
@@ -735,6 +752,23 @@ func (d Data) GetFasilitasUtama(ctx context.Context) ([]ppdbEntity.TableFasilita
 	return fasilitasArray, nil
 }
 
+func (d Data) UpdateFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas, fasilitasID string) (string, error) {
+	var (
+		result string
+		err    error
+	)
+
+	_, err = (*d.stmt)[updateFasilitas].ExecContext(ctx, fasilitas.FasilitasName, fasilitas.FasilitasImage, fasilitasID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][UpdateFasilitas]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
 // Hapus Data Fasilitas
 func (d Data) DeleteFasilitas(ctx context.Context, fasilitasID string) (string, error) {
 	var (
@@ -886,7 +920,6 @@ func (d Data) GetProfileStaffPagination(ctx context.Context, searchInput string)
 	return totalCount, nil
 }
 
-// Hapus Data Fasilitas
 func (d Data) DeleteProfileStaff(ctx context.Context, staffID string) (string, error) {
 	var (
 		err    error
@@ -960,6 +993,32 @@ func (d Data) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableStaff
 	return staffArray, nil
 }
 
+func (d Data) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff, staffID string) (string, error) {
+	var (
+		result string
+		err    error
+	)
+
+	_, err = (*d.stmt)[updateProfileStaff].ExecContext(ctx, 
+		staff.StaffName, 
+		staff.StaffGender, 
+		staff.StaffPosition, 
+		staff.StaffTmptLahir, 
+		staff.StaffTglLahir.Format("2006-01-02"), // Format tanggal
+		staff.StaffPhoto, 
+		staffID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][UpdateProfileStaff]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
+
+// EVENT
 func (d Data) InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error) {
 	var (
 		err    error

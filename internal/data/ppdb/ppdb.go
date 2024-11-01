@@ -175,8 +175,23 @@ const (
 	updateBanner  = "UpdateBanner"
 	qUpdateBanner = `UPDATE T_BannerSekolah
 					SET bannerName = ?, bannerImage = ?
-					WHERE bannerID = ?
-	`
+					WHERE bannerID = ?`
+
+	updateInfoDaftar  = "UpdateInfoDaftar"
+	qUpdateInfoDaftar = `UPDATE T_InfoPendaftaran 
+		SET posterDaftar = ?, awalTahunAjar = ?, akhirTahunAjar = ? 
+		WHERE infoID = ?`
+
+	updateFasilitas  = "UpdateFasilitas"
+	qUpdateFasilitas = `UPDATE T_Fasilitas 
+							SET fasilitasName = ?, fasilitasImage = ?
+							WHERE fasilitasID = ?`
+
+	updateProfileStaff  = "UpdateProfileStaff"
+	qUpdateProfileStaff = `UPDATE T_ProfileStaff 
+						 SET staffName = ?, staffGender = ?, staffPosition = ?, 
+						 staffTmptLahir = ?, staffTglLahir = ?, staffPhoto = ?
+						WHERE staffID = ?`
 )
 
 var (
@@ -227,6 +242,9 @@ var (
 	}
 	updateStmt = []statement{
 		{updateBanner, qUpdateBanner},
+		{updateInfoDaftar, qUpdateInfoDaftar},
+		{updateFasilitas, qUpdateFasilitas},
+		{updateProfileStaff, qUpdateProfileStaff},
 	}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},

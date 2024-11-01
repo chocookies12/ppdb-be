@@ -212,6 +212,21 @@ func (s Service) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDafta
 	return infoDaftar, nil
 }
 
+func (s Service) UpdateInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar, infoID string) (string, error) {
+	var (
+		result string
+	)
+
+	result, err := s.ppdb.UpdateInfoDaftar(ctx, infoDaftar, infoID)
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][UpdateInfoDaftar]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
 // Banner
 func (s Service) InsertBanner(ctx context.Context, banner ppdbEntity.TableBanner) (string, error) {
 	var (
@@ -359,6 +374,22 @@ func (s Service) DeleteFasilitas(ctx context.Context, fasilitasID string) (strin
 	return result, nil
 }
 
+func (s Service) UpdateFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas, fasilitasID string) (string, error) {
+	var (
+		result string
+	)
+
+	result, err := s.ppdb.UpdateFasilitas(ctx, fasilitas, fasilitasID)
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][UpdateFasilitas]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
+// Profile Staff
 func (s Service) InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error) {
 	var (
 		result string
@@ -444,6 +475,22 @@ func (s Service) GetProfileStaffUtama(ctx context.Context) ([]ppdbEntity.TableSt
 	return staff, nil
 }
 
+func (s Service) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff, staffID string) (string, error) {
+	var (
+		result string
+	)
+
+	result, err := s.ppdb.UpdateProfileStaff(ctx, staff, staffID)
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][UpdateProfileStaff]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
+// Event
 func (s Service) InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error) {
 	var (
 		result string

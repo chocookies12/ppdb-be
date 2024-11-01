@@ -48,6 +48,8 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/insertinfopendaftaran", s.Ppdb.InsertInfoDaftar).Methods("POST")
 	ppdb.HandleFunc("/getgambarinfodaftar", s.Ppdb.GetGambarInfoDaftar).Methods("GET")
 	ppdb.HandleFunc("/getinfodaftar", s.Ppdb.GetInfoDaftar).Methods("GET")
+	ppdb.HandleFunc("/updateinfodaftar", s.Ppdb.UpdateInfoDaftar).Methods("PUT")
+
 	//Banner
 	ppdb.HandleFunc("/insertbanner", s.Ppdb.InsertBanner).Methods("POST")
 	ppdb.HandleFunc("/getgambarbanner", s.Ppdb.GetGambarBanner).Methods("GET")
@@ -61,6 +63,7 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getfasilitasslim", s.Ppdb.GetFasilitasSlim).Methods("GET")
 	ppdb.HandleFunc("/getfasilitas", s.Ppdb.GetFasilitas).Methods("GET")
 	ppdb.HandleFunc("/deletefasilitas", s.Ppdb.DeleteFasilitas).Methods("DELETE")
+	ppdb.HandleFunc("/updatefasilitas", s.Ppdb.UpdateFasilitas).Methods("PUT")
 
 	//Profile Staff
 	ppdb.HandleFunc("/insertprofilestaff", s.Ppdb.InsertProfileStaff).Methods("POST")
@@ -68,6 +71,7 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getprofilstaffslim", s.Ppdb.GetProfileStaffSlim).Methods("GET") // slim untuk pagination
 	ppdb.HandleFunc("/deleteprofilstaff", s.Ppdb.DeleteProfileStaff).Methods("DELETE")
 	ppdb.HandleFunc("/getprofilstaff", s.Ppdb.GetProfilStaffUtama).Methods("GET")
+	ppdb.HandleFunc("/updateprofilstaff", s.Ppdb.UpdateProfileStaff).Methods("PUT")
 
 	//Event Sekolah
 	ppdb.HandleFunc("/insertevent", s.Ppdb.InsertEvent).Methods("POST")

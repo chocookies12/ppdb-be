@@ -69,6 +69,9 @@ type Data interface {
 
 	//update
 	UpdateBanner(ctx context.Context, banner ppdbEntity.TableBanner, bannerID string) (string, error)
+	UpdateInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar, infoID string) (string, error)
+	UpdateFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas, fasilitasID string) (string, error)
+	UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff, staffID string) (string, error)
 }
 
 type Service struct {
