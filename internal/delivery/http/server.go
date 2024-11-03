@@ -64,6 +64,7 @@ type Handler interface {
 
 	//Peserta Didik
 	InsertPesertaDidik(w http.ResponseWriter, r *http.Request)
+	GetLoginCheck(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

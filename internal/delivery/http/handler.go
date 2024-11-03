@@ -83,6 +83,7 @@ func (s *Server) Handler() *mux.Router {
 
 	//Peserta Didik
 	ppdb.HandleFunc("/registeraccount", s.Ppdb.InsertPesertaDidik).Methods("POST")
+	ppdb.HandleFunc("/login", s.Ppdb.GetLoginCheck).Methods("POST")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

@@ -1611,3 +1611,17 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 	result = "Berhasil menyimpan data peserta didik"
 	return result, nil
 }
+
+func (d Data) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error) {
+	var (
+		err    error
+		result ppdbEntity.TablePesertaDidik
+	)
+
+	err = (*d.stmt)[getLoginCheck].QueryRowxContext(ctx, login.EmailPeserta).StructScan(&result)
+	if err != nil {
+		return result, errors.Wrap(err, "[DATA][GetLoginCheck]")
+	}
+
+	return result, nil
+}

@@ -51,6 +51,9 @@ type Data interface {
 	GetEventDetail(ctx context.Context, eventID string) (ppdbEntity.TableEvent, error)
 	GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error)
 
+	//Peserta Didik
+	GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

@@ -91,14 +91,14 @@ type TableStatus struct {
 }
 
 type TablePesertaDidik struct {
-	PesertaID         string `db:"pesertaID" json:"peserta_id"`
-	PesertaName       string `db:"pesertaName" json:"peserta_name"`
-	Password          string `db:"password" json:"password"`
-	EmailPeserta      string `db:"emailPeserta" json:"email_peserta"`
-	NoTelpHpPeserta   string `db:"noTelpHpPeserta" json:"no_telp_hp_peserta"`
-	SekolahAsalYN     string `db:"sekolahAsalYN" json:"sekolah_asal_yn"`
-	SekolahAsal       string `db:"sekolahAsal" json:"sekolah_asal"`
-	AlamatSekolahAsal string `db:"alamatSekolahAsal" json:"alamat_sekolah_asal"`
+	PesertaID         string `db:"pesertaID" json:"peserta_id,omitempty"`
+	PesertaName       string `db:"pesertaName" json:"peserta_name,omitempty"`
+	Password          string `db:"password" json:"password,omitempty"`
+	EmailPeserta      string `db:"emailPeserta" json:"email_peserta,omitempty"`
+	NoTelpHpPeserta   string `db:"noTelpHpPeserta" json:"no_telp_hp_peserta,omitempty"`
+	SekolahAsalYN     string `db:"sekolahAsalYN" json:"sekolah_asal_yn,omitempty"`
+	SekolahAsal       string `db:"sekolahAsal" json:"sekolah_asal,omitempty"`
+	AlamatSekolahAsal string `db:"alamatSekolahAsal" json:"alamat_sekolah_asal,omitempty"`
 }
 
 type TablePembayaranFormulir struct {

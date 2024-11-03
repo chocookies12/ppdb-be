@@ -192,6 +192,11 @@ const (
 							FROM T_JadwalTest
 							WHERE pesertaID = ?`
 
+	getLoginCheck = "GetLoginCheck"
+	qGetLoginCheck = `SELECT pesertaID, emailPeserta, password
+						FROM T_PesertaDidik
+						WHERE emailPeserta = ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -346,6 +351,8 @@ var (
 
 		{getLastJadwalTestId, qGetLastJadwalTestId},
 		{getJadwalTestDetail, qGetJadwalTestDetail},
+
+		{getLoginCheck, qGetLoginCheck},
 
 	}
 	insertStmt = []statement{

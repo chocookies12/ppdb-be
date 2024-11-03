@@ -5,6 +5,7 @@ import (
 	"math"
 
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
+	"ppdb-be/internal/entity/ppdb"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/errors"
 
@@ -609,5 +610,24 @@ func (s Service) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity
 	}
 
 	result = "Berhasil menyimpan data peserta didik"
+	return result, nil
+}
+
+func (s Service) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error) {
+	var (
+		err error
+		result ppdb.TablePesertaDidik
+	)
+
+	result, err = s.ppdb.GetLoginCheck(ctx, login)
+	if err != nil {
+		return result, errors.Wrap(err, "[Service][GetLoginCheck]")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(login.Password))
+	if err != nil {
+		return result, errors.Wrap(err, "[SERVICE][GetLoginCheck][CompareHash]")
+	}
+
 	return result, nil
 }
