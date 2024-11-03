@@ -129,6 +129,69 @@ const (
 	getStatus  = "GetStatus"
 	qGetStatus = `SELECT statusID, statusName, statusDesc FROM T_Status`
 
+	getLastPesertaDidikId  = "GetLastPesertaDidikId"
+	qGetLastPesertaDidikId = `SELECT pesertaID
+								FROM T_PesertaDidik
+								ORDER BY pesertaID DESC LIMIT 1`
+
+	getLastPembayaranFormulirId  = "GetLastPembayaranFormulirId"
+	qGetLastPembayaranFormulirId = `SELECT pembayaranID
+								FROM T_PembayaranFormulir
+								ORDER BY  pembayaranID DESC LIMIT 1`
+
+	getPembayaranFormulirDetail  = "GetPembayaranFormulirDetail"
+	qGetPembayaranFormulirDetail = `SELECT pembayaranID, pesertaID, statusID, 
+										IFNULL(CAST(tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, hargaFormulir, buktiPembayaran
+									FROM T_PembayaranFormulir
+									WHERE pesertaID = ?`
+
+	getLastFormulirId  = "GetLastFormulirId"
+	qGetLastFormulirId = `SELECT formulirID
+							FROM T_Formulir
+							ORDER BY  formulirID DESC LIMIT 1`
+
+	getLastKontakPesertaId  = "GetLastKontakPesertaId"
+	qGetLastKontakPesertaId = `SELECT kontakID
+								FROM T_KontakPeserta
+								ORDER BY  kontakID DESC LIMIT 1`
+
+	getLastOrtuId  = "GetLastOrtuId"
+	qGetLastOrtuId = `SELECT ortuID
+						FROM T_Ortu
+						ORDER BY  ortuID DESC LIMIT 1`
+
+	getFormulirDetail  = "GetFormulirDetail"
+	qGetFormulirDetail = `SELECT f.formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, tempatLahir, 
+							IFNULL(CAST(tglLahir AS DATE), '0001-01-01') AS tglLahir, 
+							NISN, Kelas, tglSubmit, statusID, kontakID, alamatTerakhir, kodePos, noTelpRumah,
+							ortuID, namaAyah, pekerjaanAyah, noTelpHpAyah, namaIbu, pekerjaanIbu, noTelpHpIbu, namaWali, pekerjaanWali, noTelpHpWali
+						FROM T_Formulir f
+							JOIN T_KontakPeserta kp ON f.formulirID = kp.formulirID
+							JOIN T_Ortu o ON f.formulirID = o.formulirID
+						WHERE pesertaID = ?`
+
+	getLastBerkasId  = "GetLastBerkasId"
+	qGetLastBerkasId = `SELECT berkasID
+						FROM T_Berkas
+						ORDER BY berkasID DESC LIMIT 1`
+
+	getBerkasDetail  = "GetBerkasDetail"
+	qGetBerkasDetail = `SELECT berkasID, pesertaID, statusID, aktaLahir, pasPhoto, rapor, 
+							IFNULL(CAST(tanggalUpload AS DATE), '0001-01-01') AS tanggalUpload
+						FROM T_Berkas
+						WHERE pesertaID = ?`
+
+	getLastJadwalTestId  = "GetLastJadwalTestId"
+	qGetLastJadwalTestId = `SELECT testID
+							FROM T_JadwalTest
+							ORDER BY testID DESC LIMIT 1`
+
+	getJadwalTestDetail  = "GetJadwalTestDetail"
+	qGetJadwalTestDetail = `SELECT testID, pesertaID, statusID, IFNULL(CAST(tglTest AS DATE), '0001-01-01') AS tglTest,  
+								IFNULL(CAST(waktuTest AS TIME), '0001-01-01 00:00:00') AS waktuTest
+							FROM T_JadwalTest
+							WHERE pesertaID = ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -153,6 +216,42 @@ const (
 	insertEvent  = "InsertEvent"
 	qInsertEvent = `INSERT INTO T_EventSekolah (eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage)
 					VALUES(?, ?, ?, ?, ?, ?)`
+
+	insertPesertaDidik  = "InsertPesertaDidik"
+	qInsertPesertaDidik = `INSERT INTO T_PesertaDidik
+								(pesertaID, pesertaName, password, emailPeserta, noTelpHpPeserta, sekolahAsalYN, sekolahAsal, alamatSekolahAsal)
+							VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
+
+	insertPembayaranFormulir  = "InsertPembayaranFormulir"
+	qInsertPembayaranFormulir = `INSERT INTO T_PembayaranFormulir
+									(pembayaranID, pesertaID, statusID, tglPembayaran, hargaFormulir, buktiPembayaran)
+								VALUES(?, ?, ?, ?, ?, "")`
+
+	insertFormulir  = "InsertFormulir"
+	qInsertFormulir = `INSERT INTO u868654674_ppdb.T_Formulir
+							(formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, tempatLahir, tglLahir, NISN, Kelas, tglSubmit, statusID)
+						VALUES(?, ?, ?, "", "", "", "", ?, "", "", ?, ?)`
+
+	insertKontakPeserta  = "InsertKontakPeserta"
+	qInsertKontakPeserta = `INSERT INTO T_KontakPeserta
+								(kontakID, formulirID, alamatTerakhir, kodePos, noTelpRumah)
+							VALUES(?, ?, "", "", "")`
+
+	insertOrtu  = "InsertOrtu"
+	qInsertOrtu = `INSERT INTO T_Ortu
+						(ortuID, formulirID, namaAyah, pekerjaanAyah, noTelpHpAyah, namaIbu, pekerjaanIbu, noTelpHpIbu, 
+						namaWali, pekerjaanWali, noTelpHpWali)
+					VALUES(?, ?, "", "", "", "", "", "", "", "", "");`
+
+	insertBerkas  = "InsertBerkas"
+	qInsertBerkas = `INSERT INTO u868654674_ppdb.T_Berkas
+						(berkasID, pesertaID, statusID, aktaLahir, pasPhoto, rapor, tanggalUpload)
+					VALUES(?, ?, ?, "", "", "", ?);`
+
+	insertJadwalTest  = "InsertJadwalTest"
+	qInsertJadwalTest = `INSERT INTO u868654674_ppdb.T_JadwalTest
+							(testID, pesertaID, statusID, tglTest, waktuTest)
+						VALUES(?, ?, ?, ?, CAST(? AS TIME));`
 
 	//query delete
 	deleteDataAdmin  = "DeleteDataAdmin"
@@ -231,6 +330,23 @@ var (
 		{getEventPagination, qGetEventPagination},
 		{getEventDetail, qGetEventDetail},
 		{getEventUtama, qGetEventUtama},
+
+		{getLastPesertaDidikId, qGetLastPesertaDidikId},
+
+		{getLastPembayaranFormulirId, qGetLastPembayaranFormulirId},
+		{getPembayaranFormulirDetail, qGetPembayaranFormulirDetail},
+
+		{getLastFormulirId, qGetLastFormulirId},
+		{getLastKontakPesertaId, qGetLastKontakPesertaId},
+		{getLastOrtuId, qGetLastOrtuId},
+		{getFormulirDetail, qGetFormulirDetail},
+
+		{getLastBerkasId, qGetLastBerkasId},
+		{getBerkasDetail, qGetBerkasDetail},
+
+		{getLastJadwalTestId, qGetLastJadwalTestId},
+		{getJadwalTestDetail, qGetJadwalTestDetail},
+
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -239,6 +355,13 @@ var (
 		{insertFasilitas, qInsertFasilitas},
 		{insertProfileStaff, qInsertProfileStaff},
 		{insertEvent, qInsertEvent},
+		{insertPesertaDidik, qInsertPesertaDidik},
+		{insertPembayaranFormulir, qInsertPembayaranFormulir},
+		{insertFormulir, qInsertFormulir},
+		{insertKontakPeserta, qInsertKontakPeserta},
+		{insertOrtu, qInsertOrtu},
+		{insertBerkas, qInsertBerkas},
+		{insertJadwalTest, qInsertJadwalTest},
 	}
 	updateStmt = []statement{
 		{updateBanner, qUpdateBanner},

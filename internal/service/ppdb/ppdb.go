@@ -60,6 +60,8 @@ type Data interface {
 	InsertProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff) (string, error)
 	InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error)
 
+	InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.TablePesertaDidik) (string, error)
+
 	//delete
 	DeleteAdmin(ctx context.Context, adminID string) (string, error)
 	DeleteBanner(ctx context.Context, bannerID string) (string, error)

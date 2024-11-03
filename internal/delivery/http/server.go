@@ -61,6 +61,9 @@ type Handler interface {
 	GetEventDetail(w http.ResponseWriter, r *http.Request)
 	GetEventUtama(w http.ResponseWriter, r *http.Request)
 	DeleteEvent(w http.ResponseWriter, r *http.Request)
+
+	//Peserta Didik
+	InsertPesertaDidik(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

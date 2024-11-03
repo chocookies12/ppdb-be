@@ -7,6 +7,8 @@ import (
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/errors"
+
+	"golang.org/x/crypto/bcrypt"
 	// "encoding/json"
 	// "fmt"
 	// "log"
@@ -582,5 +584,30 @@ func (s Service) DeleteEvent(ctx context.Context, eventID string) (string, error
 		return result, errors.Wrap(err, "[Service][DeleteEvent]")
 	}
 
+	return result, nil
+}
+
+
+func (s Service) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.TablePesertaDidik) (string, error) {
+	var (
+		err error
+		result string
+	)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(pesertadidik.Password), bcrypt.DefaultCost)
+	if err != nil {
+		result = "Gagal menyimpan data peserta didik"
+		return result, errors.Wrap(err, "[SERVICE][InsertUser][Hash]")
+	}
+
+	pesertadidik.Password = string(hashedPassword)
+
+	result, err = s.ppdb.InsertPesertaDidik(ctx, pesertadidik)
+	if err != nil {
+		result = "Gagal menyimpan data peserta didik"
+		return result, errors.Wrap(err, "[Service][InsertEvent]")
+	}
+
+	result = "Berhasil menyimpan data peserta didik"
 	return result, nil
 }

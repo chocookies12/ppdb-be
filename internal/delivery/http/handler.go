@@ -81,6 +81,9 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/geteventutama", s.Ppdb.GetEventUtama).Methods("GET")
 	ppdb.HandleFunc("/deleteevent", s.Ppdb.DeleteEvent).Methods("DELETE")
 
+	//Peserta Didik
+	ppdb.HandleFunc("/registeraccount", s.Ppdb.InsertPesertaDidik).Methods("POST")
+
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r
 }

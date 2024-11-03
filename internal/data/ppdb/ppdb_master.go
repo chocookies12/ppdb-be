@@ -999,13 +999,13 @@ func (d Data) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaf
 		err    error
 	)
 
-	_, err = (*d.stmt)[updateProfileStaff].ExecContext(ctx, 
-		staff.StaffName, 
-		staff.StaffGender, 
-		staff.StaffPosition, 
-		staff.StaffTmptLahir, 
+	_, err = (*d.stmt)[updateProfileStaff].ExecContext(ctx,
+		staff.StaffName,
+		staff.StaffGender,
+		staff.StaffPosition,
+		staff.StaffTmptLahir,
 		staff.StaffTglLahir.Format("2006-01-02"), // Format tanggal
-		staff.StaffPhoto, 
+		staff.StaffPhoto,
 		staffID)
 
 	if err != nil {
@@ -1016,7 +1016,6 @@ func (d Data) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaf
 	result = "Berhasil"
 	return result, err
 }
-
 
 // EVENT
 func (d Data) InsertEvent(ctx context.Context, event ppdbEntity.TableEvent) (string, error) {
@@ -1281,5 +1280,334 @@ func (d Data) DeleteEvent(ctx context.Context, eventID string) (string, error) {
 	}
 
 	result = "Berhasil"
+	return result, nil
+}
+
+// Peserta Didik
+func (d Data) GetLastPesertaDidikId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastPesertaDidikId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastPesertaDidikId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("D%04d", num+1)
+	} else {
+		newID = "D0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastPembayaranFormulirId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastPembayaranFormulirId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastPembayaranFormulirId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("P%04d", num+1)
+	} else {
+		newID = "P0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastFormulirId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastFormulirId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastFormulirId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("F%04d", num+1)
+	} else {
+		newID = "F0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastKontakPesertaId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastKontakPesertaId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastKontakPesertaId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("K%04d", num+1)
+	} else {
+		newID = "K0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastOrtuId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastOrtuId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastOrtuId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("O%04d", num+1)
+	} else {
+		newID = "O0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastBerkasId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastBerkasId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastBerkasId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("B%04d", num+1)
+	} else {
+		newID = "B0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) GetLastJadwalTestId(ctx context.Context) (string, error) {
+	var (
+		err    error
+		lastID string
+		newID  string
+	)
+
+	err = (*d.stmt)[getLastJadwalTestId].QueryRowxContext(ctx).Scan(&lastID)
+	if err != nil && err != sql.ErrNoRows {
+		return newID, errors.Wrap(err, "[DATA][GetLastJadwalTestId]")
+	}
+
+	if lastID != "" {
+		num, _ := strconv.Atoi(lastID[1:])
+		newID = fmt.Sprintf("J%04d", num+1)
+	} else {
+		newID = "J0001"
+	}
+
+	return newID, nil
+}
+
+func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.TablePesertaDidik) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	// Parse the date string
+	dateString := "0001-01-01"
+	layout := "2006-01-02" 
+	defaultTime, err := time.Parse(layout, dateString)
+	if err != nil {
+		result = "Gagal parse"
+		return result, errors.Wrap(err, "[DATA][GetLastPesertaDidikId]")
+	}
+
+	// Peserta Didik
+	pesertadidik.PesertaID, err = d.GetLastPesertaDidikId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastPesertaDidikId]")
+	}
+
+	// Pembayaran Formulir
+	pembayaranformulir := ppdbEntity.TablePembayaranFormulir{}
+
+	pembayaranformulir.PembayaranID, err = d.GetLastPembayaranFormulirId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastPesertaDidikId]")
+	}
+	pembayaranformulir.PesertaID = pesertadidik.PesertaID
+	pembayaranformulir.StatusID = "S001"
+	pembayaranformulir.HargaFormulir = 150000
+	pembayaranformulir.TglPembayaran = defaultTime
+
+	// Formulir
+	formulir := ppdbEntity.TableFormulir{}
+
+	formulir.FormulirID, err = d.GetLastFormulirId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastFormulirId]")
+	}
+	formulir.PesertaID = pesertadidik.PesertaID
+	formulir.PembayaranID = pembayaranformulir.PembayaranID
+	formulir.StatusID = "S001"
+	formulir.TglLahir = defaultTime
+	formulir.TglSubmit = defaultTime
+
+	// Kontak Peserta
+	kontakpeserta := ppdbEntity.TableKontakPeserta{}
+
+	kontakpeserta.KontakID, err = d.GetLastKontakPesertaId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastKontakPesertaId]")
+	}
+	kontakpeserta.FormulirID = formulir.FormulirID
+
+	// Ortu
+	ortu := ppdbEntity.TableOrtu{}
+
+	ortu.OrtuID, err = d.GetLastOrtuId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastOrtuId]")
+	}
+	ortu.FormulirID = formulir.FormulirID
+
+	// Berkas
+	berkas := ppdbEntity.TableBerkas{}
+
+	berkas.BerkasID, err = d.GetLastBerkasId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastBerkasId]")
+	}
+	berkas.PesertaID = pesertadidik.PesertaID
+	berkas.StatusID = "S001"
+	berkas.TanggalUpload = defaultTime
+
+	// JadwalTest
+	jadwaltest := ppdbEntity.TableJadwalTest{}
+
+	jadwaltest.TestID, err = d.GetLastJadwalTestId(ctx)
+	if err != nil && err != sql.ErrNoRows {
+		result = "Gagal mengambil ID terakhir"
+		return result, errors.Wrap(err, "[DATA][GetLastJadwalTestId]")
+	}
+	jadwaltest.PesertaID = pesertadidik.PesertaID
+	jadwaltest.StatusID = "S001"
+	jadwaltest.TglTest = defaultTime
+	jadwaltest.WaktuTest = defaultTime
+
+	// Insert Peserta Didik
+	_, err = (*d.stmt)[insertPesertaDidik].ExecContext(ctx,
+		pesertadidik.PesertaID,
+		pesertadidik.PesertaName,
+		pesertadidik.Password,
+		pesertadidik.EmailPeserta,
+		pesertadidik.NoTelpHpPeserta,
+		pesertadidik.SekolahAsalYN,
+		pesertadidik.SekolahAsal,
+		pesertadidik.AlamatSekolahAsal)
+	if err != nil {
+		return "Gagal menyimpan data peserta didik", errors.Wrap(err, "[DATA][InsertPesertaDidik]")
+	}
+
+	// Insert Pembayaran Formulir
+	_, err = (*d.stmt)[insertPembayaranFormulir].ExecContext(ctx,
+		pembayaranformulir.PembayaranID,
+		pembayaranformulir.PesertaID,
+		pembayaranformulir.StatusID,
+		pembayaranformulir.TglPembayaran,
+		pembayaranformulir.HargaFormulir)
+	if err != nil {
+		return "Gagal menyimpan data pembayaran formulir", errors.Wrap(err, "[DATA][InsertPembayaranFormulir]")
+	}
+
+	// Insert Formulir
+	_, err = (*d.stmt)[insertFormulir].ExecContext(ctx,
+		formulir.FormulirID,
+		formulir.PesertaID,
+		formulir.PembayaranID,
+		formulir.TglLahir,
+		formulir.TglSubmit,
+		formulir.StatusID)
+	if err != nil {
+		return "Gagal menyimpan data formulir", errors.Wrap(err, "[DATA][InsertFormulir]")
+	}
+
+	// Insert Kontak Peserta
+	_, err = (*d.stmt)[insertKontakPeserta].ExecContext(ctx,
+		kontakpeserta.KontakID,
+		kontakpeserta.FormulirID)
+	if err != nil {
+		return "Gagal menyimpan data kontak peserta", errors.Wrap(err, "[DATA][InsertKontakPeserta]")
+	}
+
+	// Insert Ortu
+	_, err = (*d.stmt)[insertOrtu].ExecContext(ctx,
+		ortu.OrtuID,
+		ortu.FormulirID)
+	if err != nil {
+		return "Gagal menyimpan data ortu", errors.Wrap(err, "[DATA][InsertOrtu]")
+	}
+
+	// Insert Berkas
+	_, err = (*d.stmt)[insertBerkas].ExecContext(ctx,
+		berkas.BerkasID,
+		berkas.PesertaID,
+		berkas.StatusID,
+		berkas.TanggalUpload,
+	)
+	if err != nil {
+		return "Gagal menyimpan data berkas", errors.Wrap(err, "[DATA][InsertBerkas]")
+	}
+
+	// Insert Jadwal Test
+	_, err = (*d.stmt)[insertJadwalTest].ExecContext(ctx,
+		jadwaltest.TestID,
+		jadwaltest.PesertaID,
+		jadwaltest.StatusID,
+		jadwaltest.TglTest,
+		jadwaltest.WaktuTest,
+	)
+	if err != nil {
+		return "Gagal menyimpan data jadwal test", errors.Wrap(err, "[DATA][InsertJadwalTest]")
+	}
+
+	result = "Berhasil menyimpan data peserta didik"
 	return result, nil
 }

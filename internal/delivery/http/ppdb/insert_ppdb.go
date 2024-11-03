@@ -418,3 +418,38 @@ func (h *Handler) InsertEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
+
+
+func (h *Handler) InsertPesertaDidik(w http.ResponseWriter, r *http.Request) {
+	var (
+		pesertadidik ppdbEntity.TablePesertaDidik
+		resp  response.Response
+	)
+
+	// Decode JSON dari body request
+	err := json.NewDecoder(r.Body).Decode(&pesertadidik)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	// Panggil service untuk memasukkan data pesertadidik
+	result, err := h.ppdbSvc.InsertPesertaDidik(r.Context(), pesertadidik)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Peserta didik data inserted successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
