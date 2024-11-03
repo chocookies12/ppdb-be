@@ -493,3 +493,110 @@ func (h *Handler) GetLoginCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
+
+func (h *Handler) GetPembayaranFormulirDetail(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp  response.Response
+	)
+
+	// Panggil service untuk memasukkan data pesertadidik
+	result, err := h.ppdbSvc.GetPembayaranFormulirDetail(r.Context(), r.FormValue("idpesertadidik"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Berhasil mendapatkan pembayaran formulir"
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (h *Handler) GetFormulirDetail(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp  response.Response
+	)
+
+	// Panggil service untuk memasukkan data pesertadidik
+	result, err := h.ppdbSvc.GetFormulirDetail(r.Context(), r.FormValue("idpesertadidik"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Berhasil mendapatkan formulir"
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+
+func (h *Handler) GetBerkasDetail(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp  response.Response
+	)
+
+	// Panggil service untuk memasukkan data pesertadidik
+	result, err := h.ppdbSvc.GetBerkasDetail(r.Context(), r.FormValue("idpesertadidik"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Berhasil mendapatkan berkas"
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+
+func (h *Handler) GetJadwalTestDetail(w http.ResponseWriter, r *http.Request) {
+	var (
+		resp  response.Response
+	)
+
+	// Panggil service untuk memasukkan data pesertadidik
+	result, err := h.ppdbSvc.GetJadwalTestDetail(r.Context(), r.FormValue("idpesertadidik"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Berhasil mendapatkan jadwal test"
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+

@@ -54,6 +54,14 @@ type Data interface {
 	//Peserta Didik
 	GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error)
 
+	GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TablePembayaranFormulir, error)
+
+	GetFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableDataFormulir, error)
+
+	GetBerkasDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableBerkas, error)
+
+	GetJadwalTestDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableJadwalTest, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

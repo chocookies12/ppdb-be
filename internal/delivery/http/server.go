@@ -65,6 +65,11 @@ type Handler interface {
 	//Peserta Didik
 	InsertPesertaDidik(w http.ResponseWriter, r *http.Request)
 	GetLoginCheck(w http.ResponseWriter, r *http.Request)
+
+	GetPembayaranFormulirDetail(w http.ResponseWriter, r *http.Request)
+	GetFormulirDetail(w http.ResponseWriter, r *http.Request)
+	GetBerkasDetail(w http.ResponseWriter, r *http.Request)
+	GetJadwalTestDetail(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

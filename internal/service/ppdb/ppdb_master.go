@@ -631,3 +631,43 @@ func (s Service) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesert
 
 	return result, nil
 }
+
+func (s Service) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TablePembayaranFormulir, error) {
+	
+	pembayaranformulir, err := s.ppdb.GetPembayaranFormulirDetail(ctx, idpesertadidik)
+	if err != nil {
+		return pembayaranformulir, errors.Wrap(err, "[SERVICE][GetPembayaranFormulirDetail]")
+	}
+
+	return pembayaranformulir, nil
+}
+
+func (s Service) GetFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableDataFormulir, error) {
+	
+	formulir, err := s.ppdb.GetFormulirDetail(ctx, idpesertadidik)
+	if err != nil {
+		return formulir, errors.Wrap(err, "[SERVICE][GetFormulirDetail]")
+	}
+
+	return formulir, nil
+}
+
+func (s Service) GetBerkasDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableBerkas, error) {
+	
+	berkas, err := s.ppdb.GetBerkasDetail(ctx, idpesertadidik)
+	if err != nil {
+		return berkas, errors.Wrap(err, "[SERVICE][GetBerkasDetail]")
+	}
+
+	return berkas, nil
+}
+
+func (s Service) GetJadwalTestDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableJadwalTest, error) {
+	
+	jadwaltest, err := s.ppdb.GetJadwalTestDetail(ctx, idpesertadidik)
+	if err != nil {
+		return jadwaltest, errors.Wrap(err, "[SERVICE][GetJadwalTestDetail]")
+	}
+
+	return jadwaltest, nil
+}

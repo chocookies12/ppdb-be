@@ -1445,8 +1445,8 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 	)
 
 	// Parse the date string
-	dateString := "0001-01-01"
-	layout := "2006-01-02" 
+	dateString := "0001-01-02"
+	layout := "2006-01-02"
 	defaultTime, err := time.Parse(layout, dateString)
 	if err != nil {
 		result = "Gagal parse"
@@ -1624,4 +1624,77 @@ func (d Data) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDi
 	}
 
 	return result, nil
+}
+
+func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePembayaranFormulir, error) {
+	var (
+		pembayaranformulir ppdbEntity.TablePembayaranFormulir
+	)
+
+	var tglPembayaran sql.NullString
+
+	// Prepare the query
+	row := (*d.stmt)[getPembayaranFormulirDetail].QueryRowxContext(ctx, idpesertadidik)
+
+	// Use Scan to assign each column value to the struct fields individually
+	err := row.Scan(
+		&pembayaranformulir.PembayaranID,
+		&pembayaranformulir.PesertaID,
+		&pembayaranformulir.StatusID,
+		&tglPembayaran,
+		&pembayaranformulir.HargaFormulir,
+		&pembayaranformulir.BuktiPembayaran,
+	)
+	if err != nil {
+		return pembayaranformulir, errors.Wrap(err, "[DATA][GetPembayaranFormulirDetail]")
+	}
+	t, err := time.Parse("2006-01-02", tglPembayaran.String)
+	if err != nil {
+		return pembayaranformulir, errors.Wrap(err, "[DATA] [GetPembayaranFormulirDetail] - Failed to parse date")
+	}
+	pembayaranformulir.TglPembayaran = t
+
+	return pembayaranformulir, nil
+}
+
+func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableDataFormulir, error) {
+
+	var (
+		formulir ppdbEntity.TableDataFormulir
+	)
+
+	err := (*d.stmt)[getFormulirDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&formulir)
+	if err != nil {
+		return formulir, errors.Wrap(err, "[DATA][GetFormulirDetail]")
+	}
+
+	return formulir, nil
+}
+
+func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableBerkas, error) {
+
+	var (
+		berkas ppdbEntity.TableBerkas
+	)
+
+	err := (*d.stmt)[getBerkasDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&berkas)
+	if err != nil {
+		return berkas, errors.Wrap(err, "[DATA][GetBerkasDetail]")
+	}
+
+	return berkas, nil
+}
+
+func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error) {
+
+	var (
+		jadwaltest ppdbEntity.TableJadwalTest
+	)
+
+	err := (*d.stmt)[getJadwalTestDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&jadwaltest)
+	if err != nil {
+		return jadwaltest, errors.Wrap(err, "[DATA][GetJadwalTestDetail]")
+	}
+
+	return jadwaltest, nil
 }
