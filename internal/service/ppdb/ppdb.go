@@ -86,6 +86,12 @@ type Data interface {
 	UpdateFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas, fasilitasID string) (string, error)
 	UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff, staffID string) (string, error)
 	UpdateEvent(ctx context.Context, event ppdbEntity.TableEvent, eventID string) (string, error)
+	UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error)
+	UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataFormulir) (string, error)
+	UpdateKontakPeserta(ctx context.Context, kontakpeserta ppdbEntity.TableDataFormulir) (string, error)
+	UpdateOrtu(ctx context.Context, ortu ppdbEntity.TableDataFormulir) (string, error)
+	UpdateBerkas(ctx context.Context, berkas ppdbEntity.TableBerkas) (string, error)
+	UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJadwalTest) (string, error)
 }
 
 type Service struct {

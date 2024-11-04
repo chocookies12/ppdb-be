@@ -411,3 +411,212 @@ func (h *Handler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 	w.Write([]byte("Data Staff berhasil diperbarui"))
 }
+
+func (h *Handler) UpdatePembayaranFormulir(w http.ResponseWriter, r *http.Request) {
+	var (
+		pembayaranformulir ppdbEntity.TablePembayaranFormulir
+		resp               response.Response
+		fileData []byte
+	)
+
+	pembayaranformulir.PembayaranID = r.FormValue("pembayaran_id")
+	pembayaranformulir.StatusID =r.FormValue("status_id")
+
+	file, _, err := r.FormFile("bukti_pembayaran")
+	if err != nil && file != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] Unable to parse form file")
+		return
+	}
+
+	if file != nil {
+		fileData, err = io.ReadAll(file)
+		if err != nil {
+			resp = httpHelper.ParseErrorCode(err.Error())
+			log.Printf("[ERROR] Unable to read file")
+			return
+		}
+		defer file.Close()
+	} else {
+		fileData = nil
+	}
+
+	pembayaranformulir.BuktiPembayaran = fileData
+
+	// Panggil service untuk memasukkan data pembayaranformulir
+	result, err := h.ppdbSvc.UpdatePembayaranFormulir(r.Context(), pembayaranformulir)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Pembayaran formulir data updated successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (h *Handler) UpdateFormulir(w http.ResponseWriter, r *http.Request) {
+	var (
+		formulir ppdbEntity.TableDataFormulir
+		resp     response.Response
+	)
+
+	// Decode JSON dari body request
+	err := json.NewDecoder(r.Body).Decode(&formulir)
+	if err != nil {
+		fmt.Println("err", err)
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	// Panggil service untuk memasukkan data formulir
+	result, err := h.ppdbSvc.UpdateFormulir(r.Context(), formulir)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Formulir data updated successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (h *Handler) UpdateBerkas(w http.ResponseWriter, r *http.Request) {
+	var (
+		berkas ppdbEntity.TableBerkas
+		resp   response.Response
+	)
+
+	berkas.BerkasID = r.FormValue("berkas_id")
+	berkas.StatusID = r.FormValue("status_id")
+
+	fileakta, _, err := r.FormFile("akta_lahir")
+	if err != nil && fileakta != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] Unable to parse form fileakta")
+		return
+	}
+
+	if fileakta != nil {
+		berkas.AktalLahir, err = io.ReadAll(fileakta)
+		if err != nil {
+			resp = httpHelper.ParseErrorCode(err.Error())
+			log.Printf("[ERROR] Unable to read file")
+			return
+		}
+		defer fileakta.Close()
+	} else {
+		berkas.AktalLahir = nil
+	}
+
+	filephoto, _, err := r.FormFile("pas_photo")
+	if err != nil && filephoto != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] Unable to parse form filephoto")
+		return
+	}
+
+	if filephoto != nil {
+		berkas.PasPhoto, err = io.ReadAll(filephoto)
+		if err != nil {
+			resp = httpHelper.ParseErrorCode(err.Error())
+			log.Printf("[ERROR] Unable to read filephoto")
+			return
+		}
+		defer filephoto.Close()
+	} else {
+		berkas.PasPhoto = nil
+	}
+
+	filerapor, _, err := r.FormFile("rapor")
+	if err != nil && filerapor != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] Unable to parse form filerapor")
+		return
+	}
+
+	if filerapor != nil {
+		berkas.Rapor, err = io.ReadAll(filerapor)
+		if err != nil {
+			resp = httpHelper.ParseErrorCode(err.Error())
+			log.Printf("[ERROR] Unable to read filerapor")
+			return
+		}
+		defer filerapor.Close()
+	} else {
+		berkas.Rapor = nil
+	}
+
+	// Panggil service untuk memasukkan data berkas
+	result, err := h.ppdbSvc.UpdateBerkas(r.Context(), berkas)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Berkas data updated successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+func (h *Handler) UpdateJadwalTest(w http.ResponseWriter, r *http.Request) {
+	var (
+		jadwaltest ppdbEntity.TableJadwalTest
+		resp       response.Response
+	)
+
+	// Decode JSON dari body request
+	err := json.NewDecoder(r.Body).Decode(&jadwaltest)
+	if err != nil {
+		fmt.Println("err", err)
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	// Panggil service untuk memasukkan data jadwaltest
+	result, err := h.ppdbSvc.UpdateJadwalTest(r.Context(), jadwaltest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Jadwal test data updated successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}

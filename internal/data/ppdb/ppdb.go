@@ -301,6 +301,38 @@ const (
 	qUpdateEvent = `UPDATE T_EventSekolah 
 					SET eventHeader = ?, eventStartDate = ?, eventEndDate = ?, eventDesc = ?, eventImage = ?
 					WHERE eventID = ?`
+
+	updatePembayaranFormulir  = "UpdatePembayaranFormulir"
+	qUpdatePembayaranFormulir = `UPDATE T_PembayaranFormulir
+								SET statusID=?, tglPembayaran=NOW() + INTERVAL 7 HOUR, buktiPembayaran=?
+								WHERE pembayaranID=?`
+
+	updateFormulir  = "UpdateFormulir"
+	qUpdateFormulir = `UPDATE T_Formulir
+						SET jurusanID=?, agamaID=?, genderPeserta=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
+						WHERE formulirID=?`
+								
+	updateKontakPeserta  = "UpdateKontakPeserta"
+	qUpdateKontakPeserta = `UPDATE T_KontakPeserta
+							SET alamatTerakhir=?, kodePos=?, noTelpRumah=?
+							WHERE kontakID=?`
+
+	updateOrtu  = "UpdateOrtu"
+	qUpdateOrtu = `UPDATE T_Ortu
+					SET namaAyah=?, pekerjaanAyah=?, noTelpHpAyah=?, namaIbu=?, pekerjaanIbu=?, 
+						noTelpHpIbu=?, namaWali=?, pekerjaanWali=?, noTelpHpWali=?
+					WHERE ortuID=?;`
+
+	updateBerkas  = "UpdateBerkas"
+	qUpdateBerkas = `UPDATE T_Berkas
+						SET statusID=?, aktaLahir=?, pasPhoto=?, rapor=?, tanggalUpload=NOW() + INTERVAL 7 HOUR
+						WHERE berkasID=?`
+
+	updateJadwalTest  = "UpdateJadwalTest"
+	qUpdateJadwalTest = `UPDATE T_JadwalTest
+							SET statusID=?, tglTest=?, waktuTest=CAST(? AS TIME)
+							WHERE testID=?`
+						
 )
 
 var (
@@ -380,6 +412,12 @@ var (
 		{updateFasilitas, qUpdateFasilitas},
 		{updateProfileStaff, qUpdateProfileStaff},
 		{updateEvent, qUpdateEvent},
+		{updatePembayaranFormulir, qUpdatePembayaranFormulir},
+		{updateFormulir, qUpdateFormulir},
+		{updateKontakPeserta, qUpdateKontakPeserta},
+		{updateOrtu, qUpdateOrtu},
+		{updateBerkas, qUpdateBerkas},
+		{updateJadwalTest, qUpdateJadwalTest},
 	}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},

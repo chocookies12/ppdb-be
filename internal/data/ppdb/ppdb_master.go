@@ -1495,7 +1495,7 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 		return result, errors.Wrap(err, "[DATA][GetLastPesertaDidikId]")
 	}
 	pembayaranformulir.PesertaID = pesertadidik.PesertaID
-	pembayaranformulir.StatusID = "S001"
+	pembayaranformulir.StatusID = "S0001"
 	pembayaranformulir.HargaFormulir = 150000
 	pembayaranformulir.TglPembayaran = defaultTime
 
@@ -1509,7 +1509,7 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 	}
 	formulir.PesertaID = pesertadidik.PesertaID
 	formulir.PembayaranID = pembayaranformulir.PembayaranID
-	formulir.StatusID = "S001"
+	formulir.StatusID = "S0001"
 	formulir.TglLahir = defaultTime
 	formulir.TglSubmit = defaultTime
 
@@ -1542,7 +1542,7 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 		return result, errors.Wrap(err, "[DATA][GetLastBerkasId]")
 	}
 	berkas.PesertaID = pesertadidik.PesertaID
-	berkas.StatusID = "S001"
+	berkas.StatusID = "S0001"
 	berkas.TanggalUpload = defaultTime
 
 	// JadwalTest
@@ -1554,7 +1554,7 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 		return result, errors.Wrap(err, "[DATA][GetLastJadwalTestId]")
 	}
 	jadwaltest.PesertaID = pesertadidik.PesertaID
-	jadwaltest.StatusID = "S001"
+	jadwaltest.StatusID = "S0001"
 	jadwaltest.TglTest = defaultTime
 	jadwaltest.WaktuTest = defaultTime
 
@@ -1737,7 +1737,7 @@ func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbE
 
 	var (
 		tglUpload sql.NullString
-		berkas ppdbEntity.TableBerkas
+		berkas    ppdbEntity.TableBerkas
 	)
 
 	err := (*d.stmt)[getBerkasDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
@@ -1764,8 +1764,8 @@ func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbE
 func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error) {
 
 	var (
-		tglTest sql.NullString
-		waktuTest sql.NullString
+		tglTest    sql.NullString
+		waktuTest  sql.NullString
 		jadwaltest ppdbEntity.TableJadwalTest
 	)
 
@@ -1774,7 +1774,7 @@ func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (p
 		&jadwaltest.PesertaID,
 		&jadwaltest.StatusID,
 		&tglTest,
-		&waktuTest,)
+		&waktuTest)
 	if err != nil {
 		return jadwaltest, errors.Wrap(err, "[DATA][GetJadwalTestDetail]")
 	}
@@ -1792,4 +1792,117 @@ func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (p
 	jadwaltest.WaktuTest = tWaktu
 
 	return jadwaltest, nil
+}
+
+func (d Data) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+
+	_, err := (*d.stmt)[updatePembayaranFormulir].ExecContext(ctx,
+		pembayaranformulir.StatusID,
+		pembayaranformulir.BuktiPembayaran,
+		pembayaranformulir.PembayaranID,
+	)
+	if err != nil {
+		return "Gagal update data pembayaran formulir", errors.Wrap(err, "[DATA][UpdatePembayaranFormulir]")
+	}
+
+	result := "Berhasil update data pembayaran formulir"
+
+	return result, nil
+}
+
+func (d Data) UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataFormulir) (string, error) {
+
+	_, err := (*d.stmt)[updateFormulir].ExecContext(ctx,
+		formulir.JurusanID,
+		formulir.AgamaID,
+		formulir.GenderPeserta,
+		formulir.TempatLahir,
+		formulir.TglLahir,
+		formulir.NISN,
+		formulir.Kelas,
+		formulir.StatusID,
+		formulir.FormulirID,
+	)
+	if err != nil {
+		return "Gagal update data formulir", errors.Wrap(err, "[DATA][UpdateFormulir]")
+	}
+
+	result := "Berhasil update data formulir"
+
+	return result, nil
+}
+
+func (d Data) UpdateKontakPeserta(ctx context.Context, kontakpeserta ppdbEntity.TableDataFormulir) (string, error) {
+
+	_, err := (*d.stmt)[updateKontakPeserta].ExecContext(ctx,
+		kontakpeserta.AlamatTerakhir,
+		kontakpeserta.KodePos,
+		kontakpeserta.NoTelpRumah,
+		kontakpeserta.KontakID,
+	)
+	if err != nil {
+		return "Gagal update data kontak peserta", errors.Wrap(err, "[DATA][UpdateKontakPeserta]")
+	}
+
+	result := "Berhasil update data kontak peserta"
+
+	return result, nil
+}
+
+func (d Data) UpdateOrtu(ctx context.Context, ortu ppdbEntity.TableDataFormulir) (string, error) {
+
+	_, err := (*d.stmt)[updateOrtu].ExecContext(ctx,
+		ortu.NamaAyah,
+		ortu.PekerjaanAyah,
+		ortu.NoTelpHpAyah,
+		ortu.NamaIbu,
+		ortu.PekerjaanIbu,
+		ortu.NoTelpHpIbu,
+		ortu.NamaWali,
+		ortu.PekerjaanWali,
+		ortu.NoTelpHpWali,
+		ortu.OrtuID,
+	)
+	if err != nil {
+		return "Gagal update data ortu", errors.Wrap(err, "[DATA][UpdateOrtu]")
+	}
+
+	result := "Berhasil update data ortu"
+
+	return result, nil
+}
+
+func (d Data) UpdateBerkas(ctx context.Context, berkas ppdbEntity.TableBerkas) (string, error) {
+
+	_, err := (*d.stmt)[updateBerkas].ExecContext(ctx,
+		berkas.StatusID,
+		berkas.AktalLahir,
+		berkas.PasPhoto,
+		berkas.Rapor,
+		berkas.BerkasID,
+	)
+	if err != nil {
+		return "Gagal update data berkas", errors.Wrap(err, "[DATA][UpdateBerkas]")
+	}
+
+	result := "Berhasil update data berkas"
+
+	return result, nil
+}
+
+func (d Data) UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJadwalTest) (string, error) {
+
+	_, err := (*d.stmt)[updateJadwalTest].ExecContext(ctx,
+		jadwalTest.StatusID,
+		jadwalTest.TglTest,
+		jadwalTest.WaktuTest,
+		jadwalTest.TestID,
+	)
+	if err != nil {
+		return "Gagal update data jadwal test", errors.Wrap(err, "[DATA][UpdateJadwalTest]")
+	}
+
+	result := "Berhasil update data jadwal test"
+
+	return result, nil
 }

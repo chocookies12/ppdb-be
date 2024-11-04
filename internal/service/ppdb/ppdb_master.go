@@ -605,7 +605,6 @@ func (s Service) UpdateEvent(ctx context.Context, event ppdbEntity.TableEvent, e
 	return result, err
 }
 
-
 // Peserta Didik
 func (s Service) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.TablePesertaDidik) (string, error) {
 	var (
@@ -688,4 +687,80 @@ func (s Service) GetJadwalTestDetail(ctx context.Context, idpesertadidik string)
 	}
 
 	return jadwaltest, nil
+}
+
+func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	result, err = s.ppdb.UpdatePembayaranFormulir(ctx, pembayaranformulir)
+	if err != nil {
+		result = "Gagal update data pembayaran formulir"
+		return result, errors.Wrap(err, "[Service][UpdatePembayaranFormulir]")
+	}
+
+	result = "Berhasil update data pembayaran formulir"
+	return result, nil
+}
+
+func (s Service) UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataFormulir) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	result, err = s.ppdb.UpdateFormulir(ctx, formulir)
+	if err != nil {
+		result = "Gagal update data formulir"
+		return result, errors.Wrap(err, "[Service][UpdateFormulir]")
+	}
+
+	result, err = s.ppdb.UpdateKontakPeserta(ctx, formulir)
+	if err != nil {
+		result = "Gagal update data kontak peserta"
+		return result, errors.Wrap(err, "[Service][UpdateFormulir]")
+	}
+
+	result, err = s.ppdb.UpdateOrtu(ctx, formulir)
+	if err != nil {
+		result = "Gagal update data ortu"
+		return result, errors.Wrap(err, "[Service][UpdateFormulir]")
+	}
+
+	result = "Berhasil update data formulir"
+	return result, nil
+}
+
+func (s Service) UpdateBerkas(ctx context.Context, berkas ppdbEntity.TableBerkas) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	result, err = s.ppdb.UpdateBerkas(ctx, berkas)
+	if err != nil {
+		result = "Gagal update data berkas"
+		return result, errors.Wrap(err, "[Service][UpdateBerkas]")
+	}
+
+	result = "Berhasil update data berkas"
+	return result, nil
+}
+
+func (s Service) UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJadwalTest) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	result, err = s.ppdb.UpdateJadwalTest(ctx, jadwalTest)
+	if err != nil {
+		result = "Gagal update data jadwal test"
+		return result, errors.Wrap(err, "[Service][UpdateJadwalTest]")
+	}
+
+	result = "Berhasil update data jadwal test"
+	return result, nil
 }
