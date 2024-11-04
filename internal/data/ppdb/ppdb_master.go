@@ -1627,27 +1627,23 @@ func (d Data) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDi
 }
 
 func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePembayaranFormulir, error) {
+
 	var (
+		tglPembayaran      sql.NullString
 		pembayaranformulir ppdbEntity.TablePembayaranFormulir
 	)
 
-	var tglPembayaran sql.NullString
-
-	// Prepare the query
-	row := (*d.stmt)[getPembayaranFormulirDetail].QueryRowxContext(ctx, idpesertadidik)
-
-	// Use Scan to assign each column value to the struct fields individually
-	err := row.Scan(
+	err := (*d.stmt)[getPembayaranFormulirDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
 		&pembayaranformulir.PembayaranID,
 		&pembayaranformulir.PesertaID,
 		&pembayaranformulir.StatusID,
 		&tglPembayaran,
 		&pembayaranformulir.HargaFormulir,
-		&pembayaranformulir.BuktiPembayaran,
-	)
+		&pembayaranformulir.BuktiPembayaran)
 	if err != nil {
 		return pembayaranformulir, errors.Wrap(err, "[DATA][GetPembayaranFormulirDetail]")
 	}
+
 	t, err := time.Parse("2006-01-02", tglPembayaran.String)
 	if err != nil {
 		return pembayaranformulir, errors.Wrap(err, "[DATA] [GetPembayaranFormulirDetail] - Failed to parse date")
@@ -1660,13 +1656,53 @@ func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik st
 func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableDataFormulir, error) {
 
 	var (
-		formulir ppdbEntity.TableDataFormulir
+		tglLahir  sql.NullString
+		tglSubmit sql.NullString
+		formulir  ppdbEntity.TableDataFormulir
 	)
 
-	err := (*d.stmt)[getFormulirDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&formulir)
+	err := (*d.stmt)[getFormulirDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
+		&formulir.FormulirID,
+		&formulir.PesertaID,
+		&formulir.PembayaranID,
+		&formulir.JurusanID,
+		&formulir.AgamaID,
+		&formulir.GenderPeserta,
+		&formulir.TempatLahir,
+		&tglLahir,
+		&formulir.NISN,
+		&formulir.Kelas,
+		&tglSubmit,
+		&formulir.StatusID,
+		&formulir.KontakID,
+		&formulir.AlamatTerakhir,
+		&formulir.KodePos,
+		&formulir.NoTelpRumah,
+		&formulir.OrtuID,
+		&formulir.NamaAyah,
+		&formulir.PekerjaanAyah,
+		&formulir.NoTelpHpAyah,
+		&formulir.NamaIbu,
+		&formulir.PekerjaanIbu,
+		&formulir.NoTelpHpIbu,
+		&formulir.NamaWali,
+		&formulir.PekerjaanWali,
+		&formulir.NoTelpHpWali)
 	if err != nil {
 		return formulir, errors.Wrap(err, "[DATA][GetFormulirDetail]")
 	}
+
+	tLahir, err := time.Parse("2006-01-02", tglLahir.String)
+	if err != nil {
+		return formulir, errors.Wrap(err, "[DATA] [GetFormulirDetail] - Failed to parse tgl lahir")
+	}
+	formulir.TglLahir = tLahir
+
+	tSubmit, err := time.Parse("2006-01-02 15:04:05", tglSubmit.String)
+	if err != nil {
+		return formulir, errors.Wrap(err, "[DATA] [GetFormulirDetail] - Failed to parse tgl submit")
+	}
+	formulir.TglSubmit = tSubmit
 
 	return formulir, nil
 }
@@ -1674,13 +1710,27 @@ func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppd
 func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableBerkas, error) {
 
 	var (
+		tglUpload sql.NullString
 		berkas ppdbEntity.TableBerkas
 	)
 
-	err := (*d.stmt)[getBerkasDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&berkas)
+	err := (*d.stmt)[getBerkasDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
+		&berkas.BerkasID,
+		&berkas.PesertaID,
+		&berkas.StatusID,
+		&berkas.AktalLahir,
+		&berkas.PasPhoto,
+		&berkas.Rapor,
+		&tglUpload)
 	if err != nil {
 		return berkas, errors.Wrap(err, "[DATA][GetBerkasDetail]")
 	}
+
+	t, err := time.Parse("2006-01-02", tglUpload.String)
+	if err != nil {
+		return berkas, errors.Wrap(err, "[DATA] [GetBerkasDetail] - Failed to parse date")
+	}
+	berkas.TanggalUpload = t
 
 	return berkas, nil
 }
@@ -1688,13 +1738,32 @@ func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbE
 func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error) {
 
 	var (
+		tglTest sql.NullString
+		waktuTest sql.NullString
 		jadwaltest ppdbEntity.TableJadwalTest
 	)
 
-	err := (*d.stmt)[getJadwalTestDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&jadwaltest)
+	err := (*d.stmt)[getJadwalTestDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
+		&jadwaltest.TestID,
+		&jadwaltest.PesertaID,
+		&jadwaltest.StatusID,
+		&tglTest,
+		&waktuTest,)
 	if err != nil {
 		return jadwaltest, errors.Wrap(err, "[DATA][GetJadwalTestDetail]")
 	}
+
+	tTest, err := time.Parse("2006-01-02", tglTest.String)
+	if err != nil {
+		return jadwaltest, errors.Wrap(err, "[DATA] [GetJadwalTestDetail] - Failed to parse date")
+	}
+	jadwaltest.TglTest = tTest
+
+	tWaktu, err := time.Parse("15:04:05", waktuTest.String)
+	if err != nil {
+		return jadwaltest, errors.Wrap(err, "[DATA] [GetJadwalTestDetail] - Failed to parse date")
+	}
+	jadwaltest.WaktuTest = tWaktu
 
 	return jadwaltest, nil
 }
