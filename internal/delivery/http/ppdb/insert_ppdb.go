@@ -297,23 +297,18 @@ func (h *Handler) InsertProfileStaff(w http.ResponseWriter, r *http.Request) {
 		staff.StaffTmptLahir = nil // Atur ke nil jika tidak ada tempat lahir yang diberikan
 	}
 
-	// Parse tanggal lahir dengan format RFC1123
+	// Mengambil dan memproses tanggal akhir event
 	staffTglLahir := r.FormValue("staff_tgl_lahir")
-	log.Printf("Tanggal lahir yang diterima: %s", staffTglLahir) // Logging nilai yang diterima
 	if staffTglLahir != "" {
-		// Parsing sesuai format waktu RFC1123
-		parsedDate, err := time.Parse(time.RFC1123, staffTglLahir)
+		dateOnly, err := time.Parse("2006-01-02", staffTglLahir)
 		if err != nil {
-			log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err) // Logging tambahan
-			http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+			log.Printf("Error parsing end date: %s, Error: %v", staffTglLahir, err)
+			http.Error(w, "Error memproses tanggal lahir staff", http.StatusBadRequest)
 			return
 		}
-
-		// Menyimpan hanya tanggal tanpa waktu
-		dateOnly := time.Date(parsedDate.Year(), parsedDate.Month(), parsedDate.Day(), 0, 0, 0, 0, parsedDate.Location())
-		staff.StaffTglLahir = &dateOnly // Menggunakan pointer untuk menyimpan tanggal
+		staff.StaffTglLahir = &dateOnly
 	} else {
-		staff.StaffTglLahir = nil // Atur ke nil jika tidak ada tanggal yang diberikan
+		staff.StaffTglLahir = nil
 	}
 
 	// Memanggil service untuk memasukkan data staff
