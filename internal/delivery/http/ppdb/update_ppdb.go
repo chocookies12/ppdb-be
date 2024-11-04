@@ -266,15 +266,15 @@ func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
 	// Parse tanggal lahir
 	staffTglLahir := r.FormValue("staff_tgl_lahir")
 	var dateOnly *time.Time
-	fmt.Println("tetsinggg2", staffTglLahir)
 
 	if staffTglLahir != "" {
 		if strings.TrimSpace(staffTglLahir) != "" { // Memeriksa apakah string tidak kosong
-			fmt.Println("tetsinggg", staffTglLahir)
 			parsedDate, err := time.Parse("2006-01-02", staffTglLahir)
+			// Jika parsing dengan format "2006-01-02" gagal, coba format RFC3339
+			parsedDate, err = time.Parse(time.RFC3339, staffTglLahir)
 			if err != nil {
 				log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err)
-				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+				http.Error(w, "Error memproses tanggal awal", http.StatusBadRequest)
 				return
 			}
 			dateOnly = &parsedDate
@@ -354,16 +354,19 @@ func (h *Handler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse tanggal lahir
 	eventStartDate := r.FormValue("event_start_date")
 
 	if eventStartDate != "" {
 		if strings.TrimSpace(eventStartDate) != "" { // Memeriksa apakah string tidak kosong
 			parsedDate, err := time.Parse("2006-01-02", eventStartDate)
 			if err != nil {
-				log.Printf("Error parsing date: %s, Error: %v", eventStartDate, err)
-				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
-				return
+				// Jika parsing dengan format "2006-01-02" gagal, coba format RFC3339
+				parsedDate, err = time.Parse(time.RFC3339, eventStartDate)
+				if err != nil {
+					log.Printf("Error parsing date: %s, Error: %v", eventStartDate, err)
+					http.Error(w, "Error memproses tanggal awal", http.StatusBadRequest)
+					return
+				}
 			}
 			event.EventStartDate = parsedDate
 		}
@@ -376,9 +379,13 @@ func (h *Handler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		if strings.TrimSpace(eventEndDate) != "" { // Memeriksa apakah string tidak kosong
 			parsedDate, err := time.Parse("2006-01-02", eventEndDate)
 			if err != nil {
-				log.Printf("Error parsing date: %s, Error: %v", eventEndDate, err)
-				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
-				return
+				// Jika parsing dengan format "2006-01-02" gagal, coba format RFC3339
+				parsedDate, err = time.Parse(time.RFC3339, eventEndDate)
+				if err != nil {
+					log.Printf("Error parsing date: %s, Error: %v", eventEndDate, err)
+					http.Error(w, "Error memproses tanggal akhir", http.StatusBadRequest)
+					return
+				}
 			}
 			dateOnly = &parsedDate
 		}
