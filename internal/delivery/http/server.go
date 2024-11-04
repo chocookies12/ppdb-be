@@ -52,7 +52,7 @@ type Handler interface {
 	GetProfileStaffSlim(w http.ResponseWriter, r *http.Request)
 	DeleteProfileStaff(w http.ResponseWriter, r *http.Request)
 	GetProfilStaffUtama(w http.ResponseWriter, r *http.Request)
-	UpdateProfileStaff(w http.ResponseWriter, r *http.Request) 
+	UpdateProfileStaff(w http.ResponseWriter, r *http.Request)
 
 	//Event Sekolah
 	InsertEvent(w http.ResponseWriter, r *http.Request)
@@ -61,6 +61,7 @@ type Handler interface {
 	GetEventDetail(w http.ResponseWriter, r *http.Request)
 	GetEventUtama(w http.ResponseWriter, r *http.Request)
 	DeleteEvent(w http.ResponseWriter, r *http.Request)
+	UpdateEvent(w http.ResponseWriter, r *http.Request)
 
 	//Peserta Didik
 	InsertPesertaDidik(w http.ResponseWriter, r *http.Request)

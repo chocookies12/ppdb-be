@@ -998,20 +998,23 @@ func (d Data) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaf
 		result string
 		err    error
 	)
+	fmt.Println("masuk data")
 
 	_, err = (*d.stmt)[updateProfileStaff].ExecContext(ctx,
 		staff.StaffName,
 		staff.StaffGender,
 		staff.StaffPosition,
 		staff.StaffTmptLahir,
-		staff.StaffTglLahir.Format("2006-01-02"), // Format tanggal
+		staff.StaffTglLahir,
 		staff.StaffPhoto,
 		staffID)
+	fmt.Println("masuk data2")
 
 	if err != nil {
 		result = "Gagal"
 		return result, errors.Wrap(err, "[DATA][UpdateProfileStaff]")
 	}
+	fmt.Println("masuk data3")
 
 	result = "Berhasil"
 	return result, err
@@ -1263,6 +1266,29 @@ func (d Data) GetEventUtama(ctx context.Context) ([]ppdbEntity.TableEvent, error
 	}
 
 	return eventArray, nil
+}
+
+func (d Data) UpdateEvent(ctx context.Context, event ppdbEntity.TableEvent, eventID string) (string, error) {
+	var (
+		result string
+		err    error
+	)
+
+	_, err = (*d.stmt)[updateEvent].ExecContext(ctx,
+		event.EventHeader,
+		event.EventStartDate,
+		event.EventEndDate,
+		event.EventDesc,
+		event.EventImage,
+		eventID)
+
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[DATA][UpdateEvent]")
+	}
+
+	result = "Berhasil"
+	return result, err
 }
 
 // Hapus Data Event

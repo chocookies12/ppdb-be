@@ -229,96 +229,14 @@ func (h *Handler) UpdateFasilitas(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Fasilitas berhasil diperbarui"))
 }
 
-// func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
-// 	var (
-// 		staff ppdbEntity.TableStaff
-// 		resp  response.Response
-// 		err   error
-// 	)
-
-// 	// Parse multipart form dengan ukuran maksimum 10MB
-// 	err = r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
-// 	if err != nil {
-// 		fmt.Println("Error memproses bagian dari form-data:", err)
-// 		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	// Mengambil file gambar dari form-data
-// 	file, _, err := r.FormFile("staff_photo")
-// 	if err != nil {
-// 		fmt.Println("Error mengambil file dari form-data:", err)
-// 		http.Error(w, "Error mengambil file dari form-data", http.StatusBadRequest)
-// 		return
-// 	}
-// 	defer file.Close()
-
-// 	// Membaca isi file ke dalam byte array
-// 	fileBytes, err := io.ReadAll(file)
-// 	if err != nil {
-// 		fmt.Println("Error membaca isi file ke dalam byte array:", err)
-// 		http.Error(w, "Error membaca isi file", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Parse tanggal lahir
-// 	staffTglLahir := r.FormValue("staff_tgl_lahir")
-// 	var dateOnly *time.Time
-// 	if strings.TrimSpace(staffTglLahir) != "" { // Memeriksa apakah string tidak kosong atau tidak hanya berisi spasi
-// 		// Parsing sesuai format waktu (2006-01-02)
-// 		parsedDate, err := time.Parse("2006-01-02", staffTglLahir)
-// 		if err == nil {
-// 			dateOnly = &parsedDate // Menggunakan pointer untuk menyimpan tanggal
-// 		} else {
-// 			log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err)
-// 			http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
-// 			return
-// 		}
-// 	}
-
-// 	// Membaca tempat lahir dari form-data
-// 	staffTmptLahir := r.FormValue("staff_tmpt_lahir")
-// 	var tempatLahir *string
-// 	if staffTmptLahir != "" {
-// 		tempatLahir = &staffTmptLahir // Menggunakan pointer untuk menyimpan tempat lahir
-// 	}
-
-// 	// Membaca data JSON yang lain dari form-data
-// 	staffID := r.FormValue("staffID")
-// 	staff = ppdbEntity.TableStaff{
-// 		StaffID:        staffID,
-// 		StaffPhoto:     fileBytes,
-// 		StaffName:      r.FormValue("staff_name"),
-// 		StaffGender:    r.FormValue("staff_gender"),
-// 		StaffPosition:  r.FormValue("staff_position"),
-// 		StaffTglLahir:  dateOnly,    // Menggunakan pointer untuk tanggal lahir
-// 		StaffTmptLahir: tempatLahir, // Menggunakan pointer untuk tempat lahir
-// 	}
-
-// 	// Memperbarui data ke dalam database melalui layanan UpdateProfileStaff
-// 	result, err := h.ppdbSvc.UpdateProfileStaff(r.Context(), staff, staffID)
-// 	if err != nil {
-// 		resp.SetError(err, http.StatusInternalServerError)
-// 		resp.StatusCode = 500
-// 		log.Printf("[ERROR] %s %s - %s\n", r.Method, r.URL, err.Error())
-// 		json.NewEncoder(w).Encode(resp)
-// 		return
-// 	}
-
-// 	// Mengembalikan response
-// 	resp.Data = result
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(resp)
-// 	w.Write([]byte("Data Staff berhasil diperbarui"))
-// }
-
 func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
 	var (
 		staff ppdbEntity.TableStaff
 		resp  response.Response
 		err   error
 	)
+
+	fmt.Println("masuk1")
 
 	// Parse multipart form dengan ukuran maksimum 10MB
 	err = r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
@@ -348,15 +266,21 @@ func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
 	// Parse tanggal lahir
 	staffTglLahir := r.FormValue("staff_tgl_lahir")
 	var dateOnly *time.Time
-	if strings.TrimSpace(staffTglLahir) != "" { // Memeriksa apakah string tidak kosong
-		parsedDate, err := time.Parse("2006-01-02", staffTglLahir)
-		if err != nil {
-			log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err)
-			http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
-			return
+	fmt.Println("tetsinggg2", staffTglLahir)
+
+	if staffTglLahir != "" {
+		if strings.TrimSpace(staffTglLahir) != "" { // Memeriksa apakah string tidak kosong
+			fmt.Println("tetsinggg", staffTglLahir)
+			parsedDate, err := time.Parse("2006-01-02", staffTglLahir)
+			if err != nil {
+				log.Printf("Error parsing date: %s, Error: %v", staffTglLahir, err)
+				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+				return
+			}
+			dateOnly = &parsedDate
 		}
-		dateOnly = &parsedDate
 	}
+	fmt.Println("tetsinggg3", staffTglLahir)
 
 	// Membaca tempat lahir dari form-data
 	staffTmptLahir := r.FormValue("staff_tmpt_lahir")
@@ -364,6 +288,7 @@ func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
 	if staffTmptLahir != "" {
 		tempatLahir = &staffTmptLahir
 	}
+	fmt.Println("tetsinggg4", staffTglLahir)
 
 	// Membaca data JSON yang lain dari form-data
 	staffID := r.FormValue("staffID")
@@ -376,9 +301,101 @@ func (h *Handler) UpdateProfileStaff(w http.ResponseWriter, r *http.Request) {
 		StaffTglLahir:  dateOnly,    // Mengatur nilai pointer
 		StaffTmptLahir: tempatLahir, // Mengatur nilai pointer
 	}
+	fmt.Println("tetsinggg5", staffTglLahir)
 
 	// Memperbarui data ke dalam database melalui layanan UpdateProfileStaff
 	result, err := h.ppdbSvc.UpdateProfileStaff(r.Context(), staff, staffID)
+	if err != nil {
+		resp.SetError(err, http.StatusInternalServerError)
+		resp.StatusCode = 500
+		log.Printf("[ERROR] %s %s - %s\n", r.Method, r.URL, err.Error())
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+	fmt.Println("tetsinggg6", staffTglLahir)
+
+	// Mengembalikan response
+	resp.Data = result
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+	w.Write([]byte("Data Staff berhasil diperbarui"))
+}
+
+func (h *Handler) UpdateEvent(w http.ResponseWriter, r *http.Request) {
+	var (
+		event ppdbEntity.TableEvent
+		resp  response.Response
+		err   error
+	)
+
+	// Parse multipart form dengan ukuran maksimum 10MB
+	err = r.ParseMultipartForm(10 << 20) // Maksimum ukuran file 10MB
+	if err != nil {
+		fmt.Println("Error memproses bagian dari form-data:", err)
+		http.Error(w, "Error memproses form-data", http.StatusBadRequest)
+		return
+	}
+
+	// Mengambil file gambar dari form-data
+	file, _, err := r.FormFile("event_image")
+	if err != nil {
+		fmt.Println("Error mengambil file dari form-data:", err)
+		http.Error(w, "Error mengambil file dari form-data", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	// Membaca isi file ke dalam byte array
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error membaca isi file ke dalam byte array:", err)
+		http.Error(w, "Error membaca isi file", http.StatusInternalServerError)
+		return
+	}
+
+	// Parse tanggal lahir
+	eventStartDate := r.FormValue("event_start_date")
+
+	if eventStartDate != "" {
+		if strings.TrimSpace(eventStartDate) != "" { // Memeriksa apakah string tidak kosong
+			parsedDate, err := time.Parse("2006-01-02", eventStartDate)
+			if err != nil {
+				log.Printf("Error parsing date: %s, Error: %v", eventStartDate, err)
+				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+				return
+			}
+			event.EventStartDate = parsedDate
+		}
+	}
+
+	eventEndDate := r.FormValue("event_end_date")
+	var dateOnly *time.Time
+
+	if eventEndDate != "" {
+		if strings.TrimSpace(eventEndDate) != "" { // Memeriksa apakah string tidak kosong
+			parsedDate, err := time.Parse("2006-01-02", eventEndDate)
+			if err != nil {
+				log.Printf("Error parsing date: %s, Error: %v", eventEndDate, err)
+				http.Error(w, "Error memproses tanggal lahir", http.StatusBadRequest)
+				return
+			}
+			dateOnly = &parsedDate
+		}
+	}
+
+	// Membaca data JSON yang lain dari form-data
+	eventID := r.FormValue("eventID")
+	event = ppdbEntity.TableEvent{
+		EventID:        eventID,
+		EventHeader:    r.FormValue("event_header"),
+		EventStartDate: event.EventStartDate,
+		EventEndDate:   dateOnly,
+		EventDesc:      r.FormValue("event_desc"),
+		EventImage:     fileBytes,
+	}
+
+	result, err := h.ppdbSvc.UpdateEvent(r.Context(), event, eventID)
 	if err != nil {
 		resp.SetError(err, http.StatusInternalServerError)
 		resp.StatusCode = 500

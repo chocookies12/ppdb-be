@@ -54,13 +54,13 @@ type Data interface {
 	//Peserta Didik
 	GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error)
 
-	GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TablePembayaranFormulir, error)
+	GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePembayaranFormulir, error)
 
-	GetFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableDataFormulir, error)
+	GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableDataFormulir, error)
 
-	GetBerkasDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableBerkas, error)
+	GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableBerkas, error)
 
-	GetJadwalTestDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableJadwalTest, error)
+	GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
@@ -85,6 +85,7 @@ type Data interface {
 	UpdateInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar, infoID string) (string, error)
 	UpdateFasilitas(ctx context.Context, fasilitas ppdbEntity.TableFasilitas, fasilitasID string) (string, error)
 	UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableStaff, staffID string) (string, error)
+	UpdateEvent(ctx context.Context, event ppdbEntity.TableEvent, eventID string) (string, error)
 }
 
 type Service struct {

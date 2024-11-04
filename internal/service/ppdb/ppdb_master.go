@@ -2,6 +2,7 @@ package ppdb
 
 import (
 	"context"
+	"fmt"
 	"math"
 
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
@@ -482,6 +483,7 @@ func (s Service) UpdateProfileStaff(ctx context.Context, staff ppdbEntity.TableS
 	var (
 		result string
 	)
+	fmt.Println("masuk service")
 
 	result, err := s.ppdb.UpdateProfileStaff(ctx, staff, staffID)
 	if err != nil {
@@ -588,10 +590,26 @@ func (s Service) DeleteEvent(ctx context.Context, eventID string) (string, error
 	return result, nil
 }
 
+func (s Service) UpdateEvent(ctx context.Context, event ppdbEntity.TableEvent, eventID string) (string, error) {
+	var (
+		result string
+	)
 
+	result, err := s.ppdb.UpdateEvent(ctx, event, eventID)
+	if err != nil {
+		result = "Gagal"
+		return result, errors.Wrap(err, "[Service][UpdateEvent]")
+	}
+
+	result = "Berhasil"
+	return result, err
+}
+
+
+// Peserta Didik
 func (s Service) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.TablePesertaDidik) (string, error) {
 	var (
-		err error
+		err    error
 		result string
 	)
 
@@ -615,7 +633,7 @@ func (s Service) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity
 
 func (s Service) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDidik) (ppdbEntity.TablePesertaDidik, error) {
 	var (
-		err error
+		err    error
 		result ppdb.TablePesertaDidik
 	)
 
@@ -632,8 +650,8 @@ func (s Service) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesert
 	return result, nil
 }
 
-func (s Service) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TablePembayaranFormulir, error) {
-	
+func (s Service) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePembayaranFormulir, error) {
+
 	pembayaranformulir, err := s.ppdb.GetPembayaranFormulirDetail(ctx, idpesertadidik)
 	if err != nil {
 		return pembayaranformulir, errors.Wrap(err, "[SERVICE][GetPembayaranFormulirDetail]")
@@ -642,8 +660,8 @@ func (s Service) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik
 	return pembayaranformulir, nil
 }
 
-func (s Service) GetFormulirDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableDataFormulir, error) {
-	
+func (s Service) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableDataFormulir, error) {
+
 	formulir, err := s.ppdb.GetFormulirDetail(ctx, idpesertadidik)
 	if err != nil {
 		return formulir, errors.Wrap(err, "[SERVICE][GetFormulirDetail]")
@@ -652,8 +670,8 @@ func (s Service) GetFormulirDetail(ctx context.Context, idpesertadidik string)(p
 	return formulir, nil
 }
 
-func (s Service) GetBerkasDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableBerkas, error) {
-	
+func (s Service) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableBerkas, error) {
+
 	berkas, err := s.ppdb.GetBerkasDetail(ctx, idpesertadidik)
 	if err != nil {
 		return berkas, errors.Wrap(err, "[SERVICE][GetBerkasDetail]")
@@ -662,8 +680,8 @@ func (s Service) GetBerkasDetail(ctx context.Context, idpesertadidik string)(ppd
 	return berkas, nil
 }
 
-func (s Service) GetJadwalTestDetail(ctx context.Context, idpesertadidik string)(ppdbEntity.TableJadwalTest, error) {
-	
+func (s Service) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error) {
+
 	jadwaltest, err := s.ppdb.GetJadwalTestDetail(ctx, idpesertadidik)
 	if err != nil {
 		return jadwaltest, errors.Wrap(err, "[SERVICE][GetJadwalTestDetail]")

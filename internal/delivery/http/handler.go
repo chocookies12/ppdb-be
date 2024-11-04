@@ -80,6 +80,7 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/geteventdetail", s.Ppdb.GetEventDetail).Methods("GET")
 	ppdb.HandleFunc("/geteventutama", s.Ppdb.GetEventUtama).Methods("GET")
 	ppdb.HandleFunc("/deleteevent", s.Ppdb.DeleteEvent).Methods("DELETE")
+	ppdb.HandleFunc("/updateevent", s.Ppdb.UpdateEvent).Methods("PUT")
 
 	//Peserta Didik
 	ppdb.HandleFunc("/registeraccount", s.Ppdb.InsertPesertaDidik).Methods("POST")

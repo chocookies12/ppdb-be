@@ -192,7 +192,7 @@ const (
 							FROM T_JadwalTest
 							WHERE pesertaID = ?`
 
-	getLoginCheck = "GetLoginCheck"
+	getLoginCheck  = "GetLoginCheck"
 	qGetLoginCheck = `SELECT pesertaID, emailPeserta, password
 						FROM T_PesertaDidik
 						WHERE emailPeserta = ?`
@@ -296,6 +296,11 @@ const (
 						 SET staffName = ?, staffGender = ?, staffPosition = ?, 
 						 staffTmptLahir = ?, staffTglLahir = ?, staffPhoto = ?
 						WHERE staffID = ?`
+
+	updateEvent  = "UpdateEvent"
+	qUpdateEvent = `UPDATE T_EventSekolah 
+					SET eventHeader = ?, eventStartDate = ?, eventEndDate = ?, eventDesc = ?, eventImage = ?
+					WHERE eventID = ?`
 )
 
 var (
@@ -353,7 +358,6 @@ var (
 		{getJadwalTestDetail, qGetJadwalTestDetail},
 
 		{getLoginCheck, qGetLoginCheck},
-
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -375,6 +379,7 @@ var (
 		{updateInfoDaftar, qUpdateInfoDaftar},
 		{updateFasilitas, qUpdateFasilitas},
 		{updateProfileStaff, qUpdateProfileStaff},
+		{updateEvent, qUpdateEvent},
 	}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},
