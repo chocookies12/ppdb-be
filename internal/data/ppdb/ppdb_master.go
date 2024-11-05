@@ -1663,6 +1663,7 @@ func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik st
 		&pembayaranformulir.PembayaranID,
 		&pembayaranformulir.PesertaID,
 		&pembayaranformulir.StatusID,
+		&pembayaranformulir.StatusName,
 		&tglPembayaran,
 		&pembayaranformulir.HargaFormulir,
 		&pembayaranformulir.BuktiPembayaran)
@@ -1700,6 +1701,7 @@ func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppd
 		&formulir.Kelas,
 		&tglSubmit,
 		&formulir.StatusID,
+		&formulir.StatusName,
 		&formulir.KontakID,
 		&formulir.AlamatTerakhir,
 		&formulir.KodePos,

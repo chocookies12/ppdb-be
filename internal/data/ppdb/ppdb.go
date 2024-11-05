@@ -140,10 +140,20 @@ const (
 								ORDER BY  pembayaranID DESC LIMIT 1`
 
 	getPembayaranFormulirDetail  = "GetPembayaranFormulirDetail"
-	qGetPembayaranFormulirDetail = `SELECT pembayaranID, pesertaID, statusID, 
-										IFNULL(CAST(tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, hargaFormulir, buktiPembayaran
-									FROM T_PembayaranFormulir
-									WHERE pesertaID = ?`
+	qGetPembayaranFormulirDetail = `SELECT 
+                                    p.pembayaranID, 
+                                    p.pesertaID, 
+                                    p.statusID, 
+				    				s.statusName,
+                                    IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
+                                    p.hargaFormulir, 
+                                    p.buktiPembayaran
+                                FROM 
+                                    T_PembayaranFormulir p
+                                JOIN 
+                                    T_Status s ON p.statusID = s.statusID  
+                                WHERE 
+                                    p.pesertaID = ?`
 
 	getLastFormulirId  = "GetLastFormulirId"
 	qGetLastFormulirId = `SELECT formulirID
@@ -161,14 +171,44 @@ const (
 						ORDER BY  ortuID DESC LIMIT 1`
 
 	getFormulirDetail  = "GetFormulirDetail"
-	qGetFormulirDetail = `SELECT f.formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, tempatLahir, 
-							IFNULL(CAST(tglLahir AS DATE), '0001-01-01') AS tglLahir, 
-							NISN, Kelas, tglSubmit, statusID, kontakID, alamatTerakhir, kodePos, noTelpRumah,
-							ortuID, namaAyah, pekerjaanAyah, noTelpHpAyah, namaIbu, pekerjaanIbu, noTelpHpIbu, namaWali, pekerjaanWali, noTelpHpWali
-						FROM T_Formulir f
-							JOIN T_KontakPeserta kp ON f.formulirID = kp.formulirID
-							JOIN T_Ortu o ON f.formulirID = o.formulirID
-						WHERE pesertaID = ?`
+	qGetFormulirDetail = `SELECT 
+						f.formulirID, 
+						f.pesertaID, 
+						f.pembayaranID, 
+						f.jurusanID, 
+						f.agamaID, 
+						f.genderPeserta, 
+						f.tempatLahir, 
+						IFNULL(CAST(f.tglLahir AS DATE), '0001-01-01') AS tglLahir, 
+						f.NISN, 
+						f.Kelas, 
+						f.tglSubmit, 
+						s.statusID, 
+						s.statusName, 
+						kp.kontakID, 
+						kp.alamatTerakhir, 
+						kp.kodePos, 
+						kp.noTelpRumah, 
+						o.ortuID, 
+						o.namaAyah, 
+						o.pekerjaanAyah, 
+						o.noTelpHpAyah, 
+						o.namaIbu, 
+						o.pekerjaanIbu, 
+						o.noTelpHpIbu, 
+						o.namaWali, 
+						o.pekerjaanWali, 
+						o.noTelpHpWali
+					FROM 
+						T_Formulir f
+					JOIN 
+						T_KontakPeserta kp ON f.formulirID = kp.formulirID
+					JOIN 
+						T_Ortu o ON f.formulirID = o.formulirID
+					JOIN 
+						T_Status s ON f.statusID = s.statusID
+					WHERE 
+						f.pesertaID = ?`
 
 	getLastBerkasId  = "GetLastBerkasId"
 	qGetLastBerkasId = `SELECT berkasID
@@ -193,7 +233,7 @@ const (
 							WHERE pesertaID = ?`
 
 	getLoginCheck  = "GetLoginCheck"
-	qGetLoginCheck = `SELECT pesertaID, emailPeserta, password
+	qGetLoginCheck = `SELECT pesertaID, pesertaName, emailPeserta, password
 						FROM T_PesertaDidik
 						WHERE emailPeserta = ?`
 
@@ -311,7 +351,7 @@ const (
 	qUpdateFormulir = `UPDATE T_Formulir
 						SET jurusanID=?, agamaID=?, genderPeserta=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
 						WHERE formulirID=?`
-								
+
 	updateKontakPeserta  = "UpdateKontakPeserta"
 	qUpdateKontakPeserta = `UPDATE T_KontakPeserta
 							SET alamatTerakhir=?, kodePos=?, noTelpRumah=?
@@ -332,7 +372,6 @@ const (
 	qUpdateJadwalTest = `UPDATE T_JadwalTest
 							SET statusID=?, tglTest=?, waktuTest=CAST(? AS TIME)
 							WHERE testID=?`
-						
 )
 
 var (

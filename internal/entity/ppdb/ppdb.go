@@ -105,6 +105,7 @@ type TablePembayaranFormulir struct {
 	PembayaranID    string    `db:"pembayaranID" json:"pembayaran_id"`
 	PesertaID       string    `db:"pesertaID" json:"peserta_id"`
 	StatusID        string    `db:"statusID" json:"status_id"`
+	StatusName      string    `db:"statusName" json:"status_name"`
 	TglPembayaran   time.Time `db:"tglPembayaran" json:"tgl_pembayaran"`
 	HargaFormulir   float64   `db:"hargaFormulir" json:"harga_formulir"`
 	BuktiPembayaran []byte    `db:"buktiPembayaran" json:"bukti_pembayaran"`
@@ -160,6 +161,7 @@ type TableDataFormulir struct {
 	Kelas          string    `db:"Kelas" json:"kelas"`
 	TglSubmit      time.Time `db:"tglSubmit" json:"tgl_submit"`
 	StatusID       string    `db:"statusID" json:"status_id"`
+	StatusName     string    `db:"statusName" json:"status_name"`
 	KontakID       string    `db:"kontakID" json:"kontak_id"`
 	AlamatTerakhir string    `db:"alamatTerakhir" json:"alamat_terakhir"`
 	KodePos        string    `db:"kodePos" json:"kode_pos"`
