@@ -104,6 +104,7 @@ type TablePesertaDidik struct {
 type TablePembayaranFormulir struct {
 	PembayaranID    string    `db:"pembayaranID" json:"pembayaran_id"`
 	PesertaID       string    `db:"pesertaID" json:"peserta_id"`
+	PesertaName     string    `db:"pesertaName" json:"peserta_name"`
 	StatusID        string    `db:"statusID" json:"status_id"`
 	StatusName      string    `db:"statusName" json:"status_name"`
 	TglPembayaran   time.Time `db:"tglPembayaran" json:"tgl_pembayaran"`
@@ -182,6 +183,7 @@ type TableBerkas struct {
 	BerkasID      string    `db:"berkasID" json:"berkas_id"`
 	PesertaID     string    `db:"pesertaID" json:"peserta_id"`
 	StatusID      string    `db:"statusID" json:"status_id"`
+	StatusName    string    `db:"statusName" json:"status_name"`
 	AktalLahir    []byte    `db:"aktaLahir" json:"akta_lahir"`
 	PasPhoto      []byte    `db:"pasPhoto" json:"pas_photo"`
 	Rapor         []byte    `db:"rapor" json:"rapor"`
@@ -189,9 +191,10 @@ type TableBerkas struct {
 }
 
 type TableJadwalTest struct {
-	TestID    string    `db:"testID" json:"test_id"`
-	PesertaID string    `db:"pesertaID" json:"peserta_id"`
-	StatusID  string    `db:"statusID" json:"status_id"`
-	TglTest   time.Time `db:"tglTest" json:"tgl_test"`
-	WaktuTest time.Time `db:"waktuTest" json:"waktu_test"`
+	TestID     string    `db:"testID" json:"test_id"`
+	PesertaID  string    `db:"pesertaID" json:"peserta_id"`
+	StatusID   string    `db:"statusID" json:"status_id"`
+	StatusName string    `db:"statusName" json:"status_name"`
+	TglTest    time.Time `db:"tglTest" json:"tgl_test"`
+	WaktuTest  time.Time `db:"waktuTest" json:"waktu_test"`
 }

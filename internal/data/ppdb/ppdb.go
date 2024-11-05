@@ -141,19 +141,22 @@ const (
 
 	getPembayaranFormulirDetail  = "GetPembayaranFormulirDetail"
 	qGetPembayaranFormulirDetail = `SELECT 
-                                    p.pembayaranID, 
-                                    p.pesertaID, 
-                                    p.statusID, 
-				    				s.statusName,
-                                    IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
-                                    p.hargaFormulir, 
-                                    p.buktiPembayaran
-                                FROM 
-                                    T_PembayaranFormulir p
-                                JOIN 
-                                    T_Status s ON p.statusID = s.statusID  
-                                WHERE 
-                                    p.pesertaID = ?`
+									p.pembayaranID, 
+									p.pesertaID, 
+									pd.pesertaName,
+									p.statusID, 
+									s.statusName,
+									IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
+									p.hargaFormulir, 
+									p.buktiPembayaran
+								FROM 
+									T_PembayaranFormulir p
+								JOIN 
+									T_Status s ON p.statusID = s.statusID
+								JOIN 
+									T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
+								WHERE 
+									p.pesertaID = ?`
 
 	getLastFormulirId  = "GetLastFormulirId"
 	qGetLastFormulirId = `SELECT formulirID
@@ -216,10 +219,21 @@ const (
 						ORDER BY berkasID DESC LIMIT 1`
 
 	getBerkasDetail  = "GetBerkasDetail"
-	qGetBerkasDetail = `SELECT berkasID, pesertaID, statusID, aktaLahir, pasPhoto, rapor, 
-							IFNULL(CAST(tanggalUpload AS DATE), '0001-01-01') AS tanggalUpload
-						FROM T_Berkas
-						WHERE pesertaID = ?`
+	qGetBerkasDetail = `SELECT 
+						b.berkasID,
+						b.pesertaID,
+						b.statusID,
+						s.statusName,
+						b.aktaLahir,
+						b.pasPhoto,
+						b.rapor,
+						IFNULL(CAST(b.tanggalUpload AS DATE), '0001-01-01') AS tanggalUpload
+					FROM 
+						T_Berkas b
+					JOIN 
+						T_Status s ON b.statusID = s.statusID
+					WHERE 
+						b.pesertaID = ?`
 
 	getLastJadwalTestId  = "GetLastJadwalTestId"
 	qGetLastJadwalTestId = `SELECT testID
@@ -227,10 +241,19 @@ const (
 							ORDER BY testID DESC LIMIT 1`
 
 	getJadwalTestDetail  = "GetJadwalTestDetail"
-	qGetJadwalTestDetail = `SELECT testID, pesertaID, statusID, IFNULL(CAST(tglTest AS DATE), '0001-01-01') AS tglTest,  
-								IFNULL(CAST(waktuTest AS TIME), '0001-01-01 00:00:00') AS waktuTest
-							FROM T_JadwalTest
-							WHERE pesertaID = ?`
+	qGetJadwalTestDetail = `SELECT 
+							jt.testID,
+							jt.pesertaID,
+							jt.statusID,
+							s.statusName,
+							IFNULL(CAST(jt.tglTest AS DATE), '0001-01-01') AS tglTest,  
+							IFNULL(CAST(jt.waktuTest AS TIME), '00:00:00') AS waktuTest
+						FROM 
+							T_JadwalTest jt
+						JOIN 
+							T_Status s ON jt.statusID = s.statusID
+						WHERE 
+							jt.pesertaID = ?`
 
 	getLoginCheck  = "GetLoginCheck"
 	qGetLoginCheck = `SELECT pesertaID, pesertaName, emailPeserta, password

@@ -1662,6 +1662,7 @@ func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik st
 	err := (*d.stmt)[getPembayaranFormulirDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
 		&pembayaranformulir.PembayaranID,
 		&pembayaranformulir.PesertaID,
+		&pembayaranformulir.PesertaName,
 		&pembayaranformulir.StatusID,
 		&pembayaranformulir.StatusName,
 		&tglPembayaran,
@@ -1746,6 +1747,7 @@ func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbE
 		&berkas.BerkasID,
 		&berkas.PesertaID,
 		&berkas.StatusID,
+		&berkas.StatusName,
 		&berkas.AktalLahir,
 		&berkas.PasPhoto,
 		&berkas.Rapor,
@@ -1775,6 +1777,7 @@ func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (p
 		&jadwaltest.TestID,
 		&jadwaltest.PesertaID,
 		&jadwaltest.StatusID,
+		&jadwaltest.StatusName,
 		&tglTest,
 		&waktuTest)
 	if err != nil {
