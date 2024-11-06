@@ -311,6 +311,54 @@ func (d Data) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 	return roleArray, err
 }
 
+// Agama
+func (d Data) GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error) {
+	var (
+		agama      ppdbEntity.TableAgama
+		agamaArray []ppdbEntity.TableAgama
+		err        error
+	)
+
+	rows, err := (*d.stmt)[getAgama].QueryxContext(ctx)
+	if err != nil {
+		return agamaArray, errors.Wrap(err, "[DATA] [GetAgama]")
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		if err = rows.StructScan(&agama); err != nil {
+			return agamaArray, errors.Wrap(err, "[DATA] [GetAgama]")
+		}
+		agamaArray = append(agamaArray, agama)
+	}
+	return agamaArray, err
+}
+
+// Jurusan
+func (d Data) GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error) {
+	var (
+		jurusan      ppdbEntity.TableJurusan
+		jurusanArray []ppdbEntity.TableJurusan
+		err          error
+	)
+
+	rows, err := (*d.stmt)[getJurusan].QueryxContext(ctx)
+	if err != nil {
+		return jurusanArray, errors.Wrap(err, "[DATA] [GetJurusan]")
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		if err = rows.StructScan(&jurusan); err != nil {
+			return jurusanArray, errors.Wrap(err, "[DATA] [GetJurusan]")
+		}
+		jurusanArray = append(jurusanArray, jurusan)
+	}
+	return jurusanArray, err
+}
+
 // Status
 func (d Data) GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error) {
 	var (
@@ -1716,7 +1764,13 @@ func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppd
 		&formulir.NoTelpHpIbu,
 		&formulir.NamaWali,
 		&formulir.PekerjaanWali,
-		&formulir.NoTelpHpWali)
+		&formulir.NoTelpHpWali,
+		&formulir.PesertaName,
+		&formulir.NoTelpHpPeserta,
+		&formulir.SekolahAsal,
+		&formulir.AlamatSekolahAsal,
+		&formulir.JurusanName,
+		&formulir.AgamaName)
 	if err != nil {
 		return formulir, errors.Wrap(err, "[DATA][GetFormulirDetail]")
 	}

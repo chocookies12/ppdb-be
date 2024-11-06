@@ -150,33 +150,39 @@ type TableOrtu struct {
 }
 
 type TableDataFormulir struct {
-	FormulirID     string    `db:"formulirID" json:"formulir_id"`
-	PesertaID      string    `db:"pesertaID" json:"peserta_id"`
-	PembayaranID   string    `db:"pembayaranID" json:"pembayaran_id"`
-	JurusanID      string    `db:"jurusanID" json:"jurusan_id"`
-	AgamaID        string    `db:"agamaID" json:"agama_id"`
-	GenderPeserta  string    `db:"genderPeserta" json:"gender_peserta"`
-	TempatLahir    string    `db:"tempatLahir" json:"tempat_lahir"`
-	TglLahir       time.Time `db:"tglLahir" json:"tgl_lahir"`
-	NISN           string    `db:"NISN" json:"nisn"`
-	Kelas          string    `db:"Kelas" json:"kelas"`
-	TglSubmit      time.Time `db:"tglSubmit" json:"tgl_submit"`
-	StatusID       string    `db:"statusID" json:"status_id"`
-	StatusName     string    `db:"statusName" json:"status_name"`
-	KontakID       string    `db:"kontakID" json:"kontak_id"`
-	AlamatTerakhir string    `db:"alamatTerakhir" json:"alamat_terakhir"`
-	KodePos        string    `db:"kodePos" json:"kode_pos"`
-	NoTelpRumah    string    `db:"noTelpRumah" json:"no_telp_rumah"`
-	OrtuID         string    `db:"ortuID" json:"ortu_id"`
-	NamaAyah       string    `db:"namaAyah" json:"nama_ayah"`
-	PekerjaanAyah  string    `db:"pekerjaanAyah" json:"pekerjaan_ayah"`
-	NoTelpHpAyah   string    `db:"noTelpHpAyah" json:"no_telp_hp_ayah"`
-	NamaIbu        string    `db:"namaIbu" json:"nama_ibu"`
-	PekerjaanIbu   string    `db:"pekerjaanIbu" json:"pekerjaan_ibu"`
-	NoTelpHpIbu    string    `db:"noTelpHpIbu" json:"no_telp_hp_ibu"`
-	NamaWali       string    `db:"namaWali" json:"nama_wali"`
-	PekerjaanWali  string    `db:"pekerjaanWali" json:"pekerjaan_wali"`
-	NoTelpHpWali   string    `db:"noTelpHpWali" json:"no_telp_hp_wali"`
+	FormulirID        string    `db:"formulirID" json:"formulir_id"`
+	PesertaID         string    `db:"pesertaID" json:"peserta_id"`
+	PembayaranID      string    `db:"pembayaranID" json:"pembayaran_id"`
+	JurusanID         string    `db:"jurusanID" json:"jurusan_id"`
+	AgamaID           string    `db:"agamaID" json:"agama_id"`
+	GenderPeserta     string    `db:"genderPeserta" json:"gender_peserta"`
+	TempatLahir       string    `db:"tempatLahir" json:"tempat_lahir"`
+	TglLahir          time.Time `db:"tglLahir" json:"tgl_lahir"`
+	NISN              string    `db:"NISN" json:"nisn"`
+	Kelas             string    `db:"Kelas" json:"kelas"`
+	TglSubmit         time.Time `db:"tglSubmit" json:"tgl_submit"`
+	StatusID          string    `db:"statusID" json:"status_id"`
+	StatusName        string    `db:"statusName" json:"status_name"`
+	KontakID          string    `db:"kontakID" json:"kontak_id"`
+	AlamatTerakhir    string    `db:"alamatTerakhir" json:"alamat_terakhir"`
+	KodePos           string    `db:"kodePos" json:"kode_pos"`
+	NoTelpRumah       string    `db:"noTelpRumah" json:"no_telp_rumah"`
+	OrtuID            string    `db:"ortuID" json:"ortu_id"`
+	NamaAyah          string    `db:"namaAyah" json:"nama_ayah"`
+	PekerjaanAyah     string    `db:"pekerjaanAyah" json:"pekerjaan_ayah"`
+	NoTelpHpAyah      string    `db:"noTelpHpAyah" json:"no_telp_hp_ayah"`
+	NamaIbu           string    `db:"namaIbu" json:"nama_ibu"`
+	PekerjaanIbu      string    `db:"pekerjaanIbu" json:"pekerjaan_ibu"`
+	NoTelpHpIbu       string    `db:"noTelpHpIbu" json:"no_telp_hp_ibu"`
+	NamaWali          string    `db:"namaWali" json:"nama_wali"`
+	PekerjaanWali     string    `db:"pekerjaanWali" json:"pekerjaan_wali"`
+	NoTelpHpWali      string    `db:"noTelpHpWali" json:"no_telp_hp_wali"`
+	PesertaName       string    `db:"pesertaName" json:"peserta_name"`
+	NoTelpHpPeserta   string    `db:"noTelpHpPeserta" json:"no_telp_hp_peserta"`
+	SekolahAsal       string    `db:"sekolahAsal" json:"sekolah_asal"`
+	AlamatSekolahAsal string    `db:"alamatSekolahAsal" json:"alamat_sekolah_asal"`
+	JurusanName       string    `db:"jurusanName" json:"jurusan_name"`
+	AgamaName         string    `db:"agamaName" json:"agama_name"`
 }
 
 type TableBerkas struct {
@@ -197,4 +203,14 @@ type TableJadwalTest struct {
 	StatusName string    `db:"statusName" json:"status_name"`
 	TglTest    time.Time `db:"tglTest" json:"tgl_test"`
 	WaktuTest  time.Time `db:"waktuTest" json:"waktu_test"`
+}
+
+type TableAgama struct {
+	AgamaID   string `db:"agamaID" json:"agama_id"`
+	AgamaName string `db:"agamaName" json:"agama_name"`
+}
+
+type TableJurusan struct {
+	JurusanID   string `db:"jurusanID" json:"jurusan_id"`
+	JurusanName string `db:"jurusanName" json:"jurusan_name"`
 }

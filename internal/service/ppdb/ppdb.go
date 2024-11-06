@@ -22,7 +22,9 @@ type Data interface {
 	GetDataAdminPagination(ctx context.Context, searchInput string) (int, error)
 
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
+	GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error)
 	GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error)
+	GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error) 
 
 	//info Daftar
 	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)

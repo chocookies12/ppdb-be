@@ -54,6 +54,12 @@ const (
 	getRole  = "GetRole"
 	qGetRole = `Select roleID, roleName, roleDesc FROM T_Role`
 
+	getAgama  = "GetAgama"
+	qGetAgama = `SELECT agamaID, agamaName FROM T_Agama`
+
+	getJurusan  = "GetJurusan"
+	qGetJurusan = `SELECT jurusanID, jurusanName FROM T_Jurusan`
+
 	getLastInfoId  = "GetLastInfoId"
 	qGetLastInfoId = `SELECT infoID FROM T_InfoPendaftaran ORDER BY infoID DESC LIMIT 1`
 
@@ -201,15 +207,27 @@ const (
 						o.noTelpHpIbu, 
 						o.namaWali, 
 						o.pekerjaanWali, 
-						o.noTelpHpWali
+						o.noTelpHpWali,
+						pd.pesertaName,
+						pd.noTelpHpPeserta,
+						pd.sekolahAsal,
+						pd.alamatSekolahAsal,
+						IFNULL(j.jurusanName, '') AS jurusanName,    
+						IFNULL(a.agamaName, '') AS agamaName         
 					FROM 
 						T_Formulir f
 					JOIN 
 						T_KontakPeserta kp ON f.formulirID = kp.formulirID
 					JOIN 
 						T_Ortu o ON f.formulirID = o.formulirID
-					JOIN 
+					LEFT JOIN 
 						T_Status s ON f.statusID = s.statusID
+					JOIN 
+						T_PesertaDidik pd ON f.pesertaID = pd.pesertaID
+					LEFT JOIN 
+						T_Jurusan j ON f.jurusanID = j.jurusanID
+					LEFT JOIN 
+						T_Agama a ON f.agamaID = a.agamaID          
 					WHERE 
 						f.pesertaID = ?`
 
@@ -415,6 +433,8 @@ var (
 
 		{getRole, qGetRole},
 		{getStatus, qGetStatus},
+		{getAgama, qGetAgama},
+		{getJurusan, qGetJurusan},
 
 		{getLastFasilitasId, qGetLastFasilitasId},
 		{getGambarFasilitas, qGetGambarFasilitas},

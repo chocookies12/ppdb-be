@@ -19,6 +19,8 @@ type Handler interface {
 	GetKontakSekolah(w http.ResponseWriter, r *http.Request)
 	GetRole(w http.ResponseWriter, r *http.Request)
 	GetStatus(w http.ResponseWriter, r *http.Request)
+	GetAgama(w http.ResponseWriter, r *http.Request)
+	GetJurusan(w http.ResponseWriter, r *http.Request) 
 
 	//kelola Admin
 	GetDataAdminSlim(w http.ResponseWriter, r *http.Request)

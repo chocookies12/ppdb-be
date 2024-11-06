@@ -133,6 +133,47 @@ func (h *Handler) GetRole(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
+func (h *Handler) GetAgama(w http.ResponseWriter, r *http.Request) {
+
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+
+	agama, err := h.ppdbSvc.GetAgama(ctx)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	resp.Data = agama
+	resp.Metadata = nil
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+func (h *Handler) GetJurusan(w http.ResponseWriter, r *http.Request) {
+
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+
+	jurusan, err := h.ppdbSvc.GetJurusan(ctx)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	resp.Data = jurusan
+	resp.Metadata = nil
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+
 func (h *Handler) GetStatus(w http.ResponseWriter, r *http.Request) {
 
 	resp := response.Response{}

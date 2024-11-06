@@ -18,7 +18,9 @@ type IppdbSvc interface {
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
 	GetDataAdminSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableKelolaDataAdmin, interface{}, error)
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
+	GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error)
 	GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error)
+	GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error)
 
 	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)
 	GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, error)

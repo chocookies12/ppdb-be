@@ -168,6 +168,31 @@ func (s Service) GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error) {
 
 }
 
+func (s Service) GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error) {
+
+	agamaArray, err := s.ppdb.GetAgama(ctx)
+
+	if err != nil {
+		return agamaArray, errors.Wrap(err, "[Service][GetAgama]")
+	}
+
+	return agamaArray, nil
+
+}
+
+
+func (s Service) GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error) {
+
+	jurusanArray, err := s.ppdb.GetJurusan(ctx)
+
+	if err != nil {
+		return jurusanArray, errors.Wrap(err, "[Service][GetJurusan]")
+	}
+
+	return jurusanArray, nil
+
+}
+
 func (s Service) GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error) {
 
 	statusArray, err := s.ppdb.GetStatus(ctx)
