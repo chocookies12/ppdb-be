@@ -1,15 +1,23 @@
 package ppdb
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"image"
+	"io/ioutil"
+	"log"
 	"math"
+	"os"
+	"strconv"
+	"time"
 
 	// ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/internal/entity/ppdb"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
 	"ppdb-be/pkg/errors"
 
+	"github.com/jung-kurt/gofpdf"
 	"golang.org/x/crypto/bcrypt"
 	// "encoding/json"
 	// "fmt"
@@ -179,7 +187,6 @@ func (s Service) GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error) 
 	return agamaArray, nil
 
 }
-
 
 func (s Service) GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error) {
 
@@ -788,4 +795,147 @@ func (s Service) UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.Tab
 
 	result = "Berhasil update data jadwal test"
 	return result, nil
+}
+
+func GetImageHeight(imagePath string, targetWidth float64) (float64, error) {
+	file, err := os.Open(imagePath)
+	if err != nil {
+		return 0, fmt.Errorf("unable to open image: %w", err)
+	}
+	defer file.Close()
+
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return 0, fmt.Errorf("unable to decode image: %w", err)
+	}
+
+	// Get image dimensions
+	imgWidth := float64(img.Bounds().Dx())
+	imgHeight := float64(img.Bounds().Dy())
+
+	// Calculate height while maintaining aspect ratio
+	aspectRatio := imgWidth / imgHeight
+	height := targetWidth / aspectRatio
+
+	return height, nil
+}
+
+func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik string) ([]byte, error) {
+
+	var (
+		err error
+	)
+
+	docPdf := bytes.Buffer{}
+
+	currentYear := time.Now().Year()
+	nextYear := currentYear + 1
+
+	currentYearString := strconv.Itoa(currentYear)
+	nextYearString := strconv.Itoa(nextYear)
+
+	pesertadidik, err := s.ppdb.GetPesertaDidikDetail(ctx, idpesertadidik)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GeneratePDF]")
+	}
+
+	formulir, err := s.ppdb.GetFormulirDetail(ctx, idpesertadidik)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GeneratePDF]")
+	}
+
+	berkas, err := s.ppdb.GetBerkasDetail(ctx, idpesertadidik)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GeneratePDF]")
+	}
+
+	jadwaltest, err := s.ppdb.GetJadwalTestDetail(ctx, idpesertadidik)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GeneratePDF]")
+	}
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+
+	pdf.AddPage()
+	pdf.SetFont("Arial", "B", 12)
+
+	pdf.CellFormat(190, 20, "TANDA TERIMA PENDAFTARAN SISWA BARU SMA - TAHUN PELAJARAN "+currentYearString+"/"+nextYearString, "0", 0, "C", false, 0, "")
+	pdf.Ln(18)
+
+	pdf.Line(10, pdf.GetY(), 200, pdf.GetY())
+
+	tmpFile, err := ioutil.TempFile("", "pasphoto-*.jpg")
+	if err != nil {
+		return docPdf.Bytes(), fmt.Errorf("error creating temp file for image: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	_, err = tmpFile.Write(berkas.PasPhoto)
+	if err != nil {
+		return docPdf.Bytes(), fmt.Errorf("error writing image to temp file: %v", err)
+	}
+
+	err = tmpFile.Close()
+	if err != nil {
+		return docPdf.Bytes(), fmt.Errorf("error closing temp file: %v", err)
+	}
+
+	imageWidth := 50.0
+	imageHeight, err := GetImageHeight(tmpFile.Name(), imageWidth)
+	if err != nil {
+		return docPdf.Bytes(), fmt.Errorf("error calculating image height: %v", err)
+	}
+
+	pdf.Ln(5)
+	imageX := 10.0
+	imageY := pdf.GetY()
+
+	pdf.Image(tmpFile.Name(), imageX, imageY, imageWidth, imageHeight, true, "", 0, "")
+
+	pdf.SetFont("Arial", "", 12)
+
+	namaX := imageX + imageWidth + 10
+	namaY := imageY + ((imageHeight - 27) / 2)
+
+	pdf.SetY(namaY)
+	pdf.SetX(namaX)
+
+	pdf.CellFormat(40, 12, "Nama Lengkap", "", 0, "L", false, 0, "")
+	radius := 2.0
+
+	pdf.SetX(namaX + 42)
+	pdf.CellFormat(60, 12, pesertadidik.PesertaName, "", 1, "L", false, 0, "")
+
+	pdf.SetDrawColor(189, 189, 189)
+	pdf.RoundedRectExt(namaX+40, namaY, 90, 12, radius, radius, radius, radius, "D")
+
+	kelasX := namaX
+	kelasY := namaY + 15
+
+	pdf.SetY(kelasY)
+	pdf.SetX(kelasX)
+	pdf.CellFormat(40, 12, "Mendaftar Kelas", "", 0, "L", false, 0, "")
+
+	pdf.SetX(kelasX + 42)
+	pdf.CellFormat(60, 12, formulir.Kelas+" "+formulir.JurusanName, "", 1, "L", false, 0, "")
+
+	pdf.RoundedRectExt(kelasX+40, kelasY, 90, 12, radius, radius, radius, radius, "D")
+
+	pdf.SetY(imageY + imageHeight + 5)
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(40, 10, "CATATAN :", "", 1, "L", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(190, 6, "- Tanda terima ini harap dicetak, ditanda-tangan oleh calon peserta didik dan dibawa saat test seleksi", "", 1, "L", false, 0, "")
+	pdf.CellFormat(30, 6, "   pada tanggal", "", 0, "L", false, 0, "")
+	pdf.SetFont("Arial", "B", 12)
+	pdf.CellFormat(40, 6, jadwaltest.TglTest.Format("02-01-2006"), "", 1, "L", false, 0, "")
+	pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(190, 10, "- Tanda terima ini ditunjukkan pada saat tes seleksi", "", 1, "L", false, 0, "")
+
+	err = pdf.Output(&docPdf)
+	if err != nil {
+		log.Fatalf("Error creating PDF: %s", err)
+	}
+
+	return docPdf.Bytes(), err
 }

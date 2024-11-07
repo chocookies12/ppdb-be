@@ -654,3 +654,24 @@ func (h *Handler) GetJadwalTestDetail(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }
+
+func (h *Handler) GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	ctx := r.Context()
+
+	result, err := h.ppdbSvc.GetGeneratedKartuTest(ctx, r.FormValue("idpesertadidik"))
+	if err != nil {
+		defer resp.RenderJSON(w, r)
+		
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] %s %s - %v\n", r.Method, r.URL, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", "inline; filename=Daftar_User.pdf")
+	w.Write(result)
+
+	resp.Data = result
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+}

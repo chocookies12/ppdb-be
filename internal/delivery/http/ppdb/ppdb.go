@@ -52,6 +52,8 @@ type IppdbSvc interface {
 
 	GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error)
 
+	GetGeneratedKartuTest(ctx context.Context, idpesertadidik string) ([]byte, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

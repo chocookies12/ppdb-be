@@ -139,6 +139,11 @@ const (
 	qGetLastPesertaDidikId = `SELECT pesertaID
 								FROM T_PesertaDidik
 								ORDER BY pesertaID DESC LIMIT 1`
+								
+	getPesertaDidikDetail  = "GetPesertaDidikDetail"
+	qGetPesertaDidikDetail = `SELECT pesertaID, pesertaName, password, emailPeserta, noTelpHpPeserta, sekolahAsalYN, sekolahAsal, alamatSekolahAsal
+								FROM T_PesertaDidik
+								WHERE pesertaID = ?`
 
 	getLastPembayaranFormulirId  = "GetLastPembayaranFormulirId"
 	qGetLastPembayaranFormulirId = `SELECT pembayaranID
@@ -147,22 +152,22 @@ const (
 
 	getPembayaranFormulirDetail  = "GetPembayaranFormulirDetail"
 	qGetPembayaranFormulirDetail = `SELECT 
-									p.pembayaranID, 
-									p.pesertaID, 
-									pd.pesertaName,
-									p.statusID, 
-									s.statusName,
-									IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
-									p.hargaFormulir, 
-									p.buktiPembayaran
-								FROM 
-									T_PembayaranFormulir p
-								JOIN 
-									T_Status s ON p.statusID = s.statusID
-								JOIN 
-									T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
-								WHERE 
-									p.pesertaID = ?`
+										p.pembayaranID, 
+										p.pesertaID, 
+										pd.pesertaName,
+										p.statusID, 
+										s.statusName,
+										IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
+										p.hargaFormulir, 
+										p.buktiPembayaran
+									FROM 
+										T_PembayaranFormulir p
+									JOIN 
+										T_Status s ON p.statusID = s.statusID
+									JOIN 
+										T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
+									WHERE 
+										p.pesertaID = ?`
 
 	getLastFormulirId  = "GetLastFormulirId"
 	qGetLastFormulirId = `SELECT formulirID
@@ -456,6 +461,7 @@ var (
 		{getEventUtama, qGetEventUtama},
 
 		{getLastPesertaDidikId, qGetLastPesertaDidikId},
+		{getPesertaDidikDetail, qGetPesertaDidikDetail},
 
 		{getLastPembayaranFormulirId, qGetLastPembayaranFormulirId},
 		{getPembayaranFormulirDetail, qGetPembayaranFormulirDetail},

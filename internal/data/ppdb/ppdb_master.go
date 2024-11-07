@@ -1700,6 +1700,20 @@ func (d Data) GetLoginCheck(ctx context.Context, login ppdbEntity.TablePesertaDi
 	return result, nil
 }
 
+func (d Data) GetPesertaDidikDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePesertaDidik, error) {
+	var (
+		err    error
+		result ppdbEntity.TablePesertaDidik
+	)
+
+	err = (*d.stmt)[getPesertaDidikDetail].QueryRowxContext(ctx, idpesertadidik).StructScan(&result)
+	if err != nil {
+		return result, errors.Wrap(err, "[DATA][GetLoginCheck]")
+	}
+
+	return result, nil
+}
+
 func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TablePembayaranFormulir, error) {
 
 	var (
