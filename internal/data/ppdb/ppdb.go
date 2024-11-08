@@ -139,7 +139,7 @@ const (
 	qGetLastPesertaDidikId = `SELECT pesertaID
 								FROM T_PesertaDidik
 								ORDER BY pesertaID DESC LIMIT 1`
-								
+
 	getPesertaDidikDetail  = "GetPesertaDidikDetail"
 	qGetPesertaDidikDetail = `SELECT pesertaID, pesertaName, password, emailPeserta, noTelpHpPeserta, sekolahAsalYN, sekolahAsal, alamatSekolahAsal
 								FROM T_PesertaDidik
@@ -285,7 +285,7 @@ const (
 							jt.pesertaID = ?`
 
 	getLoginCheck  = "GetLoginCheck"
-	qGetLoginCheck = `SELECT pesertaID, pesertaName, emailPeserta, password
+	qGetLoginCheck = `SELECT pesertaID, pesertaName, sekolahAsalYN, emailPeserta, password
 						FROM T_PesertaDidik
 						WHERE emailPeserta = ?`
 
