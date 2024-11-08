@@ -245,6 +245,7 @@ const (
 	qGetBerkasDetail = `SELECT 
 						b.berkasID,
 						b.pesertaID,
+						pd.pesertaName,
 						b.statusID,
 						s.statusName,
 						b.aktaLahir,
@@ -255,8 +256,10 @@ const (
 						T_Berkas b
 					JOIN 
 						T_Status s ON b.statusID = s.statusID
+					JOIN 
+						T_PesertaDidik pd ON b.pesertaID = pd.pesertaID
 					WHERE 
-						b.pesertaID = ?`
+						b.pesertaID = ?	`
 
 	getLastJadwalTestId  = "GetLastJadwalTestId"
 	qGetLastJadwalTestId = `SELECT testID
@@ -267,6 +270,7 @@ const (
 	qGetJadwalTestDetail = `SELECT 
 							jt.testID,
 							jt.pesertaID,
+							pd.pesertaName,
 							jt.statusID,
 							s.statusName,
 							IFNULL(CAST(jt.tglTest AS DATE), '0001-01-01') AS tglTest,  
@@ -275,6 +279,8 @@ const (
 							T_JadwalTest jt
 						JOIN 
 							T_Status s ON jt.statusID = s.statusID
+						JOIN 
+							T_PesertaDidik pd ON jt.pesertaID = pd.pesertaID
 						WHERE 
 							jt.pesertaID = ?`
 

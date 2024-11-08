@@ -1814,6 +1814,7 @@ func (d Data) GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbE
 	err := (*d.stmt)[getBerkasDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
 		&berkas.BerkasID,
 		&berkas.PesertaID,
+		&berkas.PesertaName,
 		&berkas.StatusID,
 		&berkas.StatusName,
 		&berkas.AktalLahir,
@@ -1844,6 +1845,7 @@ func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (p
 	err := (*d.stmt)[getJadwalTestDetail].QueryRowxContext(ctx, idpesertadidik).Scan(
 		&jadwaltest.TestID,
 		&jadwaltest.PesertaID,
+		&jadwaltest.PesertaName,
 		&jadwaltest.StatusID,
 		&jadwaltest.StatusName,
 		&tglTest,
