@@ -54,6 +54,8 @@ type IppdbSvc interface {
 
 	GetGeneratedKartuTest(ctx context.Context, idpesertadidik string) ([]byte, error)
 
+	GetGeneratedFormulir(ctx context.Context) ([]byte, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

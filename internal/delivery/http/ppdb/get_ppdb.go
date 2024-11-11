@@ -669,7 +669,28 @@ func (h *Handler) GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", "inline; filename=Daftar_User.pdf")
+	w.Header().Set("Content-Disposition", "inline; filename=Kartu_Test.pdf")
+	w.Write(result)
+
+	resp.Data = result
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+}
+
+func (h *Handler) GetGeneratedFormulir(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	ctx := r.Context()
+
+	result, err := h.ppdbSvc.GetGeneratedFormulir(ctx)
+	if err != nil {
+		defer resp.RenderJSON(w, r)
+		
+		resp = httpHelper.ParseErrorCode(err.Error())
+		log.Printf("[ERROR] %s %s - %v\n", r.Method, r.URL, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", "inline; filename=Formulir.pdf")
 	w.Write(result)
 
 	resp.Data = result

@@ -74,6 +74,7 @@ type Handler interface {
 	GetBerkasDetail(w http.ResponseWriter, r *http.Request)
 	GetJadwalTestDetail(w http.ResponseWriter, r *http.Request)
 	GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request)
+	GetGeneratedFormulir(w http.ResponseWriter, r *http.Request)
 
 	UpdatePembayaranFormulir(w http.ResponseWriter, r *http.Request)
 	UpdateFormulir(w http.ResponseWriter, r *http.Request)

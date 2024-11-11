@@ -939,3 +939,172 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 
 	return docPdf.Bytes(), err
 }
+
+func (s Service) GetGeneratedFormulir(ctx context.Context) ([]byte, error) {
+
+	var (
+		err error
+	)
+
+	docPdf := bytes.Buffer{}
+
+	currentYear := time.Now().Year()
+	nextYear := currentYear + 1
+
+	currentYearString := strconv.Itoa(currentYear)
+	nextYearString := strconv.Itoa(nextYear)
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+
+	pdf.AddPage()
+	pdf.SetFont("Arial", "", 9)
+
+	imageY := pdf.GetY()
+	pdf.SetY(imageY + 2.5)
+	imageX := 10.0
+	pdf.Image("public/images/logoKY.png", imageX, imageY, 0, 15, true, "", 0, "")
+
+	headerY := 10.0
+	headerX := imageX + 20
+	pdf.SetY(headerY)
+	pdf.SetX(headerX)
+
+	pdf.CellFormat(40, 4, "SMA Kristen Yusuf", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Jl Arwana II No. 16 Jembatan Dua", "", 2, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Jakarta Utara (14450)", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Telp: 021-6693111, 021-6682017", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "WA: 0838-7000-4500", "", 1, "L", false, 0, "")
+
+	lineY := headerY + 22
+
+	pdf.SetLineWidth(0.5)
+	pdf.SetDashPattern([]float64{1.5}, 1.5)
+	pdf.Line(10, lineY, 200, lineY)
+
+	pdf.SetFont("Arial", "B", 12)
+
+	pdf.SetY(pdf.GetY()+1.5)
+
+	pdf.Ln(3)
+
+	pdf.CellFormat(190, 7, "FORMULIR PENDAFTARAN SISWA BARU SMA - TAHUN PELAJARAN "+currentYearString+"/"+nextYearString, "", 1, "C", false, 0, "")
+
+	pdf.SetFont("Arial", "", 10)
+	pdf.SetLineWidth(0.2)
+
+	pdf.Ln(3)
+
+	pdf.CellFormat(70, 2, "a. Nama (sesuai Akta Kelahiran)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+
+	pdf.CellFormat(70, 15, "b. Jenis Kelamin", "", 0, "L", false, 0, "")
+	pdf.CellFormat(40, 15, ": Laki-Laki / Perempuan", "0", 0, "L", false, 0, "")
+	pdf.SetFont("Arial", "I", 10)
+	pdf.CellFormat(40, 15, "(coret yang tidak perlu)", "0", 1, "L", false, 0, "")
+
+	pdf.SetFont("Arial", "", 10)
+	pdf.CellFormat(70, 2, "c. Tempat, Tanggal Lahir", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+
+	pdf.SetFont("Arial", "", 10)
+
+	pdf.CellFormat(70, 15, "d. Akta Kelahiran", "", 0, "L", false, 0, "")
+	aktaLahirY := pdf.GetY()+9
+	pdf.CellFormat(60, 15, ": No.", "", 0, "L", false, 0, "")
+	pdf.Line(88, aktaLahirY, 138, aktaLahirY)
+	pdf.CellFormat(60, 15, "Tanggal", "", 1, "L", false, 0, "")
+	pdf.Line(155, aktaLahirY, 200, aktaLahirY)
+
+	pdf.CellFormat(70, 2, "e. NISN (Nomor Induk Siswa Nasional)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+
+	agamaY := pdf.GetY() + 9
+	pdf.CellFormat(70, 15, "f. Agama", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, 15, ":", "", 1, "L", false, 0, "")
+	pdf.Line(83, agamaY, 200, agamaY)
+	// pdf.Line(83, pdf.GetY()+2, 200, pdf.GetY()+2)
+
+	// pdf.Line(10, pdf.GetY(), 200, pdf.GetY())
+
+	// tmpFile, err := ioutil.TempFile("", "pasphoto-*.jpg")
+	// if err != nil {
+	// 	return docPdf.Bytes(), fmt.Errorf("error creating temp file for image: %v", err)
+	// }
+	// defer os.Remove(tmpFile.Name())
+
+	// _, err = tmpFile.Write(berkas.PasPhoto)
+	// if err != nil {
+	// 	return docPdf.Bytes(), fmt.Errorf("error writing image to temp file: %v", err)
+	// }
+
+	// err = tmpFile.Close()
+	// if err != nil {
+	// 	return docPdf.Bytes(), fmt.Errorf("error closing temp file: %v", err)
+	// }
+
+	// imageWidth := 50.0
+	// imageHeight, err := GetImageHeight(tmpFile.Name(), imageWidth)
+	// if err != nil {
+	// 	return docPdf.Bytes(), fmt.Errorf("error calculating image height: %v", err)
+	// }
+
+	// pdf.Ln(5)
+	// imageX := 10.0
+	// imageY := pdf.GetY()
+
+	// pdf.Image(tmpFile.Name(), imageX, imageY, imageWidth, imageHeight, true, "", 0, "")
+
+	// pdf.SetFont("Arial", "", 12)
+
+	// namaX := imageX + imageWidth + 10
+	// namaY := imageY + ((imageHeight - 27) / 2)
+
+	// pdf.SetY(namaY)
+	// pdf.SetX(namaX)
+
+	// pdf.CellFormat(40, 12, "Nama Lengkap", "", 0, "L", false, 0, "")
+	// radius := 2.0
+
+	// pdf.SetX(namaX + 42)
+	// pdf.CellFormat(60, 12, pesertadidik.PesertaName, "", 1, "L", false, 0, "")
+
+	// pdf.SetDrawColor(189, 189, 189)
+	// pdf.RoundedRectExt(namaX+40, namaY, 90, 12, radius, radius, radius, radius, "D")
+
+	// kelasX := namaX
+	// kelasY := namaY + 15
+
+	// pdf.SetY(kelasY)
+	// pdf.SetX(kelasX)
+	// pdf.CellFormat(40, 12, "Mendaftar Kelas", "", 0, "L", false, 0, "")
+
+	// pdf.SetX(kelasX + 42)
+	// pdf.CellFormat(60, 12, formulir.Kelas+" "+formulir.JurusanName, "", 1, "L", false, 0, "")
+
+	// pdf.RoundedRectExt(kelasX+40, kelasY, 90, 12, radius, radius, radius, radius, "D")
+
+	// pdf.SetY(imageY + imageHeight + 5)
+	// pdf.SetFont("Arial", "B", 12)
+	// pdf.CellFormat(40, 10, "CATATAN :", "", 1, "L", false, 0, "")
+	// pdf.SetFont("Arial", "", 12)
+	// pdf.CellFormat(190, 6, "- Tanda terima ini harap dicetak, ditanda-tangan oleh calon peserta didik dan dibawa saat test seleksi", "", 1, "L", false, 0, "")
+	// pdf.CellFormat(30, 6, "   pada tanggal", "", 0, "L", false, 0, "")
+	// pdf.SetFont("Arial", "B", 12)
+	// pdf.CellFormat(40, 6, jadwaltest.TglTest.Format("02-01-2006"), "", 1, "L", false, 0, "")
+	// pdf.SetFont("Arial", "", 12)
+	// pdf.CellFormat(190, 10, "- Tanda terima ini ditunjukkan pada saat tes seleksi", "", 1, "L", false, 0, "")
+
+	err = pdf.Output(&docPdf)
+	if err != nil {
+		log.Fatalf("Error creating PDF: %s", err)
+	}
+
+	return docPdf.Bytes(), err
+}
