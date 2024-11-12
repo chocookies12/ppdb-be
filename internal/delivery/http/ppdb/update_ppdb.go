@@ -146,10 +146,13 @@ func (h *Handler) UpdateInfoDaftar(w http.ResponseWriter, r *http.Request) {
 	// Extract other JSON data from form-data
 	infoID := r.FormValue("infoID")
 	TableInfoDaftar := ppdbEntity.TableInfoDaftar{
-		InfoID:         infoID,
-		PosterDaftar:   fileBytes,
-		AwalTahunAjar:  r.FormValue("awal_tahun_ajar"),
-		AkhirTahunAjar: r.FormValue("akhir_tahun_ajar"),
+		InfoID:          infoID,
+		PosterDaftar:    fileBytes,
+		AwalTahunAjar:   r.FormValue("awal_tahun_ajar"),
+		AkhirTahunAjar:  r.FormValue("akhir_tahun_ajar"),
+		NoRekening:      r.FormValue("no_rekening"),
+		NamaBank:        r.FormValue("nama_bank"),
+		PemilikRekening: r.FormValue("pemilik_rekening"),
 	}
 
 	// Update data in the database via the UpdateDestinasi service

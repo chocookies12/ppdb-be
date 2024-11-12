@@ -67,7 +67,8 @@ const (
 	qGetGambarInfoDaftar = `SELECT posterDaftar from T_InfoPendaftaran WHERE infoID= ?`
 
 	getInfoDaftar  = "GetInfoDaftar"
-	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, akhirTahunAjar from T_InfoPendaftaran`
+	qGetInfoDaftar = `SELECT infoID, posterDaftar, awalTahunAjar, akhirTahunAjar, noRekening, namaBank,
+					 pemilikRekening from T_InfoPendaftaran`
 
 	getLastBannerId  = "GetLastBannerId"
 	qGetLastBannerId = `SELECT bannerID FROM T_BannerSekolah ORDER BY bannerID DESC LIMIT 1`
@@ -359,8 +360,8 @@ const (
 						VALUES (?, ?, ?, ?, ?)`
 
 	insertInfoDaftar  = "InsertInfoDaftar"
-	qInsertInfoDaftar = `INSERT INTO T_InfoPendaftaran (infoID, posterDaftar, awalTahunAjar, akhirTahunAjar)
-						VALUES (?, ?, ?, ?)`
+	qInsertInfoDaftar = `INSERT INTO T_InfoPendaftaran (infoID, posterDaftar, awalTahunAjar, akhirTahunAjar, noRekening, namaBank, pemilikRekening)
+						VALUES (?, ?, ?, ?, ?, ?, ?)`
 
 	insertBanner  = "InsertBanner"
 	qInsertBanner = `INSERT INTO T_BannerSekolah (bannerID, bannerName, bannerImage)
@@ -439,7 +440,7 @@ const (
 
 	updateInfoDaftar  = "UpdateInfoDaftar"
 	qUpdateInfoDaftar = `UPDATE T_InfoPendaftaran 
-		SET posterDaftar = ?, awalTahunAjar = ?, akhirTahunAjar = ? 
+		SET posterDaftar = ?, awalTahunAjar = ?, akhirTahunAjar = ?,  noRekening = ?, namaBank=?, pemilikRekening=?
 		WHERE infoID = ?`
 
 	updateFasilitas  = "UpdateFasilitas"

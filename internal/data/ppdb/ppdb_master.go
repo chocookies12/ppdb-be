@@ -419,6 +419,9 @@ func (d Data) InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableI
 		infoDaftar.PosterDaftar,
 		infoDaftar.AwalTahunAjar,
 		infoDaftar.AkhirTahunAjar,
+		infoDaftar.NoRekening,
+		infoDaftar.NamaBank,
+		infoDaftar.PemilikRekening,
 	)
 
 	if err != nil {
@@ -467,7 +470,7 @@ func (d Data) GetInfoDaftar(ctx context.Context) ([]ppdbEntity.TableInfoDaftar, 
 		var infoDaftar ppdbEntity.TableInfoDaftar
 
 		// Memindahkan data dari hasil query ke dalam struct
-		if err = rows.Scan(&infoDaftar.InfoID, &infoDaftar.LinkPosterDaftar, &infoDaftar.AwalTahunAjar, &infoDaftar.AkhirTahunAjar); err != nil {
+		if err = rows.Scan(&infoDaftar.InfoID, &infoDaftar.LinkPosterDaftar, &infoDaftar.AwalTahunAjar, &infoDaftar.AkhirTahunAjar, &infoDaftar.NoRekening, &infoDaftar.NamaBank, &infoDaftar.PemilikRekening); err != nil {
 			return nil, errors.Wrap(err, "[DATA] [GetInfoDaftar] - Failed to scan row")
 		}
 
@@ -494,7 +497,7 @@ func (d Data) UpdateInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableI
 		err    error
 	)
 
-	_, err = (*d.stmt)[updateInfoDaftar].ExecContext(ctx, infoDaftar.PosterDaftar, infoDaftar.AwalTahunAjar, infoDaftar.AkhirTahunAjar, infoID)
+	_, err = (*d.stmt)[updateInfoDaftar].ExecContext(ctx, infoDaftar.PosterDaftar, infoDaftar.AwalTahunAjar, infoDaftar.AkhirTahunAjar, infoDaftar.NoRekening, infoDaftar.NamaBank, infoDaftar.PemilikRekening, infoID)
 
 	if err != nil {
 		result = "Gagal"

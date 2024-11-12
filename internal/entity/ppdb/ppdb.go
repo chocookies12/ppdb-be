@@ -47,6 +47,9 @@ type TableInfoDaftar struct {
 	LinkPosterDaftar string `json:"link_poster_daftar"`
 	AwalTahunAjar    string `db:"awalTahunAjar" json:"awal_tahun_ajar"`
 	AkhirTahunAjar   string `db:"akhirTahunAjar" json:"akhir_tahun_ajar"`
+	NoRekening       string `db:"noRekening" json:"no_rekening"`
+	NamaBank         string `db:"namaBank" json:"nama_bank"`
+	PemilikRekening  string `db:"pemilikRekening" json:"pemilik_rekening"`
 }
 
 type TableBanner struct {
