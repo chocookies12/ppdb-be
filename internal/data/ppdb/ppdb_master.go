@@ -1763,6 +1763,8 @@ func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppd
 		&tglLahir,
 		&formulir.NISN,
 		&formulir.Kelas,
+		&formulir.UrutanAnak,
+		&formulir.JumlahSaudara,
 		&tglSubmit,
 		&formulir.StatusID,
 		&formulir.StatusName,
@@ -1897,6 +1899,8 @@ func (d Data) UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataF
 		formulir.TglLahir,
 		formulir.NISN,
 		formulir.Kelas,
+		formulir.UrutanAnak,
+		formulir.JumlahSaudara,
 		formulir.StatusID,
 		formulir.FormulirID,
 	)
@@ -2063,8 +2067,8 @@ func (d Data) GetJadwalTestPagination(ctx context.Context, searchInput string) (
 func (d Data) GetPembayaranFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TablePembayaranFormulir, error) {
 
 	var (
-		tglPembayaran       sql.NullString
-		pembayaranFormulir  ppdbEntity.TablePembayaranFormulir
+		tglPembayaran           sql.NullString
+		pembayaranFormulir      ppdbEntity.TablePembayaranFormulir
 		pembayaranFormulirArray []ppdbEntity.TablePembayaranFormulir
 	)
 

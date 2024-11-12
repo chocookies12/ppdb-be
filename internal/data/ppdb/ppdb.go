@@ -197,6 +197,8 @@ const (
 						IFNULL(CAST(f.tglLahir AS DATE), '0001-01-01') AS tglLahir, 
 						f.NISN, 
 						f.Kelas, 
+						f.urutanAnak, 
+						f.jumlahSaudara,
 						f.tglSubmit, 
 						s.statusID, 
 						s.statusName, 
@@ -388,8 +390,8 @@ const (
 
 	insertFormulir  = "InsertFormulir"
 	qInsertFormulir = `INSERT INTO u868654674_ppdb.T_Formulir
-							(formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, noAktaLahir, tempatLahir, tglLahir, NISN, Kelas, tglSubmit, statusID)
-						VALUES(?, ?, ?, "", "", "", "", "", ?, "", "", ?, ?)`
+							(formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, noAktaLahir, tempatLahir, tglLahir, NISN, Kelas, urutanAnak, jumlahSaudara, tglSubmit, statusID)
+						VALUES(?, ?, ?, "", "", "", "", "", ?, "", "", ?, ?, ?, ?)`
 
 	insertKontakPeserta  = "InsertKontakPeserta"
 	qInsertKontakPeserta = `INSERT INTO T_KontakPeserta
@@ -463,7 +465,7 @@ const (
 
 	updateFormulir  = "UpdateFormulir"
 	qUpdateFormulir = `UPDATE T_Formulir
-						SET jurusanID=?, agamaID=?, genderPeserta=?, noAktaLahir=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
+						SET jurusanID=?, agamaID=?, genderPeserta=?, noAktaLahir=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, urutanAnak=?, jumlahSaudara=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
 						WHERE formulirID=?`
 
 	updateKontakPeserta  = "UpdateKontakPeserta"

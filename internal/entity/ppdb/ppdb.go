@@ -124,6 +124,8 @@ type TableFormulir struct {
 	TglLahir      time.Time `db:"tglLahir" json:"tgl_lahir"`
 	NISN          string    `db:"NISN" json:"nisn"`
 	Kelas         string    `db:"Kelas" json:"kelas"`
+	UrutanAnak    int       `db:"urutanAnak" json:"urutan_anak"`
+	JumlahSaudara int       `db:"jumlahSaudara" json:"jumlah_saudara"`
 	TglSubmit     time.Time `db:"tglSubmit" json:"tgl_submit"`
 	StatusID      string    `db:"statusID" json:"status_id"`
 }
@@ -162,6 +164,8 @@ type TableDataFormulir struct {
 	TglLahir          time.Time `db:"tglLahir" json:"tgl_lahir"`
 	NISN              string    `db:"NISN" json:"nisn"`
 	Kelas             string    `db:"Kelas" json:"kelas"`
+	UrutanAnak        int       `db:"urutanAnak" json:"urutan_anak"`
+	JumlahSaudara     int       `db:"jumlahSaudara" json:"jumlah_saudara"`
 	TglSubmit         time.Time `db:"tglSubmit" json:"tgl_submit"`
 	StatusID          string    `db:"statusID" json:"status_id"`
 	StatusName        string    `db:"statusName" json:"status_name"`
