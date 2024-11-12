@@ -119,6 +119,7 @@ type TableFormulir struct {
 	JurusanID     string    `db:"jurusanID" json:"jurusan_id"`
 	AgamaID       string    `db:"agamaID" json:"agama_id"`
 	GenderPeserta string    `db:"genderPeserta" json:"gender_peserta"`
+	NoAktaLahir   string    `db:"noAktaLahir" json:"no_akta_lahir"`
 	TempatLahir   string    `db:"tempatLahir" json:"tempat_lahir"`
 	TglLahir      time.Time `db:"tglLahir" json:"tgl_lahir"`
 	NISN          string    `db:"NISN" json:"nisn"`
@@ -156,6 +157,7 @@ type TableDataFormulir struct {
 	JurusanID         string    `db:"jurusanID" json:"jurusan_id"`
 	AgamaID           string    `db:"agamaID" json:"agama_id"`
 	GenderPeserta     string    `db:"genderPeserta" json:"gender_peserta"`
+	NoAktaLahir       string    `db:"noAktaLahir" json:"no_akta_lahir"`
 	TempatLahir       string    `db:"tempatLahir" json:"tempat_lahir"`
 	TglLahir          time.Time `db:"tglLahir" json:"tgl_lahir"`
 	NISN              string    `db:"NISN" json:"nisn"`

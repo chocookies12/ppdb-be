@@ -192,6 +192,7 @@ const (
 						f.jurusanID, 
 						f.agamaID, 
 						f.genderPeserta, 
+						f.noAktaLahir,
 						f.tempatLahir, 
 						IFNULL(CAST(f.tglLahir AS DATE), '0001-01-01') AS tglLahir, 
 						f.NISN, 
@@ -289,6 +290,36 @@ const (
 						FROM T_PesertaDidik
 						WHERE emailPeserta = ?`
 
+	getJadwalTestAll  = "GetJadwalTestAll"
+	qGetJadwaltestAll = `SELECT 
+						jt.testID,
+						jt.pesertaID,
+						pd.pesertaName,
+						jt.statusID,
+						s.statusName,
+						IFNULL(CAST(jt.tglTest AS DATE), '0001-01-01') AS tglTest,  
+						IFNULL(CAST(jt.waktuTest AS TIME), '00:00:00') AS waktuTest
+					FROM 
+						T_JadwalTest jt
+					JOIN 
+						T_Status s ON jt.statusID = s.statusID
+					JOIN 
+						T_PesertaDidik pd ON jt.pesertaID = pd.pesertaID
+					WHERE 
+						pd.pesertaName LIKE ? LIMIT ?, ?`
+
+	getJadwalTestPagination  = "GetJadwalTestPagination"
+	qGetJadwalTestPagination = `SELECT 
+                              COUNT(*) AS totalCount
+                            FROM 
+                              T_JadwalTest jt
+                            JOIN 
+                              T_Status s ON jt.statusID = s.statusID
+                            JOIN 
+                              T_PesertaDidik pd ON jt.pesertaID = pd.pesertaID
+                            WHERE 
+                              pd.pesertaName LIKE ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -326,8 +357,8 @@ const (
 
 	insertFormulir  = "InsertFormulir"
 	qInsertFormulir = `INSERT INTO u868654674_ppdb.T_Formulir
-							(formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, tempatLahir, tglLahir, NISN, Kelas, tglSubmit, statusID)
-						VALUES(?, ?, ?, "", "", "", "", ?, "", "", ?, ?)`
+							(formulirID, pesertaID, pembayaranID, jurusanID, agamaID, genderPeserta, noAktaLahir, tempatLahir, tglLahir, NISN, Kelas, tglSubmit, statusID)
+						VALUES(?, ?, ?, "", "", "", "", "", ?, "", "", ?, ?)`
 
 	insertKontakPeserta  = "InsertKontakPeserta"
 	qInsertKontakPeserta = `INSERT INTO T_KontakPeserta
@@ -401,7 +432,7 @@ const (
 
 	updateFormulir  = "UpdateFormulir"
 	qUpdateFormulir = `UPDATE T_Formulir
-						SET jurusanID=?, agamaID=?, genderPeserta=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
+						SET jurusanID=?, agamaID=?, genderPeserta=?, noAktaLahir=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
 						WHERE formulirID=?`
 
 	updateKontakPeserta  = "UpdateKontakPeserta"
@@ -484,6 +515,9 @@ var (
 		{getJadwalTestDetail, qGetJadwalTestDetail},
 
 		{getLoginCheck, qGetLoginCheck},
+
+		{getJadwalTestAll, qGetJadwaltestAll},
+		{getJadwalTestPagination, qGetJadwalTestPagination},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

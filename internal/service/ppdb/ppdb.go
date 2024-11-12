@@ -24,7 +24,7 @@ type Data interface {
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)
 	GetAgama(ctx context.Context) ([]ppdbEntity.TableAgama, error)
 	GetStatus(ctx context.Context) ([]ppdbEntity.TableStatus, error)
-	GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error) 
+	GetJurusan(ctx context.Context) ([]ppdbEntity.TableJurusan, error)
 
 	//info Daftar
 	GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, error)
@@ -65,6 +65,10 @@ type Data interface {
 	GetBerkasDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableBerkas, error)
 
 	GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (ppdbEntity.TableJadwalTest, error)
+
+	//JadwalTest Admin
+	GetJadwalTestAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableJadwalTest, error)
+	GetJadwalTestPagination(ctx context.Context, searchInput string) (int, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

@@ -721,6 +721,46 @@ func (s Service) GetJadwalTestDetail(ctx context.Context, idpesertadidik string)
 	return jadwaltest, nil
 }
 
+func (s Service) GetJadwalTestSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableJadwalTest, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	jadwaltest := []ppdbEntity.TableJadwalTest{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of jadwaltest for pagination
+		count, err := s.ppdb.GetJadwalTestPagination(ctx, searchInput)
+		if err != nil {
+			return jadwaltest, metadata, errors.Wrap(err, "[SERVICE][GetJadwalTestAll] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated jadwaltest data
+		jadwaltest, err = s.ppdb.GetJadwalTestAll(ctx, searchInput, offset, limit)
+		if err != nil {
+			return jadwaltest, metadata, errors.Wrap(err, "[SERVICE][GetJadwalTestAll] Error getting paginated jadwaltest data")
+		}
+
+		return jadwaltest, metadata, nil
+	}
+
+	// If page or length is invalid, get all data without pagination
+	jadwaltest, err := s.ppdb.GetJadwalTestAll(ctx, searchInput, 0, 0)
+	if err != nil {
+		return jadwaltest, metadata, errors.Wrap(err, "[SERVICE][GetJadwalTestAll] Error getting jadwaltest data")
+	}
+
+	return jadwaltest, metadata, nil
+}
+
 func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
 		err    error
@@ -828,7 +868,7 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 
 	docPdf := bytes.Buffer{}
 
-	currentYear := time.Now().Year()
+	currentYear := time.Now().Year() + 1
 	nextYear := currentYear + 1
 
 	currentYearString := strconv.Itoa(currentYear)
@@ -880,14 +920,14 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 		return docPdf.Bytes(), fmt.Errorf("error closing temp file: %v", err)
 	}
 
-	imageWidth := 50.0
+	imageWidth := 20.0
 	imageHeight, err := GetImageHeight(tmpFile.Name(), imageWidth)
 	if err != nil {
 		return docPdf.Bytes(), fmt.Errorf("error calculating image height: %v", err)
 	}
 
 	pdf.Ln(5)
-	imageX := 10.0
+	imageX := 20.0
 	imageY := pdf.GetY()
 
 	pdf.Image(tmpFile.Name(), imageX, imageY, imageWidth, imageHeight, true, "", 0, "")

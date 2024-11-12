@@ -423,11 +423,11 @@ func (h *Handler) UpdatePembayaranFormulir(w http.ResponseWriter, r *http.Reques
 	var (
 		pembayaranformulir ppdbEntity.TablePembayaranFormulir
 		resp               response.Response
-		fileData []byte
+		fileData           []byte
 	)
 
 	pembayaranformulir.PembayaranID = r.FormValue("pembayaran_id")
-	pembayaranformulir.StatusID =r.FormValue("status_id")
+	pembayaranformulir.StatusID = r.FormValue("status_id")
 
 	file, _, err := r.FormFile("bukti_pembayaran")
 	if err != nil && file != nil {

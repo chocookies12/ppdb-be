@@ -1758,6 +1758,7 @@ func (d Data) GetFormulirDetail(ctx context.Context, idpesertadidik string) (ppd
 		&formulir.JurusanID,
 		&formulir.AgamaID,
 		&formulir.GenderPeserta,
+		&formulir.NoAktaLahir,
 		&formulir.TempatLahir,
 		&tglLahir,
 		&formulir.NISN,
@@ -1891,6 +1892,7 @@ func (d Data) UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataF
 		formulir.JurusanID,
 		formulir.AgamaID,
 		formulir.GenderPeserta,
+		formulir.NoAktaLahir,
 		formulir.TempatLahir,
 		formulir.TglLahir,
 		formulir.NISN,
@@ -1980,4 +1982,80 @@ func (d Data) UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJ
 	result := "Berhasil update data jadwal test"
 
 	return result, nil
+}
+
+func (d Data) GetJadwalTestAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableJadwalTest, error) {
+
+	var (
+		tglTest         sql.NullString
+		waktuTest       sql.NullString
+		jadwaltest      ppdbEntity.TableJadwalTest
+		jadwaltestArray []ppdbEntity.TableJadwalTest
+	)
+
+	// Menjalankan query dengan parameter searchInput, offset, dan limit
+	rows, err := (*d.stmt)[getJadwalTestAll].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+
+	if err != nil {
+		return jadwaltestArray, errors.Wrap(err, "[DATA][GetJadwalTestAll] - Query failed")
+	}
+	defer rows.Close()
+
+	// Iterasi melalui hasil query dan mengisi slice jadwaltests
+	for rows.Next() {
+
+		// Scan data dari hasil query ke dalam objek jadwaltest
+		err := rows.Scan(
+			&jadwaltest.TestID,
+			&jadwaltest.PesertaID,
+			&jadwaltest.PesertaName,
+			&jadwaltest.StatusID,
+			&jadwaltest.StatusName,
+			&tglTest,
+			&waktuTest,
+		)
+		if err != nil {
+			return jadwaltestArray, errors.Wrap(err, "[DATA][GetJadwalTestAll] - Scan failed")
+		}
+
+		// Parse tglTest dan waktuTest jika valid
+		if tglTest.Valid {
+			tTest, err := time.Parse("2006-01-02", tglTest.String)
+			if err != nil {
+				return jadwaltestArray, errors.Wrap(err, "[DATA][GetJadwalTestAll] - Failed to parse tglTest")
+			}
+			jadwaltest.TglTest = tTest
+		}
+
+		if waktuTest.Valid {
+			tWaktu, err := time.Parse("15:04:05", waktuTest.String)
+			if err != nil {
+				return jadwaltestArray, errors.Wrap(err, "[DATA][GetJadwalTestAll] - Failed to parse waktuTest")
+			}
+			jadwaltest.WaktuTest = tWaktu
+		}
+
+		// Tambahkan jadwaltest ke dalam slice jadwaltests
+		jadwaltestArray = append(jadwaltestArray, jadwaltest)
+	}
+
+	// Cek apakah ada error setelah iterasi
+	if err := rows.Err(); err != nil {
+		return jadwaltestArray, errors.Wrap(err, "[DATA][GetJadwalTestAll] - Rows iteration failed")
+	}
+
+	// Mengembalikan slice jadwaltests
+	return jadwaltestArray, nil
+}
+
+func (d Data) GetJadwalTestPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query untuk mendapatkan total count jadwal ujian tanpa LIMIT
+	err := (*d.stmt)[getJadwalTestPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetJadwalTestPagination] Error executing count query")
+	}
+
+	return totalCount, nil
 }

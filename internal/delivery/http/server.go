@@ -20,7 +20,7 @@ type Handler interface {
 	GetRole(w http.ResponseWriter, r *http.Request)
 	GetStatus(w http.ResponseWriter, r *http.Request)
 	GetAgama(w http.ResponseWriter, r *http.Request)
-	GetJurusan(w http.ResponseWriter, r *http.Request) 
+	GetJurusan(w http.ResponseWriter, r *http.Request)
 
 	//kelola Admin
 	GetDataAdminSlim(w http.ResponseWriter, r *http.Request)
@@ -80,6 +80,9 @@ type Handler interface {
 	UpdateFormulir(w http.ResponseWriter, r *http.Request)
 	UpdateBerkas(w http.ResponseWriter, r *http.Request)
 	UpdateJadwalTest(w http.ResponseWriter, r *http.Request)
+
+	//JadwalTest di admin
+	GetJadwalTestSlim(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

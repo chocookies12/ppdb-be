@@ -13,6 +13,7 @@ import (
 
 	// "strconv"
 	ppdbEntity "ppdb-be/internal/entity/ppdb"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"go.uber.org/zap"
@@ -173,7 +174,6 @@ func (h *Handler) GetJurusan(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
-
 func (h *Handler) GetStatus(w http.ResponseWriter, r *http.Request) {
 
 	resp := response.Response{}
@@ -193,7 +193,6 @@ func (h *Handler) GetStatus(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
-
 
 func (h *Handler) GetGambarInfoDaftar(w http.ResponseWriter, r *http.Request) {
 	infoID := r.URL.Query().Get("infoID")
@@ -551,7 +550,7 @@ func (h *Handler) GetLoginCheck(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) GetPembayaranFormulirDetail(w http.ResponseWriter, r *http.Request) {
 	var (
-		resp  response.Response
+		resp response.Response
 	)
 
 	// Panggil service untuk memasukkan data pesertadidik
@@ -577,7 +576,7 @@ func (h *Handler) GetPembayaranFormulirDetail(w http.ResponseWriter, r *http.Req
 
 func (h *Handler) GetFormulirDetail(w http.ResponseWriter, r *http.Request) {
 	var (
-		resp  response.Response
+		resp response.Response
 	)
 
 	// Panggil service untuk memasukkan data pesertadidik
@@ -601,10 +600,9 @@ func (h *Handler) GetFormulirDetail(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-
 func (h *Handler) GetBerkasDetail(w http.ResponseWriter, r *http.Request) {
 	var (
-		resp  response.Response
+		resp response.Response
 	)
 
 	// Panggil service untuk memasukkan data pesertadidik
@@ -628,10 +626,9 @@ func (h *Handler) GetBerkasDetail(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-
 func (h *Handler) GetJadwalTestDetail(w http.ResponseWriter, r *http.Request) {
 	var (
-		resp  response.Response
+		resp response.Response
 	)
 
 	// Panggil service untuk memasukkan data pesertadidik
@@ -655,6 +652,34 @@ func (h *Handler) GetJadwalTestDetail(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
+func (h *Handler) GetJadwalTestSlim(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	// Get search input, page, and length from request
+	searchInput := r.FormValue("searchInput")
+	page, _ := strconv.Atoi(r.FormValue("page"))
+	length, _ := strconv.Atoi(r.FormValue("length"))
+
+	ctx := r.Context()
+
+	// Get jadwal test data with pagination
+	jadwaltest, metadata, err := h.ppdbSvc.GetJadwalTestSlim(ctx, searchInput, page, length)
+	if err != nil {
+		// Parse error and return response
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Prepare response data
+	resp.Data = jadwaltest
+	resp.Metadata = metadata
+
+	// Log successful request
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
 func (h *Handler) GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request) {
 	resp := response.Response{}
 	ctx := r.Context()
@@ -662,7 +687,7 @@ func (h *Handler) GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request) 
 	result, err := h.ppdbSvc.GetGeneratedKartuTest(ctx, r.FormValue("idpesertadidik"))
 	if err != nil {
 		defer resp.RenderJSON(w, r)
-		
+
 		resp = httpHelper.ParseErrorCode(err.Error())
 		log.Printf("[ERROR] %s %s - %v\n", r.Method, r.URL, err)
 		return

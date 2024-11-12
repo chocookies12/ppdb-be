@@ -54,6 +54,9 @@ type IppdbSvc interface {
 
 	GetGeneratedKartuTest(ctx context.Context, idpesertadidik string) ([]byte, error)
 
+	//JadwalTest Admin
+	GetJadwalTestSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableJadwalTest, interface{}, error) 
+
 	GetGeneratedFormulir(ctx context.Context) ([]byte, error)
 
 	//insert
