@@ -733,7 +733,7 @@ func (h *Handler) GetGeneratedFormulir(w http.ResponseWriter, r *http.Request) {
 	resp := response.Response{}
 	ctx := r.Context()
 
-	result, err := h.ppdbSvc.GetGeneratedFormulir(ctx)
+	result, err := h.ppdbSvc.GetGeneratedFormulir(ctx, r.FormValue("idpesertadidik"))
 	if err != nil {
 		defer resp.RenderJSON(w, r)
 

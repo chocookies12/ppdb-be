@@ -59,7 +59,7 @@ type IppdbSvc interface {
 	//Bukti Pembayaran admin
 	GetPembayaranFormulirSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TablePembayaranFormulir, interface{}, error) 
 
-	GetGeneratedFormulir(ctx context.Context) ([]byte, error)
+	GetGeneratedFormulir(ctx context.Context, idpesertaddidik string) ([]byte, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

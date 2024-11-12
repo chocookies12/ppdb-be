@@ -908,7 +908,7 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 
 	docPdf := bytes.Buffer{}
 
-	currentYear := time.Now().Year() + 1
+	currentYear := time.Now().Year()
 	nextYear := currentYear + 1
 
 	currentYearString := strconv.Itoa(currentYear)
@@ -960,14 +960,14 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 		return docPdf.Bytes(), fmt.Errorf("error closing temp file: %v", err)
 	}
 
-	imageWidth := 20.0
+	imageWidth := 50.0
 	imageHeight, err := GetImageHeight(tmpFile.Name(), imageWidth)
 	if err != nil {
 		return docPdf.Bytes(), fmt.Errorf("error calculating image height: %v", err)
 	}
 
 	pdf.Ln(5)
-	imageX := 20.0
+	imageX := 10.0
 	imageY := pdf.GetY()
 
 	pdf.Image(tmpFile.Name(), imageX, imageY, imageWidth, imageHeight, true, "", 0, "")
@@ -1020,13 +1020,18 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 	return docPdf.Bytes(), err
 }
 
-func (s Service) GetGeneratedFormulir(ctx context.Context) ([]byte, error) {
+func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string) ([]byte, error) {
 
 	var (
 		err error
 	)
 
 	docPdf := bytes.Buffer{}
+
+	formulir, err := s.ppdb.GetFormulirDetail(ctx, idpesertadidik)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GetGeneratedFormulir]")
+	}
 
 	currentYear := time.Now().Year()
 	nextYear := currentYear + 1
@@ -1061,125 +1066,186 @@ func (s Service) GetGeneratedFormulir(ctx context.Context) ([]byte, error) {
 
 	lineY := headerY + 22
 
+	endWidth := 200.0
+
 	pdf.SetLineWidth(0.5)
 	pdf.SetDashPattern([]float64{1.5}, 1.5)
-	pdf.Line(10, lineY, 200, lineY)
+	pdf.Line(10, lineY, endWidth, lineY)	
 
 	pdf.SetFont("Arial", "B", 12)
 
 	pdf.SetY(pdf.GetY() + 1.5)
 
-	pdf.Ln(3)
+	pdf.Ln(5)
 
 	pdf.CellFormat(190, 7, "FORMULIR PENDAFTARAN SISWA BARU SMA - TAHUN PELAJARAN "+currentYearString+"/"+nextYearString, "", 1, "C", false, 0, "")
 
 	pdf.SetFont("Arial", "", 10)
 	pdf.SetLineWidth(0.2)
 
-	pdf.Ln(3)
+	pdf.Ln(5)
 
-	pdf.CellFormat(70, 2, "a. Nama (sesuai Akta Kelahiran)", "", 0, "L", false, 0, "")
-	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
-	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+	listWidth := 5.0
 
-	pdf.CellFormat(70, 15, "b. Jenis Kelamin", "", 0, "L", false, 0, "")
-	pdf.CellFormat(40, 15, ": Laki-Laki / Perempuan", "0", 0, "L", false, 0, "")
-	pdf.SetFont("Arial", "I", 10)
-	pdf.CellFormat(40, 15, "(coret yang tidak perlu)", "0", 1, "L", false, 0, "")
+	cellHeight := 1.0
+	cellWidth := 65.0
 
+	pdf.CellFormat(listWidth, cellHeight, "a. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Nama (sesuai Akta Kelahiran)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(120, cellHeight, ":  "+formulir.PesertaName, "", 0, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
+
+	spacing := 8.0
+
+	pdf.Ln(spacing)
+
+	pdf.CellFormat(listWidth, cellHeight, "b. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Jenis Kelamin", "", 0, "L", false, 0, "")
+	pdf.CellFormat(40, cellHeight, ":  "+formulir.GenderPeserta, "0", 0, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
+
+	pdf.Ln(spacing)
 	pdf.SetFont("Arial", "", 10)
-	pdf.CellFormat(70, 2, "c. Tempat, Tanggal Lahir", "", 0, "L", false, 0, "")
-	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
-	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+	
+	pdf.CellFormat(listWidth, cellHeight, "c. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Tempat, Tanggal Lahir", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.TempatLahir+", "+formulir.TglLahir.Format("02-01-2006"), "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	pdf.SetFont("Arial", "", 10)
+	pdf.Ln(spacing)
 
-	pdf.CellFormat(70, 15, "d. Akta Kelahiran", "", 0, "L", false, 0, "")
-	aktaLahirY := pdf.GetY() + 9
-	pdf.CellFormat(60, 15, ": No.", "", 0, "L", false, 0, "")
-	pdf.Line(88, aktaLahirY, 138, aktaLahirY)
-	pdf.CellFormat(60, 15, "Tanggal", "", 1, "L", false, 0, "")
-	pdf.Line(155, aktaLahirY, 200, aktaLahirY)
+	pdf.CellFormat(listWidth, cellHeight, "d. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Akta Kelahiran", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, ":  No. "+formulir.NoAktaLahir, "", 0, "L", false, 0, "")
+	pdf.Line(88, pdf.GetY()+3+cellHeight, 200, pdf.GetY()+3+cellHeight)
 
-	pdf.CellFormat(70, 2, "e. NISN (Nomor Induk Siswa Nasional)", "", 0, "L", false, 0, "")
-	pdf.CellFormat(1, 2, ":", "", 1, "L", false, 0, "")
-	pdf.Line(83, pdf.GetY(), 200, pdf.GetY())
+	pdf.Ln(spacing)
 
-	agamaY := pdf.GetY() + 9
-	pdf.CellFormat(70, 15, "f. Agama", "", 0, "L", false, 0, "")
-	pdf.CellFormat(1, 15, ":", "", 1, "L", false, 0, "")
-	pdf.Line(83, agamaY, 200, agamaY)
-	// pdf.Line(83, pdf.GetY()+2, 200, pdf.GetY()+2)
+	pdf.CellFormat(listWidth, cellHeight, "e. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "NISN (Nomor Induk Siswa Nasional)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.NISN, "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.Line(10, pdf.GetY(), 200, pdf.GetY())
+	pdf.Ln(spacing)
 
-	// tmpFile, err := ioutil.TempFile("", "pasphoto-*.jpg")
-	// if err != nil {
-	// 	return docPdf.Bytes(), fmt.Errorf("error creating temp file for image: %v", err)
-	// }
-	// defer os.Remove(tmpFile.Name())
+	pdf.CellFormat(listWidth, cellHeight, "f. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Agama", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.AgamaName, "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// _, err = tmpFile.Write(berkas.PasPhoto)
-	// if err != nil {
-	// 	return docPdf.Bytes(), fmt.Errorf("error writing image to temp file: %v", err)
-	// }
+	pdf.Ln(spacing)
 
-	// err = tmpFile.Close()
-	// if err != nil {
-	// 	return docPdf.Bytes(), fmt.Errorf("error closing temp file: %v", err)
-	// }
+	pdf.CellFormat(listWidth, cellHeight, "g. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Sekolah Asal", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, ":  "+formulir.SekolahAsal, "", 0, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3+cellHeight, 140, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(50, cellHeight, " di "+formulir.AlamatSekolahAsal, "", 1, "L", false, 0, "")
+	pdf.Line(145, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// imageWidth := 50.0
-	// imageHeight, err := GetImageHeight(tmpFile.Name(), imageWidth)
-	// if err != nil {
-	// 	return docPdf.Bytes(), fmt.Errorf("error calculating image height: %v", err)
-	// }
+	pdf.Ln(spacing)
 
-	// pdf.Ln(5)
-	// imageX := 10.0
-	// imageY := pdf.GetY()
+	pdf.CellFormat(listWidth, cellHeight, "h. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Daftar Masuk Kelas", "", 0, "L", false, 0, "")
+	pdf.CellFormat(40, cellHeight, ":  "+formulir.Kelas+"-SMA "+ formulir.JurusanName, "0", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.Image(tmpFile.Name(), imageX, imageY, imageWidth, imageHeight, true, "", 0, "")
+	pdf.Ln(spacing)
 
-	// pdf.SetFont("Arial", "", 12)
+	pdf.CellFormat(listWidth, cellHeight, "i. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Nama Orang Tua", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, ":  Ayah  "+formulir.NamaAyah, "", 0, "L", false, 0, "")
+	pdf.Line(92, pdf.GetY()+3+cellHeight, 138, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(60, cellHeight, "Ibu  "+formulir.NamaIbu, "", 1, "L", false, 0, "")
+	pdf.Line(147, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// namaX := imageX + imageWidth + 10
-	// namaY := imageY + ((imageHeight - 27) / 2)
+	pdf.Ln(spacing)
 
-	// pdf.SetY(namaY)
-	// pdf.SetX(namaX)
+	pdf.CellFormat(listWidth, cellHeight, "j. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Pekerjaan Orang Tua", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, ":  Ayah  "+formulir.PekerjaanAyah, "", 0, "L", false, 0, "")
+	pdf.Line(92, pdf.GetY()+3+cellHeight, 138, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(60, cellHeight, "Ibu  "+formulir.PekerjaanIbu, "", 1, "L", false, 0, "")
+	pdf.Line(147, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.CellFormat(40, 12, "Nama Lengkap", "", 0, "L", false, 0, "")
-	// radius := 2.0
+	pdf.Ln(spacing)
 
-	// pdf.SetX(namaX + 42)
-	// pdf.CellFormat(60, 12, pesertadidik.PesertaName, "", 1, "L", false, 0, "")
+	pdf.CellFormat(listWidth, cellHeight, "k. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Nama Wali (bila perlu)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.NamaWali, "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.SetDrawColor(189, 189, 189)
-	// pdf.RoundedRectExt(namaX+40, namaY, 90, 12, radius, radius, radius, radius, "D")
+	pdf.Ln(spacing)
 
-	// kelasX := namaX
-	// kelasY := namaY + 15
+	pdf.CellFormat(listWidth, cellHeight, "l. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Pekerjaan Wali (bila perlu)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.PekerjaanWali, "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.SetY(kelasY)
-	// pdf.SetX(kelasX)
-	// pdf.CellFormat(40, 12, "Mendaftar Kelas", "", 0, "L", false, 0, "")
+	pdf.Ln(spacing)
 
-	// pdf.SetX(kelasX + 42)
-	// pdf.CellFormat(60, 12, formulir.Kelas+" "+formulir.JurusanName, "", 1, "L", false, 0, "")
+	pdf.CellFormat(listWidth, cellHeight, "m. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Alamat Terakhir (lengkap)", "", 0, "L", false, 0, "")
+	pdf.CellFormat(1, cellHeight, ":  "+formulir.AlamatTerakhir, "", 1, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.RoundedRectExt(kelasX+40, kelasY, 90, 12, radius, radius, radius, radius, "D")
+	pdf.Ln(spacing)
+	pdf.CellFormat(cellWidth+listWidth, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.CellFormat(70, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.Line(83, pdf.GetY()+3+cellHeight, 150, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(50, cellHeight, "Kode Pos  "+formulir.KodePos, "", 1, "L", false, 0, "")
+	pdf.Line(167, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
-	// pdf.SetY(imageY + imageHeight + 5)
-	// pdf.SetFont("Arial", "B", 12)
-	// pdf.CellFormat(40, 10, "CATATAN :", "", 1, "L", false, 0, "")
-	// pdf.SetFont("Arial", "", 12)
-	// pdf.CellFormat(190, 6, "- Tanda terima ini harap dicetak, ditanda-tangan oleh calon peserta didik dan dibawa saat test seleksi", "", 1, "L", false, 0, "")
-	// pdf.CellFormat(30, 6, "   pada tanggal", "", 0, "L", false, 0, "")
-	// pdf.SetFont("Arial", "B", 12)
-	// pdf.CellFormat(40, 6, jadwaltest.TglTest.Format("02-01-2006"), "", 1, "L", false, 0, "")
-	// pdf.SetFont("Arial", "", 12)
-	// pdf.CellFormat(190, 10, "- Tanda terima ini ditunjukkan pada saat tes seleksi", "", 1, "L", false, 0, "")
+	pdf.Ln(spacing)
+
+	pdf.CellFormat(listWidth, cellHeight, "n. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Nomor Telepon", "", 0, "L", false, 0, "")
+	pdf.CellFormat(50, cellHeight, ": Rumah  "+formulir.NoTelpRumah, "", 0, "L", false, 0, "")
+	pdf.Line(95, pdf.GetY()+3+cellHeight, 129, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(80, cellHeight, "HP Calon Siswa "+formulir.NoTelpHpPeserta, "", 1, "L", false, 0, "")
+	pdf.Line(157, pdf.GetY()+3, endWidth, pdf.GetY()+3)
+
+	pdf.Ln(spacing)
+	pdf.CellFormat(cellWidth+listWidth, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, "  HP Ayah  "+formulir.NoTelpHpAyah, "", 0, "L", false, 0, "")
+	pdf.Line(98, pdf.GetY()+3+cellHeight, 138, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(60, cellHeight, "HP Ibu  "+formulir.NoTelpHpIbu, "", 1, "L", false, 0, "")
+	pdf.Line(153, pdf.GetY()+3, endWidth, pdf.GetY()+3)
+
+	pdf.Ln(spacing)
+
+	pdf.CellFormat(listWidth, cellHeight, "o. ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(cellWidth, cellHeight, "Urutan dalam Keluarga", "", 0, "L", false, 0, "")
+	pdf.CellFormat(40, cellHeight, ": Anak ke", "", 0, "L", false, 0, "")
+	pdf.Line(98, pdf.GetY()+3+cellHeight, 120, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(50, cellHeight, "dari jumlah anak", "", 0, "L", false, 0, "")
+	pdf.Line(147, pdf.GetY()+3+cellHeight, 169, pdf.GetY()+3+cellHeight)
+	pdf.CellFormat(30, cellHeight, "orang", "", 1, "L", false, 0, "")
+
+	currentDate := time.Now().Format("02-01-2006")
+
+	pdf.Ln(20)
+	pdf.CellFormat(130, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, "Jakarta, "+currentDate, "", 0, "C", false, 0, "")
+	// pdf.Line(153, pdf.GetY()+1+cellHeight, 184, pdf.GetY()+1+cellHeight)
+	// pdf.CellFormat(5, cellHeight, "20", "", 0, "L", false, 0, "")
+	// pdf.Line(190, pdf.GetY()+1+cellHeight, endWidth, pdf.GetY()+1+cellHeight)
+
+	pdf.Ln(7)
+	pdf.CellFormat(132, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.CellFormat(58, cellHeight, "Tanda Tangan Orang Tua/Wali", "", 0, "C", false, 0, "")
+
+	pdf.SetDashPattern([]float64{0}, 0)
+
+	pdf.Ln(20)
+	pdf.CellFormat(132, cellHeight, "", "", 0, "L", false, 0, "")
+	pdf.CellFormat(57, cellHeight, "(", "", 0, "L", false, 0, "")
+	pdf.Line(145, pdf.GetY()+1+cellHeight, 199, pdf.GetY()+1+cellHeight)
+	pdf.CellFormat(57, cellHeight, ")", "", 0, "L", false, 0, "")
+
+	pdf.Ln(8)
+
+	pdf.SetLineWidth(0.5)
+	pdf.SetDashPattern([]float64{1.5}, 1.5)
 
 	err = pdf.Output(&docPdf)
 	if err != nil {
