@@ -2059,3 +2059,71 @@ func (d Data) GetJadwalTestPagination(ctx context.Context, searchInput string) (
 
 	return totalCount, nil
 }
+
+func (d Data) GetPembayaranFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TablePembayaranFormulir, error) {
+
+	var (
+		tglPembayaran       sql.NullString
+		pembayaranFormulir  ppdbEntity.TablePembayaranFormulir
+		pembayaranFormulirArray []ppdbEntity.TablePembayaranFormulir
+	)
+
+	// Menjalankan query dengan parameter searchInput, offset, dan limit
+	rows, err := (*d.stmt)[getPembayaranFormulirAll].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+
+	if err != nil {
+		return pembayaranFormulirArray, errors.Wrap(err, "[DATA][GetPembayaranFormulirAll] - Query failed")
+	}
+	defer rows.Close()
+
+	// Iterasi melalui hasil query dan mengisi slice pembayaranFormulirArray
+	for rows.Next() {
+
+		// Scan data dari hasil query ke dalam objek pembayaranFormulir
+		err := rows.Scan(
+			&pembayaranFormulir.PembayaranID,
+			&pembayaranFormulir.PesertaID,
+			&pembayaranFormulir.PesertaName,
+			&pembayaranFormulir.StatusID,
+			&pembayaranFormulir.StatusName,
+			&tglPembayaran,
+			&pembayaranFormulir.HargaFormulir,
+			&pembayaranFormulir.BuktiPembayaran,
+		)
+		if err != nil {
+			return pembayaranFormulirArray, errors.Wrap(err, "[DATA][GetPembayaranFormulirAll] - Scan failed")
+		}
+
+		// Parse tglPembayaran jika valid
+		if tglPembayaran.Valid {
+			tPembayaran, err := time.Parse("2006-01-02", tglPembayaran.String)
+			if err != nil {
+				return pembayaranFormulirArray, errors.Wrap(err, "[DATA][GetPembayaranFormulirAll] - Failed to parse tglPembayaran")
+			}
+			pembayaranFormulir.TglPembayaran = tPembayaran
+		}
+
+		// Tambahkan pembayaranFormulir ke dalam slice pembayaranFormulirArray
+		pembayaranFormulirArray = append(pembayaranFormulirArray, pembayaranFormulir)
+	}
+
+	// Cek apakah ada error setelah iterasi
+	if err := rows.Err(); err != nil {
+		return pembayaranFormulirArray, errors.Wrap(err, "[DATA][GetPembayaranFormulirAll] - Rows iteration failed")
+	}
+
+	// Mengembalikan slice pembayaranFormulirArray
+	return pembayaranFormulirArray, nil
+}
+
+func (d Data) GetPembayaranFormulirPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query untuk mendapatkan total count pembayaran formulir tanpa LIMIT
+	err := (*d.stmt)[getPembayaranFormulirPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA] [GetPembayaranFormulirPagination] Error executing count query")
+	}
+
+	return totalCount, nil
+}

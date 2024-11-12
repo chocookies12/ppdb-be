@@ -100,9 +100,11 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/updateberkas", s.Ppdb.UpdateBerkas).Methods("PUT")
 	ppdb.HandleFunc("/updatejadwaltest", s.Ppdb.UpdateJadwalTest).Methods("PUT")
 
-	//Jadwal Test Admin 
+	//Jadwal Test Admin
 	ppdb.HandleFunc("/getjadwaltestslim", s.Ppdb.GetJadwalTestSlim).Methods("GET")
 
+	//Pembayaran Formulir Admin
+	ppdb.HandleFunc("/getpembayaranformulirslim", s.Ppdb.GetPembayaranFormulirSlim).Methods("GET")
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r

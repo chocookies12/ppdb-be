@@ -70,6 +70,10 @@ type Data interface {
 	GetJadwalTestAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableJadwalTest, error)
 	GetJadwalTestPagination(ctx context.Context, searchInput string) (int, error)
 
+	//Pembayaran Formulir Admin
+	GetPembayaranFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TablePembayaranFormulir, error)
+	GetPembayaranFormulirPagination(ctx context.Context, searchInput string) (int, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

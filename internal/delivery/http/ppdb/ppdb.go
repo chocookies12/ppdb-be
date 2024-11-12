@@ -55,7 +55,9 @@ type IppdbSvc interface {
 	GetGeneratedKartuTest(ctx context.Context, idpesertadidik string) ([]byte, error)
 
 	//JadwalTest Admin
-	GetJadwalTestSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableJadwalTest, interface{}, error) 
+	GetJadwalTestSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableJadwalTest, interface{}, error)
+	//Bukti Pembayaran admin
+	GetPembayaranFormulirSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TablePembayaranFormulir, interface{}, error) 
 
 	GetGeneratedFormulir(ctx context.Context) ([]byte, error)
 

@@ -320,6 +320,37 @@ const (
                             WHERE 
                               pd.pesertaName LIKE ?`
 
+	getPembayaranFormulirAll  = "GetPembayaranFormulirAll"
+	qGetPembayaranFormulirAll = `SELECT 
+								p.pembayaranID, 
+								p.pesertaID, 
+								pd.pesertaName,
+								p.statusID, 
+								s.statusName,
+								IFNULL(CAST(p.tglPembayaran AS DATE), '0001-01-01') AS tglPembayaran, 
+								p.hargaFormulir, 
+								p.buktiPembayaran
+							FROM 
+								T_PembayaranFormulir p
+							JOIN 
+								T_Status s ON p.statusID = s.statusID
+							JOIN 
+								T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
+							WHERE 
+								pd.pesertaName LIKE ? LIMIT ?, ?`
+
+	getPembayaranFormulirPagination  = "GetPembayaranFormulirPagination"
+	qGetPembayaranFormulirPagination = `SELECT 
+                                        COUNT(*) AS totalCount
+                                    FROM 
+                                        T_PembayaranFormulir p
+                                    JOIN 
+                                        T_Status s ON p.statusID = s.statusID
+                                    JOIN 
+                                        T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
+                                    WHERE 
+                                        pd.pesertaName LIKE ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -518,6 +549,8 @@ var (
 
 		{getJadwalTestAll, qGetJadwaltestAll},
 		{getJadwalTestPagination, qGetJadwalTestPagination},
+		{getPembayaranFormulirAll, qGetPembayaranFormulirAll},
+		{getPembayaranFormulirPagination, qGetPembayaranFormulirPagination},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

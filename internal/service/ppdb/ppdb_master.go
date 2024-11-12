@@ -761,6 +761,46 @@ func (s Service) GetJadwalTestSlim(ctx context.Context, searchInput string, page
 	return jadwaltest, metadata, nil
 }
 
+func (s Service) GetPembayaranFormulirSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TablePembayaranFormulir, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	pembayaranformulir := []ppdbEntity.TablePembayaranFormulir{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of pembayaranformulir for pagination
+		count, err := s.ppdb.GetPembayaranFormulirPagination(ctx, searchInput)
+		if err != nil {
+			return pembayaranformulir, metadata, errors.Wrap(err, "[SERVICE][GetPembayaranFormulirSlim] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated pembayaranformulir data
+		pembayaranformulir, err = s.ppdb.GetPembayaranFormulirAll(ctx, searchInput, offset, limit)
+		if err != nil {
+			return pembayaranformulir, metadata, errors.Wrap(err, "[SERVICE][GetPembayaranFormulirSlim] Error getting paginated pembayaranformulir data")
+		}
+
+		return pembayaranformulir, metadata, nil
+	}
+
+	// If page or length is invalid, get all data without pagination
+	pembayaranformulir, err := s.ppdb.GetPembayaranFormulirAll(ctx, searchInput, 0, 0)
+	if err != nil {
+		return pembayaranformulir, metadata, errors.Wrap(err, "[SERVICE][GetPembayaranFormulirSlim] Error getting pembayaranformulir data")
+	}
+
+	return pembayaranformulir, metadata, nil
+}
+
 func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
 		err    error
@@ -1027,7 +1067,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context) ([]byte, error) {
 
 	pdf.SetFont("Arial", "B", 12)
 
-	pdf.SetY(pdf.GetY()+1.5)
+	pdf.SetY(pdf.GetY() + 1.5)
 
 	pdf.Ln(3)
 
@@ -1055,7 +1095,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context) ([]byte, error) {
 	pdf.SetFont("Arial", "", 10)
 
 	pdf.CellFormat(70, 15, "d. Akta Kelahiran", "", 0, "L", false, 0, "")
-	aktaLahirY := pdf.GetY()+9
+	aktaLahirY := pdf.GetY() + 9
 	pdf.CellFormat(60, 15, ": No.", "", 0, "L", false, 0, "")
 	pdf.Line(88, aktaLahirY, 138, aktaLahirY)
 	pdf.CellFormat(60, 15, "Tanggal", "", 1, "L", false, 0, "")
