@@ -18,11 +18,11 @@ type TableKontakSekolah struct {
 }
 
 type TableAdmin struct {
-	AdminID    string `db:"adminID" json:"admin_id"`
-	RoleID     string `db:"roleID" json:"role_id"`
-	AdminName  string `db:"adminName" json:"admin_name"`
-	EmailAdmin string `db:"emailAdmin" json:"email_admin"`
-	Password   string `db:"password" json:"password"`
+	AdminID    string `db:"adminID" json:"admin_id,omitempty"`
+	RoleID     string `db:"roleID" json:"role_id,omitempty"`
+	AdminName  string `db:"adminName" json:"admin_name,omitempty"`
+	EmailAdmin string `db:"emailAdmin" json:"email_admin,omitempty"`
+	Password   string `db:"password" json:"password,omitempty"`
 }
 
 type TableKelolaDataAdmin struct {

@@ -16,7 +16,8 @@ import (
 
 type Data interface {
 	//get
-	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
+	// LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
+	GetLoginAdmin(ctx context.Context, login ppdbEntity.TableAdmin) (ppdbEntity.TableAdmin, error)
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
 	GetDataAdmin(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableKelolaDataAdmin, error)
 	GetDataAdminPagination(ctx context.Context, searchInput string) (int, error)

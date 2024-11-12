@@ -14,7 +14,8 @@ import (
 
 type IppdbSvc interface {
 	//get
-	LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
+	// LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error)
+	GetLoginAdmin(ctx context.Context, login ppdbEntity.TableAdmin) (ppdbEntity.TableAdmin, error) 
 	GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error)
 	GetDataAdminSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableKelolaDataAdmin, interface{}, error)
 	GetRole(ctx context.Context) ([]ppdbEntity.TableRole, error)

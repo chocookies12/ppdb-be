@@ -16,6 +16,7 @@ type Handler interface {
 	UpdatePpdb(w http.ResponseWriter, r *http.Request)
 
 	//website ppdb
+	GetLoginAdmin(w http.ResponseWriter, r *http.Request)
 	GetKontakSekolah(w http.ResponseWriter, r *http.Request)
 	GetRole(w http.ResponseWriter, r *http.Request)
 	GetStatus(w http.ResponseWriter, r *http.Request)

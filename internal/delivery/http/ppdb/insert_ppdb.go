@@ -45,7 +45,7 @@ func (h *Handler) InsertPpdb(w http.ResponseWriter, r *http.Request) {
 	switch types {
 	//ini ketika submit masuk ke halaman admin
 	case "loginadmin":
-		result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("emailAdmin"), r.FormValue("password"))
+		// result, err = h.ppdbSvc.LoginAdmin(ctx, r.FormValue("emailAdmin"), r.FormValue("password"))
 	}
 
 	if err != nil {

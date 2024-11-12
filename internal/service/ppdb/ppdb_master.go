@@ -26,61 +26,42 @@ import (
 	// "time"
 )
 
-// func (s Service) GetKaryawan(ctx context.Context) ([]JoEntity.GetKaryawan, interface{}, error) {
-// 	var (
-// 		total int
-// 	)
-
-// 	metadata := make(map[string]interface{})
-// 	karyawanArray, err := s.ppdb.GetKaryawan(ctx)
-
-// 	if err != nil {
-// 		return karyawanArray, metadata, errors.Wrap(err, "[Service][GetKaryawan]")
-// 	}
-
-// 	total, err = s.ppdb.GetCountKaryawan(ctx)
-
-// 	if err != nil {
-// 		return karyawanArray, metadata, errors.Wrap(err, "[Service][GetCountKaryawan]")
-// 	}
-// 	metadata["total_data"] = total
-
-// 	return karyawanArray, metadata, nil
-
-// }
-
-// func (s Service) InsertKaryawan(ctx context.Context, karyawan JoEntity.InsertKaryawan) (string, error) {
-
+// func (s Service) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
 // 	var (
 // 		result string
 // 	)
-// 	result, err := s.ppdb.InsertKaryawan(ctx, karyawan.Insertkaryawan)
+
+// 	result, err := s.ppdb.LoginAdmin(ctx, emailAdmin, password)
 
 // 	if err != nil {
-// 		result = "Gagal"
-// 		return result, errors.Wrap(err, "[Service][InsertKaryawan]")
+// 		result = "Gagal Login"
+// 		return result, errors.Wrap(err, "[Service][LoginAdmin]")
 // 	}
-
-// 	result = "Berhasil"
+// 	result = "Berhasil Login"
 
 // 	return result, err
+
 // }
 
-func (s Service) LoginAdmin(ctx context.Context, emailAdmin string, password string) (string, error) {
+func (s Service) GetLoginAdmin(ctx context.Context, login ppdbEntity.TableAdmin) (ppdbEntity.TableAdmin, error) {
 	var (
-		result string
+		err    error
+		result ppdbEntity.TableAdmin
 	)
 
-	result, err := s.ppdb.LoginAdmin(ctx, emailAdmin, password)
-
+	// Retrieve admin data by email from the data layer
+	result, err = s.ppdb.GetLoginAdmin(ctx, login)
 	if err != nil {
-		result = "Gagal Login"
-		return result, errors.Wrap(err, "[Service][LoginAdmin]")
+		return result, errors.Wrap(err, "[Service][GetLoginAdmin]")
 	}
-	result = "Berhasil Login"
 
-	return result, err
+	// Compare hashed password from database with provided password
+	err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(login.Password))
+	if err != nil {
+		return result, errors.Wrap(err, "[SERVICE][GetLoginAdmin][CompareHash]")
+	}
 
+	return result, nil
 }
 
 func (s Service) GetKontakSekolah(ctx context.Context) ([]ppdbEntity.TableKontakSekolah, error) {
@@ -1070,7 +1051,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 
 	pdf.SetLineWidth(0.5)
 	pdf.SetDashPattern([]float64{1.5}, 1.5)
-	pdf.Line(10, lineY, endWidth, lineY)	
+	pdf.Line(10, lineY, endWidth, lineY)
 
 	pdf.SetFont("Arial", "B", 12)
 
@@ -1106,7 +1087,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 
 	pdf.Ln(spacing)
 	pdf.SetFont("Arial", "", 10)
-	
+
 	pdf.CellFormat(listWidth, cellHeight, "c. ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(cellWidth, cellHeight, "Tempat, Tanggal Lahir", "", 0, "L", false, 0, "")
 	pdf.CellFormat(1, cellHeight, ":  "+formulir.TempatLahir+", "+formulir.TglLahir.Format("02-01-2006"), "", 1, "L", false, 0, "")
@@ -1146,7 +1127,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 
 	pdf.CellFormat(listWidth, cellHeight, "h. ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(cellWidth, cellHeight, "Daftar Masuk Kelas", "", 0, "L", false, 0, "")
-	pdf.CellFormat(40, cellHeight, ":  "+formulir.Kelas+"-SMA "+ formulir.JurusanName, "0", 1, "L", false, 0, "")
+	pdf.CellFormat(40, cellHeight, ":  "+formulir.Kelas+"-SMA "+formulir.JurusanName, "0", 1, "L", false, 0, "")
 	pdf.Line(83, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
 	pdf.Ln(spacing)

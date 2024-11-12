@@ -64,6 +64,49 @@ func (h *Handler) GetPpdb(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (h *Handler) GetLoginAdmin(w http.ResponseWriter, r *http.Request) {
+	var (
+		login ppdbEntity.TableAdmin
+		resp  response.Response
+	)
+
+	// Decode JSON from request body
+	err := json.NewDecoder(r.Body).Decode(&login)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	// Call the service to perform the admin login check
+	result, err := h.ppdbSvc.GetLoginAdmin(r.Context(), login)
+	if err != nil {
+		// Handle specific errors based on bcrypt or missing user cases
+		if strings.Contains(err.Error(), "bcrypt") {
+			http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		} else if strings.Contains(err.Error(), "no rows") {
+			http.Error(w, "Email not found", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Prepare the response on successful login
+	resp.Data = result
+	resp.Message = "Admin login successful"
+
+	// Log the request context
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request completed", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Return the response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
+
 func (h *Handler) GetKontakSekolah(w http.ResponseWriter, r *http.Request) {
 	// Membuat response default
 	resp := response.Response{}

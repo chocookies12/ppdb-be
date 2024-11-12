@@ -39,7 +39,8 @@ const (
 	qGetKontakSekolah = `Select kontakKYID, alamatSekolah, noTelpSekolah1, noTelpSekolah2, emailSekolah, instagramSekolah FROM T_KontakSekolah`
 
 	loginAdmin  = "LoginAdmin"
-	qLoginAdmin = `Select adminID, roleID, adminName, emailAdmin, password FROM T_Admin WHERE emailAdmin = ? `
+	qLoginAdmin = `Select adminID, roleID, adminName, emailAdmin, password 
+					FROM T_Admin WHERE emailAdmin = ? `
 
 	getDataAdmin  = "GetDataAdmin"
 	qGetDataAdmin = `SELECT  a.adminID, a.adminName, a.emailAdmin, r.roleID, r.roleName, r.roleDesc
