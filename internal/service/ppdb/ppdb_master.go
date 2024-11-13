@@ -1064,7 +1064,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 	pdf.SetFont("Arial", "", 10)
 	pdf.SetLineWidth(0.2)
 
-	pdf.Ln(5)
+	pdf.Ln(10)
 
 	listWidth := 5.0
 
@@ -1173,43 +1173,50 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 	pdf.CellFormat(cellWidth+listWidth, cellHeight, "", "", 0, "L", false, 0, "")
 	pdf.CellFormat(70, cellHeight, "", "", 0, "L", false, 0, "")
 	pdf.Line(83, pdf.GetY()+3+cellHeight, 150, pdf.GetY()+3+cellHeight)
-	pdf.CellFormat(50, cellHeight, "Kode Pos  "+formulir.KodePos, "", 1, "L", false, 0, "")
+	pdf.CellFormat(15, cellHeight, "Kode Pos  ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(35, cellHeight, formulir.KodePos, "", 1, "C", false, 0, "")
 	pdf.Line(167, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
 	pdf.Ln(spacing)
 
 	pdf.CellFormat(listWidth, cellHeight, "n. ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(cellWidth, cellHeight, "Nomor Telepon", "", 0, "L", false, 0, "")
-	pdf.CellFormat(50, cellHeight, ": Rumah  "+formulir.NoTelpRumah, "", 0, "L", false, 0, "")
+	pdf.CellFormat(15, cellHeight, ": Rumah  ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(35, cellHeight, formulir.NoTelpRumah, "", 0, "C", false, 0, "")
 	pdf.Line(95, pdf.GetY()+3+cellHeight, 129, pdf.GetY()+3+cellHeight)
-	pdf.CellFormat(80, cellHeight, "HP Calon Siswa "+formulir.NoTelpHpPeserta, "", 1, "L", false, 0, "")
+	pdf.CellFormat(20, cellHeight, "HP Calon Siswa ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(60, cellHeight, formulir.NoTelpHpPeserta, "", 1, "C", false, 0, "")
 	pdf.Line(157, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
 	pdf.Ln(spacing)
 	pdf.CellFormat(cellWidth+listWidth, cellHeight, "", "", 0, "L", false, 0, "")
-	pdf.CellFormat(60, cellHeight, "  HP Ayah  "+formulir.NoTelpHpAyah, "", 0, "L", false, 0, "")
+	pdf.CellFormat(15, cellHeight, "  HP Ayah  ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(45, cellHeight, formulir.NoTelpHpAyah, "", 0, "C", false, 0, "")
 	pdf.Line(98, pdf.GetY()+3+cellHeight, 138, pdf.GetY()+3+cellHeight)
-	pdf.CellFormat(60, cellHeight, "HP Ibu  "+formulir.NoTelpHpIbu, "", 1, "L", false, 0, "")
+	pdf.CellFormat(15, cellHeight, "HP Ibu  ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(45, cellHeight, formulir.NoTelpHpIbu, "", 1, "C", false, 0, "")
 	pdf.Line(153, pdf.GetY()+3, endWidth, pdf.GetY()+3)
 
 	pdf.Ln(spacing)
 
+	anakKe := strconv.Itoa(formulir.UrutanAnak)
+	jumlahAnak := strconv.Itoa(formulir.JumlahSaudara)
+
 	pdf.CellFormat(listWidth, cellHeight, "o. ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(cellWidth, cellHeight, "Urutan dalam Keluarga", "", 0, "L", false, 0, "")
-	pdf.CellFormat(40, cellHeight, ": Anak ke", "", 0, "L", false, 0, "")
+	pdf.CellFormat(20, cellHeight, ": Anak ke ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(20, cellHeight, anakKe, "", 0, "C", false, 0, "")
 	pdf.Line(98, pdf.GetY()+3+cellHeight, 120, pdf.GetY()+3+cellHeight)
-	pdf.CellFormat(50, cellHeight, "dari jumlah anak", "", 0, "L", false, 0, "")
+	pdf.CellFormat(25, cellHeight, "dari jumlah anak ", "", 0, "L", false, 0, "")
+	pdf.CellFormat(25, cellHeight, jumlahAnak, "", 0, "C", false, 0, "")
 	pdf.Line(147, pdf.GetY()+3+cellHeight, 169, pdf.GetY()+3+cellHeight)
 	pdf.CellFormat(30, cellHeight, "orang", "", 1, "L", false, 0, "")
 
-	currentDate := time.Now().Format("02-01-2006")
+	currentDate := time.Now().Format("02 January 2006")
 
-	pdf.Ln(20)
+	pdf.Ln(25)
 	pdf.CellFormat(130, cellHeight, "", "", 0, "L", false, 0, "")
 	pdf.CellFormat(60, cellHeight, "Jakarta, "+currentDate, "", 0, "C", false, 0, "")
-	// pdf.Line(153, pdf.GetY()+1+cellHeight, 184, pdf.GetY()+1+cellHeight)
-	// pdf.CellFormat(5, cellHeight, "20", "", 0, "L", false, 0, "")
-	// pdf.Line(190, pdf.GetY()+1+cellHeight, endWidth, pdf.GetY()+1+cellHeight)
 
 	pdf.Ln(7)
 	pdf.CellFormat(132, cellHeight, "", "", 0, "L", false, 0, "")
@@ -1217,7 +1224,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 
 	pdf.SetDashPattern([]float64{0}, 0)
 
-	pdf.Ln(20)
+	pdf.Ln(25)
 	pdf.CellFormat(132, cellHeight, "", "", 0, "L", false, 0, "")
 	pdf.CellFormat(57, cellHeight, "(", "", 0, "L", false, 0, "")
 	pdf.Line(145, pdf.GetY()+1+cellHeight, 199, pdf.GetY()+1+cellHeight)
