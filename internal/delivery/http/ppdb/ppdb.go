@@ -59,6 +59,8 @@ type IppdbSvc interface {
 	GetJadwalTestSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableJadwalTest, interface{}, error)
 	//Bukti Pembayaran admin
 	GetPembayaranFormulirSlim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TablePembayaranFormulir, interface{}, error) 
+	//Data Formulir
+	GetFormulirSLim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableDataFormulir, interface{}, error) 
 
 	GetGeneratedFormulir(ctx context.Context, idpesertaddidik string) ([]byte, error)
 

@@ -751,6 +751,34 @@ func (h *Handler) GetPembayaranFormulirSlim(w http.ResponseWriter, r *http.Reque
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
+func (h *Handler) GetFormulirSlim(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	// Get search input, page, and length from request
+	searchInput := r.FormValue("searchInput")
+	page, _ := strconv.Atoi(r.FormValue("page"))
+	length, _ := strconv.Atoi(r.FormValue("length"))
+
+	ctx := r.Context()
+
+	// Get pembayaran formulir data with pagination
+	formulir, metadata, err := h.ppdbSvc.GetFormulirSLim(ctx, searchInput, page, length)
+	if err != nil {
+		// Parse error and return response
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Prepare response data
+	resp.Data = formulir
+	resp.Metadata = metadata
+
+	// Log successful request
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
 func (h *Handler) GetGeneratedKartuTest(w http.ResponseWriter, r *http.Request) {
 	resp := response.Response{}
 	ctx := r.Context()

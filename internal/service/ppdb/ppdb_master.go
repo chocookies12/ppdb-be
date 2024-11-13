@@ -782,6 +782,45 @@ func (s Service) GetPembayaranFormulirSlim(ctx context.Context, searchInput stri
 	return pembayaranformulir, metadata, nil
 }
 
+func (s Service) GetFormulirSLim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableDataFormulir, interface{}, error) {
+	limit := length
+	offset := (page - 1) * length
+	var lastPage int
+	metadata := make(map[string]int)
+	dataFormulir := []ppdbEntity.TableDataFormulir{}
+
+	// Pagination
+	if page > 0 && length > 0 {
+		// Get total count of pembayaranformulir for pagination
+		count, err := s.ppdb.GetFormulirPagination(ctx, searchInput)
+		if err != nil {
+			return dataFormulir, metadata, errors.Wrap(err, "[SERVICE][GetFormulirSLim] Error getting pagination count")
+		}
+
+		// Calculate last page based on count and length
+		lastPage = int(math.Ceil(float64(count) / float64(length)))
+
+		// Prepare metadata
+		metadata["total_data"] = count
+		metadata["total_page"] = lastPage
+
+		// Get paginated pembayaranformulir data
+		dataFormulir, err = s.ppdb.GetFormulirAll(ctx, searchInput, offset, limit)
+		if err != nil {
+			return dataFormulir, metadata, errors.Wrap(err, "[SERVICE][GetFormulirSLim] Error getting paginated data formulir data")
+		}
+
+		return dataFormulir, metadata, nil
+	}
+
+	// If page or length is invalid, get all data without pagination
+	dataFormulir, err := s.ppdb.GetFormulirAll(ctx, searchInput, 0, 0)
+	if err != nil {
+		return dataFormulir, metadata, errors.Wrap(err, "[SERVICE][GetFormulirSLim] Error getting data formulir data")
+	}
+
+	return dataFormulir, metadata, nil
+}
 
 
 
