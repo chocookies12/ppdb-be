@@ -782,6 +782,9 @@ func (s Service) GetPembayaranFormulirSlim(ctx context.Context, searchInput stri
 	return pembayaranformulir, metadata, nil
 }
 
+
+
+
 func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
 		err    error
@@ -792,6 +795,23 @@ func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformuli
 	if err != nil {
 		result = "Gagal update data pembayaran formulir"
 		return result, errors.Wrap(err, "[Service][UpdatePembayaranFormulir]")
+	}
+
+	result = "Berhasil update data pembayaran formulir"
+	return result, nil
+}
+
+
+func (s Service) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+	var (
+		err    error
+		result string
+	)
+
+	result, err = s.ppdb.UpdateStatusPembayaranFormulir(ctx, pembayaranformulir)
+	if err != nil {
+		result = "Gagal update data pembayaran formulir"
+		return result, errors.Wrap(err, "[Service][UpdateStatusPembayaranFormulir]")
 	}
 
 	result = "Berhasil update data pembayaran formulir"

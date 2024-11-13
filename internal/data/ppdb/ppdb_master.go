@@ -1587,6 +1587,8 @@ func (d Data) InsertPesertaDidik(ctx context.Context, pesertadidik ppdbEntity.Ta
 		formulir.PesertaID,
 		formulir.PembayaranID,
 		formulir.TglLahir,
+		formulir.UrutanAnak,
+		formulir.JumlahSaudara,
 		formulir.TglSubmit,
 		formulir.StatusID)
 	if err != nil {
@@ -1684,7 +1686,7 @@ func (d Data) GetPembayaranFormulirDetail(ctx context.Context, idpesertadidik st
 		return pembayaranformulir, errors.Wrap(err, "[DATA][GetPembayaranFormulirDetail]")
 	}
 
-	t, err := time.Parse("2006-01-02", tglPembayaran.String)
+	t, err := time.Parse("2006-01-02 15:04:05", tglPembayaran.String)
 	if err != nil {
 		return pembayaranformulir, errors.Wrap(err, "[DATA] [GetPembayaranFormulirDetail] - Failed to parse date")
 	}
@@ -1831,6 +1833,21 @@ func (d Data) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir p
 	)
 	if err != nil {
 		return "Gagal update data pembayaran formulir", errors.Wrap(err, "[DATA][UpdatePembayaranFormulir]")
+	}
+
+	result := "Berhasil update data pembayaran formulir"
+
+	return result, nil
+}
+
+func (d Data) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+
+	_, err := (*d.stmt)[updateStatusPembayaranFormulir].ExecContext(ctx,
+		pembayaranformulir.StatusID,
+		pembayaranformulir.PembayaranID,
+	)
+	if err != nil {
+		return "Gagal update data pembayaran formulir", errors.Wrap(err, "[DATA][UpdateStatusPembayaranFormulir]")
 	}
 
 	result := "Berhasil update data pembayaran formulir"
@@ -2050,7 +2067,7 @@ func (d Data) GetPembayaranFormulirAll(ctx context.Context, searchInput string, 
 
 		// Parse tglPembayaran jika valid
 		if tglPembayaran.Valid {
-			tPembayaran, err := time.Parse("2006-01-02", tglPembayaran.String)
+			tPembayaran, err := time.Parse("2006-01-02 15:04:05", tglPembayaran.String)
 			if err != nil {
 				return pembayaranFormulirArray, errors.Wrap(err, "[DATA][GetPembayaranFormulirAll] - Failed to parse tglPembayaran")
 			}
@@ -2077,6 +2094,112 @@ func (d Data) GetPembayaranFormulirPagination(ctx context.Context, searchInput s
 	err := (*d.stmt)[getPembayaranFormulirPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
 	if err != nil {
 		return 0, errors.Wrap(err, "[DATA] [GetPembayaranFormulirPagination] Error executing count query")
+	}
+
+	return totalCount, nil
+}
+
+func (d Data) GetFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableDataFormulir, error) {
+
+	var (
+		tglLahir    sql.NullString
+		tglSubmit   sql.NullString
+		formulir    ppdbEntity.TableDataFormulir
+		formulirArr []ppdbEntity.TableDataFormulir
+	)
+
+	// Menjalankan query dengan parameter searchInput, offset, dan limit
+	rows, err := (*d.stmt)[getFormulirAll].QueryxContext(ctx, "%"+searchInput+"%", offset, limit)
+
+	if err != nil {
+		return formulirArr, errors.Wrap(err, "[DATA][GetFormulirAll] - Query failed")
+	}
+	defer rows.Close()
+
+	// Iterasi melalui hasil query dan mengisi slice formulirArr
+	for rows.Next() {
+
+		// Scan data dari hasil query ke dalam objek formulir
+		err := rows.Scan(
+			&formulir.FormulirID,
+			&formulir.PesertaID,
+			&formulir.PembayaranID,
+			&formulir.JurusanID,
+			&formulir.AgamaID,
+			&formulir.GenderPeserta,
+			&formulir.NoAktaLahir,
+			&formulir.TempatLahir,
+			&tglLahir,
+			&formulir.NISN,
+			&formulir.Kelas,
+			&formulir.UrutanAnak,
+			&formulir.JumlahSaudara,
+			&tglSubmit,
+			&formulir.StatusID,
+			&formulir.StatusName,
+			&formulir.KontakID,
+			&formulir.AlamatTerakhir,
+			&formulir.KodePos,
+			&formulir.NoTelpRumah,
+			&formulir.OrtuID,
+			&formulir.NamaAyah,
+			&formulir.PekerjaanAyah,
+			&formulir.NoTelpHpAyah,
+			&formulir.NamaIbu,
+			&formulir.PekerjaanIbu,
+			&formulir.NoTelpHpIbu,
+			&formulir.NamaWali,
+			&formulir.PekerjaanWali,
+			&formulir.NoTelpHpWali,
+			&formulir.PesertaName,
+			&formulir.NoTelpHpPeserta,
+			&formulir.SekolahAsal,
+			&formulir.AlamatSekolahAsal,
+			&formulir.JurusanName,
+			&formulir.AgamaName,
+		)
+		if err != nil {
+			return formulirArr, errors.Wrap(err, "[DATA][GetFormulirAll] - Scan failed")
+		}
+
+		// Parse tglLahir jika valid
+		if tglLahir.Valid {
+			tLahir, err := time.Parse("2006-01-02", tglLahir.String)
+			if err != nil {
+				return formulirArr, errors.Wrap(err, "[DATA][GetFormulirAll] - Failed to parse tglLahir")
+			}
+			formulir.TglLahir = tLahir
+		}
+
+		// Parse tglSubmit jika valid
+		if tglSubmit.Valid {
+			tSubmit, err := time.Parse("2006-01-02 15:04:05", tglSubmit.String)
+			if err != nil {
+				return formulirArr, errors.Wrap(err, "[DATA][GetFormulirAll] - Failed to parse tglSubmit")
+			}
+			formulir.TglSubmit = tSubmit
+		}
+
+		// Tambahkan formulir ke dalam slice formulirArr
+		formulirArr = append(formulirArr, formulir)
+	}
+
+	// Cek apakah ada error setelah iterasi
+	if err := rows.Err(); err != nil {
+		return formulirArr, errors.Wrap(err, "[DATA][GetFormulirAll] - Rows iteration failed")
+	}
+
+	// Mengembalikan slice formulirArr
+	return formulirArr, nil
+}
+
+func (d Data) GetFormulirPagination(ctx context.Context, searchInput string) (int, error) {
+	var totalCount int
+
+	// Query to get the total count of formulir records based on search input
+	err := (*d.stmt)[getFormulirPagination].GetContext(ctx, &totalCount, "%"+searchInput+"%")
+	if err != nil {
+		return 0, errors.Wrap(err, "[DATA][GetFormulirPagination] Error executing count query")
 	}
 
 	return totalCount, nil

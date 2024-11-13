@@ -89,6 +89,7 @@ type IppdbSvc interface {
 	UpdateFormulir(ctx context.Context, formulir ppdbEntity.TableDataFormulir) (string, error)
 	UpdateBerkas(ctx context.Context, berkas ppdbEntity.TableBerkas) (string, error)
 	UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJadwalTest) (string, error)
+	UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) 
 }
 
 type (

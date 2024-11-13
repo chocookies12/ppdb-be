@@ -75,6 +75,10 @@ type Data interface {
 	GetPembayaranFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TablePembayaranFormulir, error)
 	GetPembayaranFormulirPagination(ctx context.Context, searchInput string) (int, error)
 
+	//Data Siswa Admin
+	GetFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableDataFormulir, error)
+	GetFormulirPagination(ctx context.Context, searchInput string) (int, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)
@@ -105,6 +109,7 @@ type Data interface {
 	UpdateOrtu(ctx context.Context, ortu ppdbEntity.TableDataFormulir) (string, error)
 	UpdateBerkas(ctx context.Context, berkas ppdbEntity.TableBerkas) (string, error)
 	UpdateJadwalTest(ctx context.Context, jadwalTest ppdbEntity.TableJadwalTest) (string, error)
+	UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error)
 }
 
 type Service struct {

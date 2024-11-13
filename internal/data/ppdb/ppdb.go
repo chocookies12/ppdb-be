@@ -159,7 +159,7 @@ const (
 										pd.pesertaName,
 										p.statusID, 
 										s.statusName,
-										IFNULL(CAST(p.tglPembayaran AS DATE), "0001-01-01") AS tglPembayaran, 
+										p.tglPembayaran,
 										p.hargaFormulir, 
 										p.buktiPembayaran
 									FROM 
@@ -331,7 +331,7 @@ const (
 								pd.pesertaName,
 								p.statusID, 
 								s.statusName,
-								IFNULL(CAST(p.tglPembayaran AS DATE), '0001-01-01') AS tglPembayaran, 
+								p.tglPembayaran,
 								p.hargaFormulir, 
 								p.buktiPembayaran
 							FROM 
@@ -354,6 +354,82 @@ const (
                                         T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
                                     WHERE 
                                         pd.pesertaName LIKE ?`
+
+	getFormulirAll  = "GetFormulirAll"
+	qGetFormulirAll = `SELECT 
+						f.formulirID, 
+						f.pesertaID, 
+						f.pembayaranID, 
+						f.jurusanID, 
+						f.agamaID, 
+						f.genderPeserta, 
+						f.noAktaLahir,
+						f.tempatLahir, 
+						IFNULL(CAST(f.tglLahir AS DATE), '0001-01-01') AS tglLahir, 
+						f.NISN, 
+						f.Kelas, 
+						f.urutanAnak, 
+						f.jumlahSaudara,
+						f.tglSubmit, 
+						s.statusID, 
+						s.statusName, 
+						kp.kontakID, 
+						kp.alamatTerakhir, 
+						kp.kodePos, 
+						kp.noTelpRumah, 
+						o.ortuID, 
+						o.namaAyah, 
+						o.pekerjaanAyah, 
+						o.noTelpHpAyah, 
+						o.namaIbu, 
+						o.pekerjaanIbu, 
+						o.noTelpHpIbu, 
+						o.namaWali, 
+						o.pekerjaanWali, 
+						o.noTelpHpWali,
+						pd.pesertaName,
+						pd.noTelpHpPeserta,
+						pd.sekolahAsal,
+						pd.alamatSekolahAsal,
+						IFNULL(j.jurusanName, '') AS jurusanName,    
+						IFNULL(a.agamaName, '') AS agamaName         
+					FROM 
+						T_Formulir f
+					JOIN 
+						T_KontakPeserta kp ON f.formulirID = kp.formulirID
+					JOIN 
+						T_Ortu o ON f.formulirID = o.formulirID
+					LEFT JOIN 
+						T_Status s ON f.statusID = s.statusID
+					JOIN 
+						T_PesertaDidik pd ON f.pesertaID = pd.pesertaID
+					LEFT JOIN 
+						T_Jurusan j ON f.jurusanID = j.jurusanID
+					LEFT JOIN 
+						T_Agama a ON f.agamaID = a.agamaID          
+					WHERE 
+						pd.pesertaName LIKE ? 
+					LIMIT ?, ?`
+
+	getFormulirPagination  = "GetFormulirPagination"
+	qGetFormulirPagination = `SELECT 
+                                COUNT(*) AS totalCount
+                            FROM 
+                                T_Formulir f
+                            JOIN 
+                                T_KontakPeserta kp ON f.formulirID = kp.formulirID
+                            JOIN 
+                                T_Ortu o ON f.formulirID = o.formulirID
+                            LEFT JOIN 
+                                T_Status s ON f.statusID = s.statusID
+                            JOIN 
+                            	T_PesertaDidik pd ON f.pesertaID = pd.pesertaID
+                            LEFT JOIN 
+                                T_Jurusan j ON f.jurusanID = j.jurusanID
+                            LEFT JOIN 
+                                T_Agama a ON f.agamaID = a.agamaID          
+                            WHERE 
+                                pd.pesertaName LIKE ?`
 
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
@@ -465,6 +541,11 @@ const (
 								SET statusID=?, tglPembayaran=NOW() + INTERVAL 7 HOUR, buktiPembayaran=?
 								WHERE pembayaranID=?`
 
+	updateStatusPembayaranFormulir  = "UpdateStatusPembayaranFormulir"
+	qUpdateStatusPembayaranFormulir = `UPDATE T_PembayaranFormulir
+									SET statusID=?
+									WHERE pembayaranID=?`
+
 	updateFormulir  = "UpdateFormulir"
 	qUpdateFormulir = `UPDATE T_Formulir
 						SET jurusanID=?, agamaID=?, genderPeserta=?, noAktaLahir=?, tempatLahir=?, tglLahir=?, NISN=?, Kelas=?, urutanAnak=?, jumlahSaudara=?, tglSubmit=NOW() + INTERVAL 7 HOUR, statusID=?
@@ -555,6 +636,8 @@ var (
 		{getJadwalTestPagination, qGetJadwalTestPagination},
 		{getPembayaranFormulirAll, qGetPembayaranFormulirAll},
 		{getPembayaranFormulirPagination, qGetPembayaranFormulirPagination},
+		{getFormulirAll, qGetFormulirAll},
+		{getFormulirPagination, qGetFormulirPagination},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
@@ -583,6 +666,8 @@ var (
 		{updateOrtu, qUpdateOrtu},
 		{updateBerkas, qUpdateBerkas},
 		{updateJadwalTest, qUpdateJadwalTest},
+
+		{updateStatusPembayaranFormulir, qUpdateStatusPembayaranFormulir},
 	}
 	deleteStmt = []statement{
 		{deleteDataAdmin, qDeleteDataAdmin},

@@ -82,6 +82,8 @@ type Handler interface {
 	UpdateBerkas(w http.ResponseWriter, r *http.Request)
 	UpdateJadwalTest(w http.ResponseWriter, r *http.Request)
 
+	UpdateStatusPembayaranFormulir(w http.ResponseWriter, r *http.Request)
+
 	//JadwalTest, pembayaran formulir di admin
 	GetJadwalTestSlim(w http.ResponseWriter, r *http.Request)
 	GetPembayaranFormulirSlim(w http.ResponseWriter, r *http.Request) 

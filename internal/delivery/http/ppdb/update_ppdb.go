@@ -474,6 +474,36 @@ func (h *Handler) UpdatePembayaranFormulir(w http.ResponseWriter, r *http.Reques
 	json.NewEncoder(w).Encode(resp)
 }
 
+func (h *Handler) UpdateStatusPembayaranFormulir(w http.ResponseWriter, r *http.Request) {
+	var (
+		pembayaranformulir ppdbEntity.TablePembayaranFormulir
+		resp               response.Response
+	)
+
+	pembayaranformulir.PembayaranID = r.FormValue("pembayaran_id")
+	pembayaranformulir.StatusID = r.FormValue("status_id")
+
+	// Panggil service untuk memasukkan data pembayaranformulir
+	result, err := h.ppdbSvc.UpdateStatusPembayaranFormulir(r.Context(), pembayaranformulir)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	resp.Data = result
+	resp.Message = "Pembayaran formulir data updated successfully" // Menyusun pesan respons
+
+	// Mengambil konteks dari request
+	ctx := r.Context()
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+
+	// Mengembalikan response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(resp)
+}
+
 func (h *Handler) UpdateFormulir(w http.ResponseWriter, r *http.Request) {
 	var (
 		formulir ppdbEntity.TableDataFormulir
