@@ -108,6 +108,7 @@ type TablePembayaranFormulir struct {
 	PembayaranID    string    `db:"pembayaranID" json:"pembayaran_id"`
 	PesertaID       string    `db:"pesertaID" json:"peserta_id"`
 	PesertaName     string    `db:"pesertaName" json:"peserta_name"`
+	EmailPeserta    string    `db:"emailPeserta" json:"email_peserta"`
 	StatusID        string    `db:"statusID" json:"status_id"`
 	StatusName      string    `db:"statusName" json:"status_name"`
 	TglPembayaran   time.Time `db:"tglPembayaran" json:"tgl_pembayaran"`
