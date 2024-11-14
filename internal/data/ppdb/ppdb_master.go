@@ -23,6 +23,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var url = "http://localhost:8080"
+
+
 func saveImageToFile(imageBytes []byte, filePath string) error {
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -390,7 +393,7 @@ func (d Data) GetGambarInfoDaftar(ctx context.Context, infoID string) ([]byte, e
 }
 
 func generateImageURLFotoInfoDaftar(id string) string {
-	var url = "http://localhost:8081"
+	// var url = "http://localhost:8081"
 	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarinfodaftar?infoID=%s", id)
 }
 
@@ -509,7 +512,7 @@ func (d Data) GetGambarBanner(ctx context.Context, bannerID string) ([]byte, err
 }
 
 func generateImageURLFotoBanner(id string) string {
-	var url = "http://localhost:8081"
+	// var url = "http://localhost:8081"
 	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarbanner?bannerID=%s", id)
 }
 
@@ -645,7 +648,7 @@ func (d Data) GetGambarFasilitas(ctx context.Context, fasilitasID string) ([]byt
 }
 
 func generateImageURLFotoFasilitas(id string) string {
-	var url = "http://localhost:8081"
+	// var url = "http://localhost:8081"
 	return fmt.Sprintf(url+"/ppdb/v1/data/getgambarfasilitas?fasilitasID=%s", id)
 }
 
@@ -844,7 +847,7 @@ func (d Data) GetPhotoStaff(ctx context.Context, staffID string) ([]byte, error)
 }
 
 func generateImageURLFotoStaff(id string) string {
-	var url = "http://localhost:8081"
+	// var url = "http://localhost:8081"
 	return fmt.Sprintf(url+"/ppdb/v1/data/getphotostaff?staffID=%s", id)
 }
 
@@ -1076,7 +1079,7 @@ func (d Data) GetImageEvent(ctx context.Context, eventID string) ([]byte, error)
 }
 
 func generateImageURLFotoEvent(id string) string {
-	var url = "http://localhost:8081"
+	// var url = "http://localhost:8081"
 	return fmt.Sprintf(url+"/ppdb/v1/data/getimageevent?eventID=%s", id)
 }
 
