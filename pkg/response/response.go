@@ -11,6 +11,7 @@ type Response struct {
 	Metadata   interface{} `json:"metadata,omitempty"`
 	Error      Error       `json:"error"`
 	StatusCode int         `json:"-"`
+	Message    string      `json:"message,omitempty"`
 }
 
 // Error defines the error
