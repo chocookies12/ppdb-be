@@ -23,8 +23,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var url = "http://localhost:8080"
-
+var url = "https://kristenyusuf.icu"
 
 func saveImageToFile(imageBytes []byte, filePath string) error {
 	file, err := os.Create(filePath)
