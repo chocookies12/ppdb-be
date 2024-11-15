@@ -822,8 +822,6 @@ func (s Service) GetFormulirSLim(ctx context.Context, searchInput string, page, 
 	return dataFormulir, metadata, nil
 }
 
-
-
 func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
 		err    error
@@ -839,7 +837,6 @@ func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformuli
 	result = "Berhasil update data pembayaran formulir"
 	return result, nil
 }
-
 
 func (s Service) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
@@ -948,7 +945,7 @@ func (s Service) GetGeneratedKartuTest(ctx context.Context, idpesertadidik strin
 
 	docPdf := bytes.Buffer{}
 
-	currentYear := time.Now().Year()
+	currentYear := time.Now().Year() + 1
 	nextYear := currentYear + 1
 
 	currentYearString := strconv.Itoa(currentYear)
@@ -1073,7 +1070,7 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GetGeneratedFormulir]")
 	}
 
-	currentYear := time.Now().Year()
+	currentYear := time.Now().Year() + 1
 	nextYear := currentYear + 1
 
 	currentYearString := strconv.Itoa(currentYear)
