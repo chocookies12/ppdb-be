@@ -1,8 +1,8 @@
 server:
-  port: ":8081"
+  port: ":8080"
 database:
   master: "u868654674_ppdb:Cathh12sehat@tcp(srv1155.hstgr.io:3306)/u868654674_ppdb"
 swagger:
-  host: "localhost:8081"
+  host: "localhost:8080"
   schemes:
     - http
