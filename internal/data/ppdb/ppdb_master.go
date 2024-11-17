@@ -1827,33 +1827,55 @@ func (d Data) GetJadwalTestDetail(ctx context.Context, idpesertadidik string) (p
 	return jadwaltest, nil
 }
 
-func (d Data) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+func (d Data) GetPesertaName(ctx context.Context, idpembayaran string) (ppdbEntity.TablePesertaDidik, error) {
+	var (
+		err    error
+		result ppdbEntity.TablePesertaDidik
+	)
 
+	err = (*d.stmt)[getPesertaName].QueryRowxContext(ctx, idpembayaran).StructScan(&result)
+	if err != nil {
+		return result, errors.Wrap(err, "[DATA][GetPesertaName]")
+	}
+
+	return result, nil
+}
+
+func (d Data) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
+	var (
+		result string
+	)
 	_, err := (*d.stmt)[updatePembayaranFormulir].ExecContext(ctx,
 		pembayaranformulir.StatusID,
 		pembayaranformulir.BuktiPembayaran,
 		pembayaranformulir.PembayaranID,
 	)
 	if err != nil {
-		return "Gagal update data pembayaran formulir", errors.Wrap(err, "[DATA][UpdatePembayaranFormulir]")
+		result = "Gagal update data pembayaran formulir"
+		return result, errors.Wrap(err, "[DATA][UpdatePembayaranFormulir]")
 	}
 
-	result := "Berhasil update data pembayaran formulir"
+	result = "Berhasil update data pembayaran formulir"
 
 	return result, nil
 }
 
 func (d Data) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 
+	var (
+		result string 
+	)
+
 	_, err := (*d.stmt)[updateStatusPembayaranFormulir].ExecContext(ctx,
 		pembayaranformulir.StatusID,
 		pembayaranformulir.PembayaranID,
 	)
 	if err != nil {
-		return "Gagal update data pembayaran formulir", errors.Wrap(err, "[DATA][UpdateStatusPembayaranFormulir]")
+		result= "Gagal update data pembayaran formulir"
+		return result , errors.Wrap(err, "[DATA][UpdateStatusPembayaranFormulir]")
 	}
 
-	result := "Berhasil update data pembayaran formulir"
+	result = "Berhasil update data pembayaran formulir"
 
 	return result, nil
 }

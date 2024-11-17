@@ -433,6 +433,9 @@ const (
                             WHERE 
                                 pd.pesertaName LIKE ?`
 
+	getPesertaName  = "GetPesertaName"
+	qGetPesertaName = `SELECT pd.* from T_PembayaranFormulir h JOIN T_PesertaDidik pd ON h.pesertaID = pd.pesertaID where h.pembayaranID = ?`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -640,6 +643,7 @@ var (
 		{getPembayaranFormulirPagination, qGetPembayaranFormulirPagination},
 		{getFormulirAll, qGetFormulirAll},
 		{getFormulirPagination, qGetFormulirPagination},
+		{getPesertaName, qGetPesertaName},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

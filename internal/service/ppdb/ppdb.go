@@ -79,6 +79,9 @@ type Data interface {
 	GetFormulirAll(ctx context.Context, searchInput string, offset, limit int) ([]ppdbEntity.TableDataFormulir, error)
 	GetFormulirPagination(ctx context.Context, searchInput string) (int, error)
 
+	//PesertaName
+	GetPesertaName(ctx context.Context, idpembayaran string) (ppdbEntity.TablePesertaDidik, error) 
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

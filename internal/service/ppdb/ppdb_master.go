@@ -19,6 +19,7 @@ import (
 
 	"github.com/jung-kurt/gofpdf"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 	// "encoding/json"
 	// "fmt"
 	// "log"
@@ -822,6 +823,32 @@ func (s Service) GetFormulirSLim(ctx context.Context, searchInput string, page, 
 	return dataFormulir, metadata, nil
 }
 
+func sendNotifPayment(name string) error {
+	// Create an email message
+	message := gomail.NewMessage()
+	// message.SetHeader("From", "your-email@example.com") // Replace with your email
+	message.SetHeader("From", "catherine.c.sky@gmail.com")                                                         // Replace with your email
+	message.SetHeader("To", "catherine.825210089@stu.untar.ac.id")                                                 // email penerima
+	message.SetHeader("Subject", "Notifikasi Pembayaran Formulir")                                                 // subject email
+	message.SetBody("text/plain", name+" telah melakukan pembayaran. Silahkan cek ke dalam website admin PPDB!! ") // body email
+
+	// Setup email server configuration
+	smtpServer := "smtp.gmail.com"              // Replace with your SMTP server
+	smtpPort := 587                             // Replace with your SMTP port
+	smtpUsername := "catherine.c.sky@gmail.com" // Replace with your SMTP username ( email from )
+	smtpPassword := "ozbi yfuc ymfr pzax"       // Replace with your SMTP password
+
+	// Dial the SMTP server
+	dialer := gomail.NewDialer(smtpServer, smtpPort, smtpUsername, smtpPassword)
+
+	// Send the email
+	if err := dialer.DialAndSend(message); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 	var (
 		err    error
@@ -834,8 +861,56 @@ func (s Service) UpdatePembayaranFormulir(ctx context.Context, pembayaranformuli
 		return result, errors.Wrap(err, "[Service][UpdatePembayaranFormulir]")
 	}
 
+	pesertaName, err := s.ppdb.GetPesertaName(ctx, pembayaranformulir.PembayaranID)
+	if err != nil {
+		result = "Gagal mengambil peserta name"
+		return result, errors.Wrap(err, "[Service][GetPesertaName]")
+	}
+
+	pembayaranformulir.PesertaName = pesertaName.PesertaName
+
+	if result == "Berhasil update data pembayaran formulir" {
+		err = sendNotifPayment(pembayaranformulir.PesertaName)
+		if err != nil {
+			result = "Gagal update data mengirim notif pembayaran formulir"
+			return result, errors.Wrap(err, "[Service][sendNotifPayment]")
+		}
+	}
+
 	result = "Berhasil update data pembayaran formulir"
 	return result, nil
+}
+
+func sendNotifStatus(email string, name string, status string) error {
+	// Create an email message
+	message := gomail.NewMessage()
+	// message.SetHeader("From", "your-email@example.com") // Replace with your email
+	message.SetHeader("From", "catherine.c.sky@gmail.com")                       // Replace with your email
+	message.SetHeader("To", email)                                               // email penerima
+	message.SetHeader("Subject", "Status Pembayaran Formulir SMA Kristen Yusuf") // subject email
+
+	if status == "S0003" {
+		message.SetBody("text/html", "Dear "+name+",<br><br>Terima kasih telah melakukan pembayaran formulir. Kami ingin memberitahukan bahwa <b>pembayaran Anda telah berhasil diverifikasi</b>.<br><br>Sekarang, Anda dapat melanjutkan ke tahap berikutnya. Silakan kembali ke <a href=\"https://kristenyusuf.vercel.app/\">https://kristenyusuf.vercel.app/</a> dan ikuti petunjuk untuk melanjutkan proses Anda.<br><br>Jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut, jangan ragu untuk menghubungi kami. Kami siap membantu Anda!<br><br>Terima kasih atas perhatian dan kerjasamanya.<br><br>Salam hormat,<br>SMA Kristen Yusuf")
+	} else {
+		message.SetBody("text/html", "Dear "+name+",<br><br>Terima kasih telah melakukan pembayaran formulir. Kami ingin memberitahukan bahwa <b>pembayaran Anda telah ditolak</b>.<br><br>Harap Upload kembali bukti pembayaran formulir pada <a href=\"https://kristenyusuf.vercel.app/\">https://kristenyusuf.vercel.app/</a>.<br><br>Jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut, jangan ragu untuk menghubungi kami. Kami siap membantu Anda!<br><br>Terima kasih atas perhatian dan kerjasamanya.<br><br>Salam hormat,<br>SMA Kristen Yusuf")
+
+	}
+
+	// Setup email server configuration
+	smtpServer := "smtp.gmail.com"              // Replace with your SMTP server
+	smtpPort := 587                             // Replace with your SMTP port
+	smtpUsername := "catherine.c.sky@gmail.com" // Replace with your SMTP username ( email from )
+	smtpPassword := "ozbi yfuc ymfr pzax"       // Replace with your SMTP password
+
+	// Dial the SMTP server
+	dialer := gomail.NewDialer(smtpServer, smtpPort, smtpUsername, smtpPassword)
+
+	// Send the email
+	if err := dialer.DialAndSend(message); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s Service) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
@@ -848,6 +923,24 @@ func (s Service) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranf
 	if err != nil {
 		result = "Gagal update data pembayaran formulir"
 		return result, errors.Wrap(err, "[Service][UpdateStatusPembayaranFormulir]")
+	}
+
+	peserta, err := s.ppdb.GetPesertaName(ctx, pembayaranformulir.PembayaranID)
+	if err != nil {
+		result = "Gagal mengambil peserta name"
+		return result, errors.Wrap(err, "[Service][GetPesertaName]")
+	}
+
+	pembayaranformulir.PesertaName = peserta.PesertaName
+	pembayaranformulir.EmailPeserta = peserta.EmailPeserta
+	
+
+	if result == "Berhasil update data pembayaran formulir" {
+		err = sendNotifStatus(pembayaranformulir.EmailPeserta, pembayaranformulir.PesertaName, pembayaranformulir.StatusID )
+		if err != nil {
+			result = "Gagal update data mengirim notif pembayaran formulir"
+			return result, errors.Wrap(err, "[Service][sendNotifPayment]")
+		}
 	}
 
 	result = "Berhasil update data pembayaran formulir"
