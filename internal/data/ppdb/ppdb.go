@@ -132,7 +132,7 @@ const (
 
 	getEventUtama  = "GetEventUtama"
 	qGetEventUtama = `SELECT eventID, eventHeader, eventStartDate, eventEndDate, eventDesc, eventImage 
-					FROM T_EventSekolah`
+					FROM T_EventSekolah ORDER BY eventStartDate DESC`
 
 	getStatus  = "GetStatus"
 	qGetStatus = `SELECT statusID, statusName, statusDesc FROM T_Status`
@@ -311,7 +311,9 @@ const (
 					JOIN 
 						T_PesertaDidik pd ON jt.pesertaID = pd.pesertaID
 					WHERE 
-						pd.pesertaName LIKE ? LIMIT ?, ?`
+						pd.pesertaName LIKE ?
+						AND pd.sekolahAsalYN = "N"
+						LIMIT ?, ?`
 
 	getJadwalTestPagination  = "GetJadwalTestPagination"
 	qGetJadwalTestPagination = `SELECT 
@@ -323,7 +325,7 @@ const (
                             JOIN 
                               T_PesertaDidik pd ON jt.pesertaID = pd.pesertaID
                             WHERE 
-                              pd.pesertaName LIKE ?`
+                              pd.pesertaName LIKE ? AND pd.sekolahAsalYN = "N"`
 
 	getPembayaranFormulirAll  = "GetPembayaranFormulirAll"
 	qGetPembayaranFormulirAll = `SELECT 
@@ -343,7 +345,9 @@ const (
 							JOIN 
 								T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
 							WHERE 
-								pd.pesertaName LIKE ? LIMIT ?, ?`
+								pd.pesertaName LIKE ? 
+								AND pd.sekolahAsalYN = "N"
+								LIMIT ?, ?`
 
 	getPembayaranFormulirPagination  = "GetPembayaranFormulirPagination"
 	qGetPembayaranFormulirPagination = `SELECT 
@@ -355,7 +359,7 @@ const (
                                     JOIN 
                                         T_PesertaDidik pd ON p.pesertaID = pd.pesertaID
                                     WHERE 
-                                        pd.pesertaName LIKE ?`
+                                        pd.pesertaName LIKE ? AND pd.sekolahAsalYN = "N"`
 
 	getFormulirAll  = "GetFormulirAll"
 	qGetFormulirAll = `SELECT 
