@@ -820,3 +820,25 @@ func (h *Handler) GetGeneratedFormulir(w http.ResponseWriter, r *http.Request) {
 	resp.Data = result
 	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
 }
+
+func (h *Handler) GetCountDataWeb(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	ctx := r.Context()
+
+	// Panggil service untuk mendapatkan data count
+	countData, err := h.ppdbSvc.GetCountDataWeb(ctx)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Isi response dengan data hasil query
+	resp.Data = countData
+	resp.Metadata = nil
+
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+

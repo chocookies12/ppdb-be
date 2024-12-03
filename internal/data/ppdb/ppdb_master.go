@@ -2230,3 +2230,20 @@ func (d Data) GetFormulirPagination(ctx context.Context, searchInput string) (in
 
 	return totalCount, nil
 }
+
+func (d Data) GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) {
+	var (
+		countData ppdbEntity.CountDataWeb
+		err       error
+	)
+
+	// Eksekusi query
+	row := (*d.stmt)[getCountDataWeb].QueryRowxContext(ctx)
+
+	// Pindai hasil ke dalam struct
+	if err = row.StructScan(&countData); err != nil {
+		return countData, errors.Wrap(err, "[DATA] [GetCountDataWeb]")
+	}
+
+	return countData, err
+}

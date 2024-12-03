@@ -82,6 +82,9 @@ type Data interface {
 	//PesertaName
 	GetPesertaName(ctx context.Context, idpembayaran string) (ppdbEntity.TablePesertaDidik, error) 
 
+	//Dashboard
+	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) 
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

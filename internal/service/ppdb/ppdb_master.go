@@ -1391,3 +1391,15 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 
 	return docPdf.Bytes(), err
 }
+
+func (s Service) GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) {
+	// Panggil fungsi di layer data
+	countData, err := s.ppdb.GetCountDataWeb(ctx)
+
+	if err != nil {
+		return countData, errors.Wrap(err, "[Service][GetCountDataWeb]")
+	}
+
+	return countData, nil
+}
+

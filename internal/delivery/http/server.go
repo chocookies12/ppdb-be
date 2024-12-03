@@ -88,6 +88,9 @@ type Handler interface {
 	GetJadwalTestSlim(w http.ResponseWriter, r *http.Request)
 	GetPembayaranFormulirSlim(w http.ResponseWriter, r *http.Request) 
 	GetFormulirSlim(w http.ResponseWriter, r *http.Request)
+
+	//Dashboard
+	GetCountDataWeb(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

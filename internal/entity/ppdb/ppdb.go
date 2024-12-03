@@ -226,3 +226,10 @@ type TableJurusan struct {
 	JurusanID   string `db:"jurusanID" json:"jurusan_id"`
 	JurusanName string `db:"jurusanName" json:"jurusan_name"`
 }
+
+type CountDataWeb struct {
+	CountBannerSekolah int `db:"countBannerSekolah" json:"count_banner_sekolah"`
+	CountFasilitas     int `db:"countFasilitas" json:"count_fasilitas"`
+	CountEvent         int `db:"countEvent" json:"count_event"`
+	CountProfileStaff  int `db:"countProfileStaff" json:"count_profile_staff"`
+}

@@ -440,6 +440,13 @@ const (
 	getPesertaName  = "GetPesertaName"
 	qGetPesertaName = `SELECT pd.* from T_PembayaranFormulir h JOIN T_PesertaDidik pd ON h.pesertaID = pd.pesertaID where h.pembayaranID = ?`
 
+	getCountDataWeb  = "GetCountDataWeb"
+	qGetCountDataWeb = `SELECT 
+						(SELECT COUNT(*) FROM T_BannerSekolah) AS countBannerSekolah,
+						(SELECT COUNT(*) FROM T_Fasilitas) AS countFasilitas,
+						(SELECT COUNT(*) FROM T_EventSekolah) AS countEvent,
+						(SELECT COUNT(*) FROM T_ProfileStaff) AS countProfileStaff`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -648,6 +655,7 @@ var (
 		{getFormulirAll, qGetFormulirAll},
 		{getFormulirPagination, qGetFormulirPagination},
 		{getPesertaName, qGetPesertaName},
+		{getCountDataWeb, qGetCountDataWeb},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},
