@@ -470,7 +470,7 @@ const (
 								JOIN T_PesertaDidik pd ON pf.pesertaID = pd.pesertaID
 								WHERE pd.sekolahAsalYN = "N" 
 								AND pf.statusID = "S0001"
-								AND (YEAR(pf.tglPembayaran) = ? OR ? = 0)) AS countStatusPending,
+								AND (YEAR(pd.tglPembuatan) = ? OR ? = 0)) AS countStatusPending,
 
 								(SELECT COUNT(*) 
 								FROM T_PembayaranFormulir pf
@@ -495,9 +495,10 @@ const (
 	getCountFormulir  = "GetCountFormulir"
 	qGetCountFormulir = `SELECT 
 							(SELECT COUNT(*) 
-							FROM T_Formulir 
-							WHERE statusID = 'S0001' 
-							AND (YEAR(tglSubmit) = ? OR ? = 0)) AS countStatusPending,
+							FROM T_Formulir f
+							JOIN T_PesertaDidik pd ON f.pesertaID = pd.pesertaID
+							WHERE f.statusID = 'S0001' 
+							AND (YEAR(pd.tglPembuatan) = ? OR ? = 0)) AS countStatusPending,
 						
 							(SELECT COUNT(*) 
 							FROM T_Formulir 
