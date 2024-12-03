@@ -438,7 +438,8 @@ const (
                                 pd.pesertaName LIKE ?`
 
 	getPesertaName  = "GetPesertaName"
-	qGetPesertaName = `SELECT pd.* from T_PembayaranFormulir h JOIN T_PesertaDidik pd ON h.pesertaID = pd.pesertaID where h.pembayaranID = ?`
+	qGetPesertaName = `SELECT pd.pesertaID, pd.pesertaName, pd.password, pd.emailPeserta, pd.noTelpHpPeserta, 
+	pd.sekolahAsalYN, pd.sekolahAsal, pd.alamatSekolahAsal from T_PembayaranFormulir h JOIN T_PesertaDidik pd ON h.pesertaID = pd.pesertaID where h.pembayaranID = ?`
 
 	getCountDataWeb  = "GetCountDataWeb"
 	qGetCountDataWeb = `SELECT 
