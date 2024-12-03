@@ -115,6 +115,7 @@ func (s *Server) Handler() *mux.Router {
 
 	//Dashboard
 	ppdb.HandleFunc("/getcountdataweb", s.Ppdb.GetCountDataWeb).Methods("GET")
+	ppdb.HandleFunc("/getcountdatappdb", s.Ppdb.GetCountDataPpdb).Methods("GET")
 
 
 

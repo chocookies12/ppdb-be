@@ -80,10 +80,13 @@ type Data interface {
 	GetFormulirPagination(ctx context.Context, searchInput string) (int, error)
 
 	//PesertaName
-	GetPesertaName(ctx context.Context, idpembayaran string) (ppdbEntity.TablePesertaDidik, error) 
+	GetPesertaName(ctx context.Context, idpembayaran string) (ppdbEntity.TablePesertaDidik, error)
 
 	//Dashboard
-	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) 
+	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error)
+	GetCountPesertaDidik(ctx context.Context, tahun int) (ppdbEntity.CountPesertaDidik, error)
+	GetCountBuktiPembayaran(ctx context.Context, tahun int) (ppdbEntity.CountBuktiPembayaran, error)
+	GetCountFormulir(ctx context.Context, tahun int) (ppdbEntity.CountFormulir, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

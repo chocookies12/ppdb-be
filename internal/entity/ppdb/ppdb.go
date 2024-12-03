@@ -94,14 +94,15 @@ type TableStatus struct {
 }
 
 type TablePesertaDidik struct {
-	PesertaID         string `db:"pesertaID" json:"peserta_id,omitempty"`
-	PesertaName       string `db:"pesertaName" json:"peserta_name,omitempty"`
-	Password          string `db:"password" json:"password,omitempty"`
-	EmailPeserta      string `db:"emailPeserta" json:"email_peserta,omitempty"`
-	NoTelpHpPeserta   string `db:"noTelpHpPeserta" json:"no_telp_hp_peserta,omitempty"`
-	SekolahAsalYN     string `db:"sekolahAsalYN" json:"sekolah_asal_yn,omitempty"`
-	SekolahAsal       string `db:"sekolahAsal" json:"sekolah_asal,omitempty"`
-	AlamatSekolahAsal string `db:"alamatSekolahAsal" json:"alamat_sekolah_asal,omitempty"`
+	PesertaID         string    `db:"pesertaID" json:"peserta_id,omitempty"`
+	PesertaName       string    `db:"pesertaName" json:"peserta_name,omitempty"`
+	Password          string    `db:"password" json:"password,omitempty"`
+	EmailPeserta      string    `db:"emailPeserta" json:"email_peserta,omitempty"`
+	NoTelpHpPeserta   string    `db:"noTelpHpPeserta" json:"no_telp_hp_peserta,omitempty"`
+	SekolahAsalYN     string    `db:"sekolahAsalYN" json:"sekolah_asal_yn,omitempty"`
+	SekolahAsal       string    `db:"sekolahAsal" json:"sekolah_asal,omitempty"`
+	AlamatSekolahAsal string    `db:"alamatSekolahAsal" json:"alamat_sekolah_asal,omitempty"`
+	TglPembuatan      time.Time `db:"tglPembuatan" json:"tgl_pembuatan_akun,omitempty"`
 }
 
 type TablePembayaranFormulir struct {
@@ -232,4 +233,29 @@ type CountDataWeb struct {
 	CountFasilitas     int `db:"countFasilitas" json:"count_fasilitas"`
 	CountEvent         int `db:"countEvent" json:"count_event"`
 	CountProfileStaff  int `db:"countProfileStaff" json:"count_profile_staff"`
+}
+
+type CountDataPpdb struct {
+	PesertaDidik    CountPesertaDidik
+	BuktiPembayaran CountBuktiPembayaran
+	Formulir        CountFormulir
+}
+
+type CountPesertaDidik struct {
+	CountAsalN int `db:"countAsalN" json:"count_pd_sekolahAsalN"`
+	CountAsalY int `db:"countAsalY" json:"count_pd_sekolahAsalY"`
+	CountTotal int `db:"countJumlahPesertaDidik" json:"count_jumlah_pd"`
+}
+
+type CountBuktiPembayaran struct {
+	CountStatusPending   int `db:"countStatusPending" json:"count_bp_pending"`
+	CountStatusUploading int `db:"countStatusUploading" json:"count_bp_uploading"`
+	CountStatusVerified  int `db:"countStatusVerified" json:"count_bp_verified"`
+	CountTotal           int `db:"countTotalBuktiPembayaran" json:"count_jumlah_bp"`
+}
+
+type CountFormulir struct {
+	CountStatusPending  int `db:"countStatusPending" json:"count_formulir_pending"`
+	CountStatusVerified int `db:"countStatusVerified" json:"count_formulir_verified"`
+	CountTotal          int `db:"countTotalFormulir" json:"count_total_formulir"`
 }

@@ -1403,3 +1403,31 @@ func (s Service) GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, 
 	return countData, nil
 }
 
+func (s Service) GetCountDataPpdb(ctx context.Context, tahun int) (ppdbEntity.CountDataPpdb, error) {
+	var (
+		countData ppdbEntity.CountDataPpdb
+		err       error
+	)
+
+	// Memanggil GetCountPesertaDidik untuk mendapatkan data peserta didik
+	countData.PesertaDidik, err = s.ppdb.GetCountPesertaDidik(ctx, tahun)
+	if err != nil {
+		return countData, errors.Wrap(err, "[SERVICE] [GetCountDataPpdb] Error while getting PesertaDidik count")
+	}
+
+	// Memanggil GetCountBuktiPembayaran untuk mendapatkan data bukti pembayaran
+	countData.BuktiPembayaran, err = s.ppdb.GetCountBuktiPembayaran(ctx, tahun)
+	if err != nil {
+		return countData, errors.Wrap(err, "[SERVICE] [GetCountDataPpdb] Error while getting BuktiPembayaran count")
+	}
+
+	// Memanggil GetCountFormulir untuk mendapatkan data formulir
+	countData.Formulir, err = s.ppdb.GetCountFormulir(ctx, tahun)
+	if err != nil {
+		return countData, errors.Wrap(err, "[SERVICE] [GetCountDataPpdb] Error while getting Formulir count")
+	}
+
+	return countData, nil
+}
+
+

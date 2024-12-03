@@ -842,3 +842,45 @@ func (h *Handler) GetCountDataWeb(w http.ResponseWriter, r *http.Request) {
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
 
+
+func (h *Handler) GetCountDataPpdb(w http.ResponseWriter, r *http.Request) {
+	// Menyiapkan response untuk hasil query
+	resp := response.Response{}
+	defer resp.RenderJSON(w, r)
+
+	// Mendapatkan context dari request
+	ctx := r.Context()
+
+	// Mendapatkan tahun dari query parameter (contoh: ?tahun=2024)
+	tahun := r.URL.Query().Get("tahun")
+	if tahun == "" {
+		resp = httpHelper.ParseErrorCode("Tahun parameter is required")
+		h.logger.For(ctx).Error("Tahun parameter is missing", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+		return
+	}
+
+	// Convert tahun ke integer
+	tahunInt, err := strconv.Atoi(tahun)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode("Invalid tahun format")
+		h.logger.For(ctx).Error("Invalid tahun format", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Panggil service untuk mendapatkan data count
+	countData, err := h.ppdbSvc.GetCountDataPpdb(ctx, tahunInt)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		h.logger.For(ctx).Error("HTTP request error", zap.String("method", r.Method), zap.Stringer("url", r.URL), zap.Error(err))
+		return
+	}
+
+	// Isi response dengan data hasil query
+	resp.Data = countData
+	resp.Metadata = nil
+
+	// Log untuk request selesai
+	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
+}
+
+

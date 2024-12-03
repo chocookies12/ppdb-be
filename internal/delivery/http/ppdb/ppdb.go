@@ -66,6 +66,7 @@ type IppdbSvc interface {
 
 	//Dashboard
 	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) 
+	GetCountDataPpdb(ctx context.Context, tahun int) (ppdbEntity.CountDataPpdb, error)
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
