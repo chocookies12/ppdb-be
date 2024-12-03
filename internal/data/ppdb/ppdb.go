@@ -440,6 +440,74 @@ const (
 	getPesertaName  = "GetPesertaName"
 	qGetPesertaName = `SELECT pd.* from T_PembayaranFormulir h JOIN T_PesertaDidik pd ON h.pesertaID = pd.pesertaID where h.pembayaranID = ?`
 
+	getCountDataWeb  = "GetCountDataWeb"
+	qGetCountDataWeb = `SELECT 
+						(SELECT COUNT(*) FROM T_BannerSekolah) AS countBannerSekolah,
+						(SELECT COUNT(*) FROM T_Fasilitas) AS countFasilitas,
+						(SELECT COUNT(*) FROM T_EventSekolah) AS countEvent,
+						(SELECT COUNT(*) FROM T_ProfileStaff) AS countProfileStaff`
+
+	getCountPesertaDididk = "GetCountPesertaDidik"
+	qGetCountPesertaDidik = `SELECT 
+							(SELECT COUNT(*) 
+							FROM T_PesertaDidik 
+							WHERE sekolahAsalYN = "N" 
+							AND (YEAR(tglPembuatan) = ? OR ? = 0)) AS countAsalN,
+
+							(SELECT COUNT(*) 
+							FROM T_PesertaDidik 
+							WHERE sekolahAsalYN = "Y" 
+							AND (YEAR(tglPembuatan) = ? OR ? = 0)) AS countAsalY,
+
+							(SELECT COUNT(*) 
+							FROM T_PesertaDidik 
+							WHERE (YEAR(tglPembuatan) = ? OR ? = 0)) AS countJumlahPesertaDidik`
+
+	getCountBuktiPembayaran  = "GetCountBuktiPembayaran"
+	qGetCountBuktiPembayaran = `SELECT 
+								(SELECT COUNT(*) 
+								FROM T_PembayaranFormulir pf
+								JOIN T_PesertaDidik pd ON pf.pesertaID = pd.pesertaID
+								WHERE pd.sekolahAsalYN = "N" 
+								AND pf.statusID = "S0001"
+								AND (YEAR(pf.tglPembayaran) = ? OR ? = 0)) AS countStatusPending,
+
+								(SELECT COUNT(*) 
+								FROM T_PembayaranFormulir pf
+								JOIN T_PesertaDidik pd ON pf.pesertaID = pd.pesertaID
+								WHERE pd.sekolahAsalYN = "N" 
+								AND pf.statusID = "S0002"
+								AND (YEAR(pf.tglPembayaran) = ? OR ? = 0)) AS countStatusUploading,
+
+								(SELECT COUNT(*) 
+								FROM T_PembayaranFormulir pf
+								JOIN T_PesertaDidik pd ON pf.pesertaID = pd.pesertaID
+								WHERE pd.sekolahAsalYN = "N" 
+								AND pf.statusID = "S0003"
+								AND (YEAR(pf.tglPembayaran) = ? OR ? = 0)) AS countStatusVerified,
+
+								(SELECT COUNT(*) 
+								FROM T_PembayaranFormulir pf
+								JOIN T_PesertaDidik pd ON pf.pesertaID = pd.pesertaID
+								WHERE pd.sekolahAsalYN = "N"
+								AND (YEAR(pf.tglPembayaran) = ? OR ? = 0)) AS countTotalBuktiPembayaran`
+
+	getCountFormulir  = "GetCountFormulir"
+	qGetCountFormulir = `SELECT 
+							(SELECT COUNT(*) 
+							FROM T_Formulir 
+							WHERE statusID = 'S0001' 
+							AND (YEAR(tglSubmit) = ? OR ? = 0)) AS countStatusPending,
+						
+							(SELECT COUNT(*) 
+							FROM T_Formulir 
+							WHERE statusID = 'S0003' 
+							AND (YEAR(tglSubmit) = ? OR ? = 0)) AS countStatusVerified,
+
+							(SELECT COUNT(*) 
+							FROM T_Formulir 
+							WHERE (YEAR(tglSubmit) = ? OR ? = 0)) AS countTotalFormulir`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -467,8 +535,8 @@ const (
 
 	insertPesertaDidik  = "InsertPesertaDidik"
 	qInsertPesertaDidik = `INSERT INTO T_PesertaDidik
-								(pesertaID, pesertaName, password, emailPeserta, noTelpHpPeserta, sekolahAsalYN, sekolahAsal, alamatSekolahAsal)
-							VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
+								(pesertaID, pesertaName, password, emailPeserta, noTelpHpPeserta, sekolahAsalYN, sekolahAsal, alamatSekolahAsal, tglPembuatan)
+							VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW() + INTERVAL 7 HOUR)`
 
 	insertPembayaranFormulir  = "InsertPembayaranFormulir"
 	qInsertPembayaranFormulir = `INSERT INTO T_PembayaranFormulir
@@ -648,6 +716,10 @@ var (
 		{getFormulirAll, qGetFormulirAll},
 		{getFormulirPagination, qGetFormulirPagination},
 		{getPesertaName, qGetPesertaName},
+		{getCountDataWeb, qGetCountDataWeb},
+		{getCountPesertaDididk, qGetCountPesertaDidik},
+		{getCountBuktiPembayaran, qGetCountBuktiPembayaran},
+		{getCountFormulir, qGetCountFormulir},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

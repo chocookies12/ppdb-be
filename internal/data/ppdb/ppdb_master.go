@@ -1863,7 +1863,7 @@ func (d Data) UpdatePembayaranFormulir(ctx context.Context, pembayaranformulir p
 func (d Data) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranformulir ppdbEntity.TablePembayaranFormulir) (string, error) {
 
 	var (
-		result string 
+		result string
 	)
 
 	_, err := (*d.stmt)[updateStatusPembayaranFormulir].ExecContext(ctx,
@@ -1871,8 +1871,8 @@ func (d Data) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranform
 		pembayaranformulir.PembayaranID,
 	)
 	if err != nil {
-		result= "Gagal update data pembayaran formulir"
-		return result , errors.Wrap(err, "[DATA][UpdateStatusPembayaranFormulir]")
+		result = "Gagal update data pembayaran formulir"
+		return result, errors.Wrap(err, "[DATA][UpdateStatusPembayaranFormulir]")
 	}
 
 	result = "Berhasil update data pembayaran formulir"
@@ -2229,4 +2229,72 @@ func (d Data) GetFormulirPagination(ctx context.Context, searchInput string) (in
 	}
 
 	return totalCount, nil
+}
+
+func (d Data) GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) {
+	var (
+		countData ppdbEntity.CountDataWeb
+		err       error
+	)
+
+	// Eksekusi query
+	row := (*d.stmt)[getCountDataWeb].QueryRowxContext(ctx)
+
+	// Pindai hasil ke dalam struct
+	if err = row.StructScan(&countData); err != nil {
+		return countData, errors.Wrap(err, "[DATA] [GetCountDataWeb]")
+	}
+
+	return countData, err
+}
+
+func (d Data) GetCountPesertaDidik(ctx context.Context, tahun int) (ppdbEntity.CountPesertaDidik, error) {
+	var (
+		countData ppdbEntity.CountPesertaDidik
+		err       error
+	)
+
+	// Eksekusi query
+	row := (*d.stmt)[getCountPesertaDididk].QueryRowxContext(ctx, tahun, tahun, tahun, tahun, tahun, tahun)
+
+	// Pindai hasil ke dalam struct
+	if err = row.StructScan(&countData); err != nil {
+		return countData, errors.Wrap(err, "[DATA] [GetCountPesertaDidik]")
+	}
+
+	return countData, err
+}
+
+func (d Data) GetCountBuktiPembayaran(ctx context.Context, tahun int) (ppdbEntity.CountBuktiPembayaran, error) {
+	var (
+		countData ppdbEntity.CountBuktiPembayaran
+		err       error
+	)
+
+	// Eksekusi query
+	row := (*d.stmt)[getCountBuktiPembayaran].QueryRowxContext(ctx, tahun, tahun, tahun, tahun, tahun, tahun, tahun, tahun)
+
+	// Pindai hasil ke dalam struct
+	if err = row.StructScan(&countData); err != nil {
+		return countData, errors.Wrap(err, "[DATA] [GetCountBuktiPembayaran]")
+	}
+
+	return countData, err
+}
+
+func (d Data) GetCountFormulir(ctx context.Context, tahun int) (ppdbEntity.CountFormulir, error) {
+	var (
+		countData ppdbEntity.CountFormulir
+		err       error
+	)
+
+	// Eksekusi query
+	row := (*d.stmt)[getCountFormulir].QueryRowxContext(ctx, tahun, tahun, tahun, tahun, tahun, tahun)
+
+	// Pindai hasil ke dalam struct
+	if err = row.StructScan(&countData); err != nil {
+		return countData, errors.Wrap(err, "[DATA] [GetCountFormulir]")
+	}
+
+	return countData, err
 }

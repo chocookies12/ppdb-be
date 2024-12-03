@@ -64,6 +64,10 @@ type IppdbSvc interface {
 
 	GetGeneratedFormulir(ctx context.Context, idpesertaddidik string) ([]byte, error)
 
+	//Dashboard
+	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) 
+	GetCountDataPpdb(ctx context.Context, tahun int) (ppdbEntity.CountDataPpdb, error)
+
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)
 	InsertInfoDaftar(ctx context.Context, infoDaftar ppdbEntity.TableInfoDaftar) (string, error)

@@ -113,6 +113,11 @@ func (s *Server) Handler() *mux.Router {
 	//Formulir Admin 
 	ppdb.HandleFunc("/getformulirslim", s.Ppdb.GetFormulirSlim).Methods("GET")
 
+	//Dashboard
+	ppdb.HandleFunc("/getcountdataweb", s.Ppdb.GetCountDataWeb).Methods("GET")
+	ppdb.HandleFunc("/getcountdatappdb", s.Ppdb.GetCountDataPpdb).Methods("GET")
+
+
 
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 	return r
