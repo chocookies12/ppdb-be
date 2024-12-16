@@ -92,6 +92,7 @@ type Handler interface {
 	//Dashboard
 	GetCountDataWeb(w http.ResponseWriter, r *http.Request)
 	GetCountDataPpdb(w http.ResponseWriter, r *http.Request)
+	GetGeneratedLaporan(w http.ResponseWriter, r *http.Request)
 }
 
 // Server ...

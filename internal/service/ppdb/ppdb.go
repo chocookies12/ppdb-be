@@ -87,6 +87,7 @@ type Data interface {
 	GetCountPesertaDidik(ctx context.Context, tahun int) (ppdbEntity.CountPesertaDidik, error)
 	GetCountBuktiPembayaran(ctx context.Context, tahun int) (ppdbEntity.CountBuktiPembayaran, error)
 	GetCountFormulir(ctx context.Context, tahun int) (ppdbEntity.CountFormulir, error)
+	GetListFormulir(ctx context.Context, tahun int) ([]ppdbEntity.TableDataFormulir, error) 
 
 	//insert
 	InsertDataAdmin(ctx context.Context, admin ppdbEntity.TableAdmin) (string, error)

@@ -510,6 +510,60 @@ const (
 							FROM T_Formulir 
 							WHERE (YEAR(tglSubmit) = ? OR ? = 0)) AS countTotalFormulir`
 
+	getListFormulir  = "GetListFormulir"
+	qGetListFormulir = `SELECT 
+						f.formulirID, 
+						f.pesertaID, 
+						f.pembayaranID, 
+						f.jurusanID, 
+						f.agamaID, 
+						f.genderPeserta, 
+						f.noAktaLahir,
+						f.tempatLahir, 
+						IFNULL(CAST(f.tglLahir AS DATE), '0001-01-01') AS tglLahir, 
+						f.NISN, 
+						f.Kelas, 
+						f.urutanAnak, 
+						f.jumlahSaudara,
+						f.tglSubmit, 
+						s.statusID, 
+						s.statusName, 
+						kp.kontakID, 
+						kp.alamatTerakhir, 
+						kp.kodePos, 
+						kp.noTelpRumah, 
+						o.ortuID, 
+						o.namaAyah, 
+						o.pekerjaanAyah, 
+						o.noTelpHpAyah, 
+						o.namaIbu, 
+						o.pekerjaanIbu, 
+						o.noTelpHpIbu, 
+						o.namaWali, 
+						o.pekerjaanWali, 
+						o.noTelpHpWali,
+						pd.pesertaName,
+						pd.noTelpHpPeserta,
+						pd.sekolahAsal,
+						pd.alamatSekolahAsal,
+						IFNULL(j.jurusanName, '') AS jurusanName,    
+						IFNULL(a.agamaName, '') AS agamaName         
+					FROM 
+						T_Formulir f
+					JOIN 
+						T_KontakPeserta kp ON f.formulirID = kp.formulirID
+					JOIN 
+						T_Ortu o ON f.formulirID = o.formulirID
+					LEFT JOIN 
+						T_Status s ON f.statusID = s.statusID
+					JOIN 
+						T_PesertaDidik pd ON f.pesertaID = pd.pesertaID
+					LEFT JOIN 
+						T_Jurusan j ON f.jurusanID = j.jurusanID
+					LEFT JOIN 
+						T_Agama a ON f.agamaID = a.agamaID           
+					WHERE (YEAR(f.tglSubmit) = ? OR ? = 0)`
+
 	//query insert
 	insertDataAdmin  = "InsertDataAdmin"
 	qInsertDataAdmin = `INSERT INTO T_Admin (adminID, roleID, adminName, password, emailAdmin)
@@ -722,6 +776,7 @@ var (
 		{getCountPesertaDididk, qGetCountPesertaDidik},
 		{getCountBuktiPembayaran, qGetCountBuktiPembayaran},
 		{getCountFormulir, qGetCountFormulir},
+		{getListFormulir, qGetListFormulir},
 	}
 	insertStmt = []statement{
 		{insertDataAdmin, qInsertDataAdmin},

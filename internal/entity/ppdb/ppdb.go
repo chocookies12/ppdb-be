@@ -239,6 +239,7 @@ type CountDataPpdb struct {
 	PesertaDidik    CountPesertaDidik
 	BuktiPembayaran CountBuktiPembayaran
 	Formulir        CountFormulir
+	Daftar          []TableDataFormulir
 }
 
 type CountPesertaDidik struct {

@@ -2298,3 +2298,97 @@ func (d Data) GetCountFormulir(ctx context.Context, tahun int) (ppdbEntity.Count
 
 	return countData, err
 }
+
+func (d Data) GetListFormulir(ctx context.Context, tahun int) ([]ppdbEntity.TableDataFormulir, error) {
+
+	var (
+		tglLahir    sql.NullString
+		tglSubmit   sql.NullString
+		formulir    ppdbEntity.TableDataFormulir
+		formulirArr []ppdbEntity.TableDataFormulir
+	)
+
+	// Menjalankan query dengan parameter searchInput, offset, dan limit
+	rows, err := (*d.stmt)[getListFormulir].QueryxContext(ctx, tahun, tahun)
+
+	if err != nil {
+		return formulirArr, errors.Wrap(err, "[DATA][GetListFormulir] - Query failed")
+	}
+	defer rows.Close()
+
+	// Iterasi melalui hasil query dan mengisi slice formulirArr
+	for rows.Next() {
+
+		// Scan data dari hasil query ke dalam objek formulir
+		err := rows.Scan(
+			&formulir.FormulirID,
+			&formulir.PesertaID,
+			&formulir.PembayaranID,
+			&formulir.JurusanID,
+			&formulir.AgamaID,
+			&formulir.GenderPeserta,
+			&formulir.NoAktaLahir,
+			&formulir.TempatLahir,
+			&tglLahir,
+			&formulir.NISN,
+			&formulir.Kelas,
+			&formulir.UrutanAnak,
+			&formulir.JumlahSaudara,
+			&tglSubmit,
+			&formulir.StatusID,
+			&formulir.StatusName,
+			&formulir.KontakID,
+			&formulir.AlamatTerakhir,
+			&formulir.KodePos,
+			&formulir.NoTelpRumah,
+			&formulir.OrtuID,
+			&formulir.NamaAyah,
+			&formulir.PekerjaanAyah,
+			&formulir.NoTelpHpAyah,
+			&formulir.NamaIbu,
+			&formulir.PekerjaanIbu,
+			&formulir.NoTelpHpIbu,
+			&formulir.NamaWali,
+			&formulir.PekerjaanWali,
+			&formulir.NoTelpHpWali,
+			&formulir.PesertaName,
+			&formulir.NoTelpHpPeserta,
+			&formulir.SekolahAsal,
+			&formulir.AlamatSekolahAsal,
+			&formulir.JurusanName,
+			&formulir.AgamaName,
+		)
+		if err != nil {
+			return formulirArr, errors.Wrap(err, "[DATA][GetListFormulir] - Scan failed")
+		}
+
+		// Parse tglLahir jika valid
+		if tglLahir.Valid {
+			tLahir, err := time.Parse("2006-01-02", tglLahir.String)
+			if err != nil {
+				return formulirArr, errors.Wrap(err, "[DATA][GetListFormulir] - Failed to parse tglLahir")
+			}
+			formulir.TglLahir = tLahir
+		}
+
+		// Parse tglSubmit jika valid
+		if tglSubmit.Valid {
+			tSubmit, err := time.Parse("2006-01-02 15:04:05", tglSubmit.String)
+			if err != nil {
+				return formulirArr, errors.Wrap(err, "[DATA][GetListFormulir] - Failed to parse tglSubmit")
+			}
+			formulir.TglSubmit = tSubmit
+		}
+
+		// Tambahkan formulir ke dalam slice formulirArr
+		formulirArr = append(formulirArr, formulir)
+	}
+
+	// Cek apakah ada error setelah iterasi
+	if err := rows.Err(); err != nil {
+		return formulirArr, errors.Wrap(err, "[DATA][GetListFormulir] - Rows iteration failed")
+	}
+
+	// Mengembalikan slice formulirArr
+	return formulirArr, nil
+}

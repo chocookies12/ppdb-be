@@ -106,7 +106,6 @@ func (h *Handler) GetLoginAdmin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-
 func (h *Handler) GetKontakSekolah(w http.ResponseWriter, r *http.Request) {
 	// Membuat response default
 	resp := response.Response{}
@@ -821,6 +820,38 @@ func (h *Handler) GetGeneratedFormulir(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
 }
 
+func (h *Handler) GetGeneratedLaporan(w http.ResponseWriter, r *http.Request) {
+	resp := response.Response{}
+	ctx := r.Context()
+
+	// Konversi tahun dari string ke int
+	tahunStr := r.FormValue("tahun")
+	tahun, err := strconv.Atoi(tahunStr)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode("Invalid year parameter")
+		resp.RenderJSON(w, r)
+		log.Printf("[ERROR] %s %s - Invalid year: %v\n", r.Method, r.URL, err)
+		return
+	}
+
+	result, err := h.ppdbSvc.GetLaporan(ctx, tahun)
+	if err != nil {
+		resp = httpHelper.ParseErrorCode(err.Error())
+		resp.RenderJSON(w, r)
+		log.Printf("[ERROR] %s %s - %v\n", r.Method, r.URL, err)
+		return
+	}
+
+	// Menyiapkan header untuk respon PDF
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", "inline; filename=Formulir.pdf")
+	w.Write(result)
+
+	// Log keberhasilan dan data respon
+	resp.Data = result
+	log.Printf("[INFO] %s %s\n", r.Method, r.URL)
+}
+
 func (h *Handler) GetCountDataWeb(w http.ResponseWriter, r *http.Request) {
 	resp := response.Response{}
 	defer resp.RenderJSON(w, r)
@@ -841,7 +872,6 @@ func (h *Handler) GetCountDataWeb(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
-
 
 func (h *Handler) GetCountDataPpdb(w http.ResponseWriter, r *http.Request) {
 	// Menyiapkan response untuk hasil query
@@ -882,5 +912,3 @@ func (h *Handler) GetCountDataPpdb(w http.ResponseWriter, r *http.Request) {
 	// Log untuk request selesai
 	h.logger.For(ctx).Info("HTTP request done", zap.String("method", r.Method), zap.Stringer("url", r.URL))
 }
-
-

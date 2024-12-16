@@ -933,10 +933,9 @@ func (s Service) UpdateStatusPembayaranFormulir(ctx context.Context, pembayaranf
 
 	pembayaranformulir.PesertaName = peserta.PesertaName
 	pembayaranformulir.EmailPeserta = peserta.EmailPeserta
-	
 
 	if result == "Berhasil update data pembayaran formulir" {
-		err = sendNotifStatus(pembayaranformulir.EmailPeserta, pembayaranformulir.PesertaName, pembayaranformulir.StatusID )
+		err = sendNotifStatus(pembayaranformulir.EmailPeserta, pembayaranformulir.PesertaName, pembayaranformulir.StatusID)
 		if err != nil {
 			result = "Gagal update data mengirim notif pembayaran formulir"
 			return result, errors.Wrap(err, "[Service][sendNotifPayment]")
@@ -1392,6 +1391,94 @@ func (s Service) GetGeneratedFormulir(ctx context.Context, idpesertadidik string
 	return docPdf.Bytes(), err
 }
 
+func (s Service) GetLaporan(ctx context.Context, tahun int) ([]byte, error) {
+	var (
+		err error
+	)
+	docPdf := bytes.Buffer{}
+
+	formulir, err := s.ppdb.GetListFormulir(ctx, tahun)
+	if err != nil {
+		return docPdf.Bytes(), errors.Wrap(err, "[SERVICE][GetGeneratedFormulir]")
+	}
+
+	currentYear := time.Now().Year() + 1
+	nextYear := currentYear + 1
+
+	currentYearString := strconv.Itoa(currentYear)
+	nextYearString := strconv.Itoa(nextYear)
+
+	pdf := gofpdf.New("P", "mm", "A4", "")
+
+	pdf.AddPage()
+	pdf.SetFont("Arial", "", 9)
+
+	imageY := pdf.GetY()
+	pdf.SetY(imageY + 2.5)
+	imageX := 10.0
+	pdf.Image("public/images/logoKY.png", imageX, imageY, 0, 15, true, "", 0, "")
+
+	headerY := 10.0
+	headerX := imageX + 20
+	pdf.SetY(headerY)
+	pdf.SetX(headerX)
+
+	pdf.CellFormat(40, 4, "SMA Kristen Yusuf", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Jl Arwana II No. 16 Jembatan Dua", "", 2, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Jakarta Utara (14450)", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "Telp: 021-6693111, 021-6682017", "", 1, "L", false, 0, "")
+	pdf.SetX(headerX)
+	pdf.CellFormat(40, 4, "WA: 0838-7000-4500", "", 1, "L", false, 0, "")
+
+	lineY := headerY + 22
+
+	endWidth := 200.0
+
+	pdf.SetLineWidth(0.5)
+	pdf.Line(10, lineY, endWidth, lineY) // Changed to solid line
+
+	pdf.SetFont("Arial", "B", 12)
+
+	pdf.SetY(pdf.GetY() + 1.5)
+
+	pdf.Ln(5)
+
+	pdf.CellFormat(190, 7, "DAFTAR PENDAFTARAN SISWA BARU SMA - TAHUN PELAJARAN "+currentYearString+"/"+nextYearString, "", 1, "C", false, 0, "")
+
+	pdf.Ln(8) // Added spacing before the table
+
+	// Membuat tabel
+	pdf.SetFont("Arial", "B", 10)
+	pdf.CellFormat(10, 10, "No", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(50, 10, "Nama Peserta", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(30, 10, "NISN", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(30, 10, "Tempat Lahir", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(30, 10, "Tanggal Lahir", "1", 0, "C", false, 0, "")
+	pdf.CellFormat(40, 10, "Sekolah Asal", "1", 1, "C", false, 0, "")
+
+	pdf.SetFont("Arial", "", 10)
+
+	for i, data := range formulir {
+		pdf.CellFormat(10, 10, strconv.Itoa(i+1), "1", 0, "C", false, 0, "")
+		pdf.CellFormat(50, 10, data.PesertaName, "1", 0, "L", false, 0, "")
+		pdf.CellFormat(30, 10, data.NISN, "1", 0, "L", false, 0, "")
+		pdf.CellFormat(30, 10, data.TempatLahir, "1", 0, "L", false, 0, "")
+		pdf.CellFormat(30, 10, data.TglLahir.Format("02-01-2006"), "1", 0, "L", false, 0, "")
+		pdf.CellFormat(40, 10, data.SekolahAsal, "1", 1, "L", false, 0, "")
+	}
+
+	err = pdf.Output(&docPdf)
+	if err != nil {
+		log.Fatalf("Error creating PDF: %s", err)
+	}
+
+	return docPdf.Bytes(), err
+}
+
+
 func (s Service) GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) {
 	// Panggil fungsi di layer data
 	countData, err := s.ppdb.GetCountDataWeb(ctx)
@@ -1427,7 +1514,10 @@ func (s Service) GetCountDataPpdb(ctx context.Context, tahun int) (ppdbEntity.Co
 		return countData, errors.Wrap(err, "[SERVICE] [GetCountDataPpdb] Error while getting Formulir count")
 	}
 
+	countData.Daftar, err = s.ppdb.GetListFormulir(ctx, tahun)
+	if err != nil {
+		return countData, errors.Wrap(err, "[SERVICE][GetFormulirSLim] Error getting paginated data formulir data")
+	}
+
 	return countData, nil
 }
-
-

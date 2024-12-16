@@ -96,6 +96,8 @@ func (s *Server) Handler() *mux.Router {
 	ppdb.HandleFunc("/getjadwaltestdetail", s.Ppdb.GetJadwalTestDetail).Methods("GET")
 	ppdb.HandleFunc("/getkartutest", s.Ppdb.GetGeneratedKartuTest).Methods("GET")
 	ppdb.HandleFunc("/getformulir", s.Ppdb.GetGeneratedFormulir).Methods("GET")
+	ppdb.HandleFunc("/getlaporan", s.Ppdb.GetGeneratedLaporan).Methods("GET")
+
 
 	ppdb.HandleFunc("/updatepembayaranformulir", s.Ppdb.UpdatePembayaranFormulir).Methods("PUT")
 	ppdb.HandleFunc("/updateformulir", s.Ppdb.UpdateFormulir).Methods("PUT")

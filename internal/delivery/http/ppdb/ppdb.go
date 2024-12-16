@@ -63,6 +63,7 @@ type IppdbSvc interface {
 	GetFormulirSLim(ctx context.Context, searchInput string, page, length int) ([]ppdbEntity.TableDataFormulir, interface{}, error) 
 
 	GetGeneratedFormulir(ctx context.Context, idpesertaddidik string) ([]byte, error)
+	GetLaporan(ctx context.Context, tahun int) ([]byte, error)
 
 	//Dashboard
 	GetCountDataWeb(ctx context.Context) (ppdbEntity.CountDataWeb, error) 
